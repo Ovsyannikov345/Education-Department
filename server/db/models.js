@@ -32,9 +32,6 @@ const Event = sequelize.define(
         plannedResult: {
             type: DataTypes.STRING,
         },
-        completionStatus: {
-            type: DataTypes.BOOLEAN,
-        },
         description: {
             type: DataTypes.STRING,
         },

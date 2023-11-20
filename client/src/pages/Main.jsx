@@ -1,6 +1,6 @@
 import { Container } from "@mui/joy";
 import React, { useEffect, useState } from "react";
-import { getEvent, getEvents, createEvent } from "../api/eventsApi.js";
+import { getEvents } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
 
 function MainPage() {

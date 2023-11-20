@@ -4,7 +4,7 @@ import {
     OFFENSIVE_ROUTE,
     REPORTS_ROUTE,
 } from "../../utils/consts";
-import AddEvent from "../../pages/AddEvent";
+import AddEvent from "../../pages/AddEventPage";
 import MainPage from "../../pages/Main";
 import OffensivePage from "../../pages/OffensivePage";
 import ReportsPage from "../../pages/ReportsPage";

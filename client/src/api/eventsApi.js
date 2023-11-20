@@ -12,10 +12,10 @@ const getEvent = async (id) => {
     return response.data;
 };
 
-const createEvent = async (event) => {
-    const response = await host.post("/events");
+const postEvent = async (event) => {
+    const response = await host.post("/events", event);
 
-    console.log(response.status);
+    return response.status;
 };
 
-export { getEvent, getEvents, createEvent };
+export { getEvent, getEvents, postEvent };

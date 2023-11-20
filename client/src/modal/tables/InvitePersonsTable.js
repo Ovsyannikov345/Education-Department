@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Box, Modal, Button } from "@mui/material";
 import { useContext } from "react";
 import { Context } from '../../index'
-import { fatchAll } from "../../api/invitesApi";
+// import { fatchAll } from "../../api/invitesApi";
 
 function InvitePersonsTable({ show = false, hide }) {
     const { eventStore } = useContext(Context)
@@ -35,7 +35,7 @@ function InvitePersonsTable({ show = false, hide }) {
     ];
 
     useEffect(() => {
-        fatchAll().then(data => eventStore.setIvints(data))
+        // fatchAll().then(data => eventStore.setIvints(data))
     }, [eventStore, refreshData])
 
     return (

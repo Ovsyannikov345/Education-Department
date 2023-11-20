@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { createInvite } from "../api/invitesApi";
+// import { createInvite } from "../api/invitesApi";
 import { Typography, Box, Modal, TextField, Button } from "@mui/material";
 
 function CreateInvitePirson({ show = false, hide }) {
@@ -17,15 +17,15 @@ function CreateInvitePirson({ show = false, hide }) {
             organization: newInviteeOrganization,
         };
 
-        createInvite(invite)
-            .then((data) => {
-                setNewInviteeName("");
-                setNewInviteeLastName("");
-                setNewInviteeOrganization("");
-                setNewSurename("");
-                setNewInviteePosition("");
-                hide();
-            });
+        // createInvite(invite)
+        //     .then((data) => {
+        //         setNewInviteeName("");
+        //         setNewInviteeLastName("");
+        //         setNewInviteeOrganization("");
+        //         setNewSurename("");
+        //         setNewInviteePosition("");
+        //         hide();
+        //     });
     };
 
 
