@@ -205,27 +205,10 @@ const Student = sequelize.define(
 const EventOrganizers = sequelize.define(
     "EventOrganizers",
     {
-        eventId: {
+        id: {
             type: DataTypes.INTEGER,
-            references: {
-                model: Event,
-                key: "id",
-            },
-            allowNull: false,
-        },
-        employeeId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: Employee,
-                key: "id",
-            },
-        },
-        studentId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: Student,
-                key: "id",
-            },
+            primaryKey: true,
+            autoIncrement: true,
         },
     },
     { timestamps: false }
@@ -307,6 +290,20 @@ Subdirection.belongsTo(Direction, {
     sourceKey: "id",
 });
 
+Event.belongsToMany(Employee, {
+    through: "EventOrganizers",
+});
+Employee.belongsToMany(Event, {
+    through: "EventOrganizers",
+});
+
+Event.belongsToMany(Student, {
+    through: "EventOrganizers",
+});
+Student.belongsToMany(Event, {
+    through: "EventOrganizers",
+});
+
 Student.hasMany(Offense, {
     foreignKey: "studentId",
 });
@@ -325,6 +322,5 @@ module.exports = {
     EventParticipants,
     Employee,
     Student,
-    EventOrganizers,
     Offense,
 };

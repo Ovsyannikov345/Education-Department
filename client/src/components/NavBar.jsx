@@ -69,7 +69,7 @@ function NavBar() {
                             onClick={() => navigate(ADDEVENT_ROUTE)}
                         >
                             <AddBoxIcon />
-                            <ListItemText primary="Добавить меоприятие" />
+                            <ListItemText primary="Добавить мероприятие" />
                         </ListItem>
                         <ListItem
                             button

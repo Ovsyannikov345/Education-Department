@@ -4,6 +4,8 @@ const {
     Subdepartment,
     Direction,
     Subdirection,
+    Employee,
+    Student,
 } = require("../db/models");
 
 class EventController {
@@ -14,6 +16,8 @@ class EventController {
                 { model: Subdirection },
                 { model: Department },
                 { model: Direction },
+                { model: Employee },
+                { model: Student },
             ],
         });
 
@@ -32,26 +36,6 @@ class EventController {
     }
 
     async create(req, res) {
-        // const { name } = req.body;
-        // const { subdepartment_id } = req.body;
-        // const { department_id } = req.body;
-        // const { organizers_id } = req.body;
-        // const { planned_result } = req.body;
-        // const { invitees_id } = req.body;
-        // const { completion_status } = req.body;
-        // const { note } = req.body;
-
-        // const event = await Event.create({
-        //     name,
-        //     subdepartment_id,
-        //     department_id,
-        //     organizers_id,
-        //     planned_result,
-        //     invitees_id,
-        //     completion_status,
-        //     note,
-        // });
-
         const event = {
             name: req.body.name,
             description: req.body.description,
@@ -63,11 +47,8 @@ class EventController {
             subdirectionId: req.body.subdirectionId,
         };
 
-        console.log(event);
+        await Event.create(event);
 
-        const a = await Event.create(event);
-        
-        console.log(a);
         return res.json();
     }
 }
