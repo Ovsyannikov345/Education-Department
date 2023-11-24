@@ -38,6 +38,7 @@ const OrganizersModal = ({
 
         if (response.status === 200) {
             addEmployeeHandler(response.data);
+            setLoadedEmployees([...loadedEmployees, response.data]);
         }
         else {
             console.log("Creation failed with code " + response.status);
