@@ -134,7 +134,7 @@ const CreateEventForm = ({ creationHandler }) => {
     const removeEmployee = (id) => {
         setEvent({
             ...event,
-            employees: event.employees.filter(emp => emp.id !== id),
+            employees: event.employees.filter((emp) => emp.id !== id),
         });
     };
 
@@ -356,7 +356,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 value={
                                     event.time === ""
                                         ? null
-                                        : moment(event.time)
+                                        : moment(event.time, "HH:mm")
                                 }
                                 onChange={(newTime) =>
                                     setEvent({
