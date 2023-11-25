@@ -10,33 +10,33 @@ import {
     TextField,
     Button,
     Typography,
-    IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/DeleteForever";
-import OrganizerItem from "./OrganizerItem";
+import StudentItem from "./StudentItem";
 
-const OrganizersList = ({
-    employees,
-    availableEmployees,
-    addEmployeeHandler,
-    createEmployeeHandler,
-    removeEmployeeHandler,
-    deleteEmployeeHandler,
+const StudentList = ({
+    students,
+    availableStudents,
+    addStudentHandler,
+    createStudentHandler,
+    removeStudentHandler,
+    deleteStudentHandler,
 }) => {
     const [creationToggle, setCreationToggle] = useState(false);
-    const [createdEmployee, setCreatedEmployee] = useState({
+    const [createdStudent, setCreatedStudent] = useState({
         lastName: "",
         firstName: "",
         patronymic: "",
+        groupName: "",
     });
 
-    const createEmployee = () => {
-        createEmployeeHandler(createdEmployee);
+    const createStudent = () => {
+        createStudentHandler(createdStudent);
         setCreationToggle(false);
-        setCreatedEmployee({
+        setCreatedStudent({
             lastName: "",
             firstName: "",
             patronymic: "",
+            groupName: "",
         });
     };
 
@@ -46,56 +46,68 @@ const OrganizersList = ({
 
     return (
         <Stack gap={1} marginTop={1}>
-            {employees.map((emp) => (
-                <OrganizerItem
-                    key={emp.id}
-                    organizer={emp}
-                    removeHandler={removeEmployeeHandler}
-                    deleteHandler={deleteEmployeeHandler}
+            {students.map((std) => (
+                <StudentItem
+                    key={std.id}
+                    student={std}
+                    removeHandler={removeStudentHandler}
+                    deleteHandler={deleteStudentHandler}
                 />
             ))}
             <FormControl fullWidth>
-                <InputLabel id="department-label">
-                    Добавить организавтора
-                </InputLabel>
+                <InputLabel id="student-label">Добавить студента</InputLabel>
                 <Select
                     fullWidth
-                    labelId="department-label"
-                    id="department-select"
-                    label="Добавить организавтора"
+                    labelId="student-label"
+                    id="student-select"
+                    label="Добавить студента"
                     value={""}
                 >
-                    {availableEmployees.length > 0 ? (
-                        availableEmployees.map((emp) => (
+                    {availableStudents.length > 0 ? (
+                        availableStudents.map((std) => (
                             <MenuItem
-                                key={emp.id}
-                                value={`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
+                                key={std.id}
+                                value={`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
                                 onClick={(e) =>
-                                    addEmployeeHandler(e.target.innerText)
+                                    addStudentHandler(e.target.innerText)
                                 }
                             >
-                                {`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
+                                {`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
                             </MenuItem>
                         ))
                     ) : (
-                        <MenuItem key={1}>Нет доступных организаторов</MenuItem>
+                        <MenuItem key={1}>Нет доступных студентов</MenuItem>
                     )}
                 </Select>
             </FormControl>
             <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                 {creationToggle ? (
                     <FormControl fullWidth>
-                        <Typography variant="h6">Новый организатор</Typography>
+                        <Typography variant="h6">Новый студент</Typography>
                         <Grid container gap={1}>
+                            <Grid item xs={2}>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    label="Группа"
+                                    value={createdStudent.groupName}
+                                    onChange={(e) =>
+                                        setCreatedStudent({
+                                            ...createdStudent,
+                                            groupName: e.target.value,
+                                        })
+                                    }
+                                ></TextField>
+                            </Grid>
                             <Grid item xs>
                                 <TextField
                                     fullWidth
                                     variant="outlined"
                                     label="Фамилия"
-                                    value={createdEmployee.lastName}
+                                    value={createdStudent.lastName}
                                     onChange={(e) =>
-                                        setCreatedEmployee({
-                                            ...createdEmployee,
+                                        setCreatedStudent({
+                                            ...createdStudent,
                                             lastName: e.target.value,
                                         })
                                     }
@@ -106,10 +118,10 @@ const OrganizersList = ({
                                     fullWidth
                                     variant="outlined"
                                     label="Имя"
-                                    value={createdEmployee.firstName}
+                                    value={createdStudent.firstName}
                                     onChange={(e) =>
-                                        setCreatedEmployee({
-                                            ...createdEmployee,
+                                        setCreatedStudent({
+                                            ...createdStudent,
                                             firstName: e.target.value,
                                         })
                                     }
@@ -120,10 +132,10 @@ const OrganizersList = ({
                                     fullWidth
                                     variant="outlined"
                                     label="Отчество"
-                                    value={createdEmployee.patronymic}
+                                    value={createdStudent.patronymic}
                                     onChange={(e) =>
-                                        setCreatedEmployee({
-                                            ...createdEmployee,
+                                        setCreatedStudent({
+                                            ...createdStudent,
                                             patronymic: e.target.value,
                                         })
                                     }
@@ -136,7 +148,7 @@ const OrganizersList = ({
                                     fullWidth
                                     variant="outlined"
                                     color="primary"
-                                    onClick={createEmployee}
+                                    onClick={createStudent}
                                 >
                                     Создать
                                 </Button>
@@ -160,7 +172,7 @@ const OrganizersList = ({
                                 variant="outlined"
                                 onClick={() => setCreationToggle(true)}
                             >
-                                Новый организатор
+                                Новый студент
                             </Button>
                         </Grid>
                     </Grid>
@@ -170,4 +182,4 @@ const OrganizersList = ({
     );
 };
 
-export default OrganizersList;
+export default StudentList;

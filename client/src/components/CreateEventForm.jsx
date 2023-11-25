@@ -29,6 +29,7 @@ const CreateEventForm = ({ creationHandler }) => {
         directionId: null,
         subdirectionId: null,
         employees: [],
+        students: [],
     });
 
     const [departments, setDepartments] = useState([]);
@@ -120,13 +121,23 @@ const CreateEventForm = ({ creationHandler }) => {
     };
 
     const addEmployee = (employee) => {
-        console.log(employee);
         if (
             event.employees.find((emp) => emp.id === employee.id) === undefined
         ) {
             setEvent({
                 ...event,
                 employees: [...event.employees, employee],
+            });
+        }
+    };
+
+    const addStudent = (student) => {
+        if (
+            event.students.find((std) => std.id === student.id) === undefined
+        ) {
+            setEvent({
+                ...event,
+                students: [...event.students, student],
             });
         }
     };
@@ -138,6 +149,13 @@ const CreateEventForm = ({ creationHandler }) => {
         });
     };
 
+    const removeStudent = (id) => {
+        setEvent({
+            ...event,
+            students: event.students.filter((std) => std.id !== id),
+        });
+    };
+
     return (
         <>
             <OrganizersModal
@@ -146,6 +164,9 @@ const CreateEventForm = ({ creationHandler }) => {
                 currentEmployees={event.employees}
                 addEmployeeHandler={addEmployee}
                 removeEmployeeHandler={removeEmployee}
+                currentStudents={event.students}
+                addStudentHandler={addStudent}
+                removeStudentHandler={removeStudent}
             />
             <Container>
                 <Grid

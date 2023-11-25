@@ -47,15 +47,18 @@ class EventController {
             directionId: req.body.directionId,
             subdirectionId: req.body.subdirectionId,
             employees: req.body.employees,
+            students: req.body.students,
         };
+
         const createdEvent = await Event.create(event);
 
         try {
             createdEvent.addEmployees(event.employees.map(emp => emp.id));
+            createdEvent.addStudents(event.students.map(std => std.id));
         } catch (e) {
             console.log(e);
         }
-
+        
         return res.json();
     }
 }

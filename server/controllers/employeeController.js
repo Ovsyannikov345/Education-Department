@@ -20,7 +20,7 @@ class EmployeeController {
     async delete(req, res) {
         const { id } = req.params;
 
-        await Employee.destroy({ where: { id: id}})
+        await Employee.destroy({ where: { id: id } });
 
         return res.json();
     }

@@ -5,18 +5,20 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
 const OrganizerItem = ({ organizer, removeHandler, deleteHandler }) => {
     return (
-        <Paper variant="outlined">
-            <Grid container alignItems={"center"} style={{ paddingLeft: 10 }}>
-                <Grid item xs={3}>
-                    <Typography>{organizer.lastName}</Typography>
+        <Paper
+            variant="outlined"
+            style={{ borderWidth: 2, borderColor: "#1976d29F" }}
+        >
+            <Grid
+                container
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                style={{ paddingLeft: 10 }}
+            >
+                <Grid item xs>
+                    <Typography>{`${organizer.lastName} ${organizer.firstName} ${organizer.patronymic}`}</Typography>
                 </Grid>
-                <Grid item xs={3}>
-                    <Typography>{organizer.firstName}</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                    <Typography>{organizer.patronymic}</Typography>
-                </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={2}>
                     <IconButton onClick={(e) => removeHandler(organizer.id)}>
                         <RemoveIcon color="primary" />
                     </IconButton>
