@@ -12,4 +12,10 @@ const postEmployee = async (employee) => {
     return response;
 }
 
-export { getEmployees, postEmployee };
+const deleteEmployee = async (id) => {
+    const response = await host.delete(`/employees/${id}`);
+
+    return response;
+}
+
+export { getEmployees, postEmployee, deleteEmployee };

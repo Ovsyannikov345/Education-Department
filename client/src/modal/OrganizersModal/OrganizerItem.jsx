@@ -1,8 +1,9 @@
 import React from "react";
 import { Grid, IconButton, Paper, Typography } from "@mui/material";
+import RemoveIcon from "@mui/icons-material/PersonRemove";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
-const OrganizerItem = ({ organizer, removeHandler }) => {
+const OrganizerItem = ({ organizer, removeHandler, deleteHandler }) => {
     return (
         <Paper variant="outlined">
             <Grid container alignItems={"center"} style={{ paddingLeft: 10 }}>
@@ -17,6 +18,9 @@ const OrganizerItem = ({ organizer, removeHandler }) => {
                 </Grid>
                 <Grid item xs={3}>
                     <IconButton onClick={(e) => removeHandler(organizer.id)}>
+                        <RemoveIcon color="primary" />
+                    </IconButton>
+                    <IconButton onClick={(e) => deleteHandler(organizer.id)}>
                         <DeleteIcon color="error" />
                     </IconButton>
                 </Grid>

@@ -16,6 +16,14 @@ class EmployeeController {
 
         return res.json(result.dataValues);
     }
+
+    async delete(req, res) {
+        const { id } = req.params;
+
+        await Employee.destroy({ where: { id: id}})
+
+        return res.json();
+    }
 }
 
 module.exports = new EmployeeController();

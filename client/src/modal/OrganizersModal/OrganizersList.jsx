@@ -10,7 +10,9 @@ import {
     TextField,
     Button,
     Typography,
+    IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/DeleteForever";
 import OrganizerItem from "./OrganizerItem";
 
 const OrganizersList = ({
@@ -19,6 +21,7 @@ const OrganizersList = ({
     addEmployeeHandler,
     createEmployeeHandler,
     removeEmployeeHandler,
+    deleteEmployeeHandler,
 }) => {
     const [creationToggle, setCreationToggle] = useState(false);
     const [createdEmployee, setCreatedEmployee] = useState({
@@ -30,6 +33,11 @@ const OrganizersList = ({
     const createEmployee = () => {
         createEmployeeHandler(createdEmployee);
         setCreationToggle(false);
+        setCreatedEmployee({
+            lastName: "",
+            firstName: "",
+            patronymic: "",
+        });
     };
 
     const cancelCreation = () => {
@@ -43,6 +51,7 @@ const OrganizersList = ({
                     key={emp.id}
                     organizer={emp}
                     removeHandler={removeEmployeeHandler}
+                    deleteHandler={deleteEmployeeHandler}
                 />
             ))}
             <FormControl fullWidth>

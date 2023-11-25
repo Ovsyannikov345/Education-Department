@@ -120,6 +120,7 @@ const CreateEventForm = ({ creationHandler }) => {
     };
 
     const addEmployee = (employee) => {
+        console.log(employee);
         if (
             event.employees.find((emp) => emp.id === employee.id) === undefined
         ) {
@@ -135,8 +136,6 @@ const CreateEventForm = ({ creationHandler }) => {
             ...event,
             employees: event.employees.filter(emp => emp.id !== id),
         });
-
-        console.log(event.employees);
     };
 
     return (

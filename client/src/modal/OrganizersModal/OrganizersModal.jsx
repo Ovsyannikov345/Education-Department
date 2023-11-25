@@ -1,6 +1,10 @@
 import { Dialog, Typography, Container } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { getEmployees, postEmployee } from "../../api/employeeApi";
+import {
+    getEmployees,
+    postEmployee,
+    deleteEmployee,
+} from "../../api/employeeApi";
 import OrganizersList from "./OrganizersList";
 
 const OrganizersModal = ({
@@ -35,12 +39,11 @@ const OrganizersModal = ({
 
     const createEmployee = async (createdEmployee) => {
         const response = await postEmployee(createdEmployee);
-
+        console.log(createdEmployee);
         if (response.status === 200) {
             addEmployeeHandler(response.data);
             setLoadedEmployees([...loadedEmployees, response.data]);
-        }
-        else {
+        } else {
             console.log("Creation failed with code " + response.status);
         }
     };
@@ -61,6 +64,15 @@ const OrganizersModal = ({
         removeEmployeeHandler(id);
     };
 
+    const removeEmployeePermanent = async (id) => {
+        const response = await deleteEmployee(id);
+
+        if (response.status === 200) {
+            removeEmployeeHandler(id);
+            setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
+        }
+    };
+
     return (
         <Dialog fullWidth open={isOpen} onClose={closeModal}>
             <Typography variant="h5" paddingLeft={3} marginTop={1}>
@@ -73,6 +85,7 @@ const OrganizersModal = ({
                     addEmployeeHandler={addEmployee}
                     createEmployeeHandler={createEmployee}
                     removeEmployeeHandler={removeEmployee}
+                    deleteEmployeeHandler={removeEmployeePermanent}
                 ></OrganizersList>
             </Container>
         </Dialog>
