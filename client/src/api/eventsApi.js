@@ -18,4 +18,10 @@ const postEvent = async (event) => {
     return response.status;
 };
 
-export { getEvent, getEvents, postEvent };
+const deleteEvent = async (id) => {
+    const response = await host.delete(`/events/${id}`);
+
+    return response;
+}
+
+export { getEvent, getEvents, postEvent, deleteEvent };

@@ -10,8 +10,10 @@ import {
     MenuItem,
     TextField,
     Button,
+    IconButton,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import BackIcon from "@mui/icons-material/ArrowBackIos";
 import moment from "moment";
 import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
@@ -195,6 +197,13 @@ const CreateEventForm = ({ creationHandler }) => {
                 addParticipantHandler={addParticipant}
                 removeParticipantHandler={removeParticipant}
             />
+            <IconButton
+                color="primary"
+                style={{ marginTop: 10, marginLeft: 10 }}
+                onClick={() => router("/events")}
+            >
+                <BackIcon></BackIcon>Список мероприятий
+            </IconButton>
             <Container>
                 <Grid
                     container

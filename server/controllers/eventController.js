@@ -66,6 +66,14 @@ class EventController {
 
         return res.json();
     }
+
+    async delete(req, res) {
+        const { id } = req.params;
+
+        await Event.destroy({ where: { id: id } });
+
+        return res.json();
+    }
 }
 
 module.exports = new EventController();
