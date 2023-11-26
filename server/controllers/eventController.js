@@ -6,7 +6,7 @@ const {
     Subdirection,
     Employee,
     Student,
-    EventParticipants,
+    Participant,
 } = require("../db/models");
 
 class EventController {
@@ -19,6 +19,7 @@ class EventController {
                 { model: Direction },
                 { model: Employee },
                 { model: Student },
+                { model: Participant },
             ],
         });
 
@@ -48,17 +49,21 @@ class EventController {
             subdirectionId: req.body.subdirectionId,
             employees: req.body.employees,
             students: req.body.students,
+            participants: req.body.participants,
         };
 
         const createdEvent = await Event.create(event);
 
         try {
-            createdEvent.addEmployees(event.employees.map(emp => emp.id));
-            createdEvent.addStudents(event.students.map(std => std.id));
+            createdEvent.addEmployees(event.employees.map((emp) => emp.id));
+            createdEvent.addStudents(event.students.map((std) => std.id));
+            createdEvent.addParticipants(
+                event.participants.map((prt) => prt.id)
+            );
         } catch (e) {
             console.log(e);
         }
-        
+
         return res.json();
     }
 }

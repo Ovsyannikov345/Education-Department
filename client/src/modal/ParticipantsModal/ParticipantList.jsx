@@ -11,30 +11,34 @@ import {
     Button,
     Typography,
 } from "@mui/material";
-import EmployeeItem from "./EmployeeItem";
+import ParticipantItem from "./ParticipantItem";
 
-const EmployeeList = ({
-    employees,
-    availableEmployees,
-    addEmployeeHandler,
-    createEmployeeHandler,
-    removeEmployeeHandler,
-    deleteEmployeeHandler,
+const ParticipantList = ({
+    participants,
+    availableParticipants,
+    addParticipantHandler,
+    createParticipantHandler,
+    removeParticipantHandler,
+    deleteParticipantHandler,
 }) => {
     const [creationToggle, setCreationToggle] = useState(false);
-    const [createdEmployee, setCreatedEmployee] = useState({
+    const [createdParticipant, setCreatedParticipant] = useState({
         lastName: "",
         firstName: "",
         patronymic: "",
+        organization: "",
+        position: "",
     });
 
-    const createEmployee = () => {
-        createEmployeeHandler(createdEmployee);
+    const createParticipant = () => {
+        createParticipantHandler(createdParticipant);
         setCreationToggle(false);
-        setCreatedEmployee({
+        setCreatedParticipant({
             lastName: "",
             firstName: "",
             patronymic: "",
+            organization: "",
+            position: "",
         });
     };
 
@@ -44,85 +48,113 @@ const EmployeeList = ({
 
     return (
         <Stack gap={1} marginTop={1}>
-            {employees.map((emp) => (
-                <EmployeeItem
-                    key={emp.id}
-                    organizer={emp}
-                    removeHandler={removeEmployeeHandler}
-                    deleteHandler={deleteEmployeeHandler}
+            {participants !== undefined && participants.length > 0 ? participants.map((prt) => (
+                <ParticipantItem
+                    key={prt.id}
+                    participant={prt}
+                    removeHandler={removeParticipantHandler}
+                    deleteHandler={deleteParticipantHandler}
                 />
-            ))}
+            )) : <></>}
             <FormControl fullWidth>
-                <InputLabel id="employee-label">
-                    Добавить организавтора
+                <InputLabel id="participant-label">
+                    Добавить участника
                 </InputLabel>
                 <Select
                     fullWidth
-                    labelId="employee-label"
-                    id="employee-select"
-                    label="Добавить организавтора"
+                    labelId="participant-label"
+                    id="participant-select"
+                    label="Добавить участника"
                     value={""}
                 >
-                    {availableEmployees.length > 0 ? (
-                        availableEmployees.map((emp) => (
+                    {availableParticipants.length > 0 ? (
+                        availableParticipants.map((prt) => (
                             <MenuItem
-                                key={emp.id}
-                                value={`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
+                                key={prt.id}
+                                value={`${prt.lastName} ${prt.firstName} ${prt.patronymic} ${prt.organization} ${prt.position}`}
                                 onClick={(e) =>
-                                    addEmployeeHandler(e.target.innerText)
+                                    addParticipantHandler(e.target.innerText)
                                 }
                             >
-                                {`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
+                                {`${prt.lastName} ${prt.firstName} ${prt.patronymic} ${prt.organization} ${prt.position}`}
                             </MenuItem>
                         ))
                     ) : (
-                        <MenuItem key={1}>Нет доступных организаторов</MenuItem>
+                        <MenuItem key={1}>Нет доступных участников</MenuItem>
                     )}
                 </Select>
             </FormControl>
             <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                 {creationToggle ? (
                     <FormControl fullWidth>
-                        <Typography variant="h6">Новый организатор</Typography>
+                        <Typography variant="h6">Новый участник</Typography>
                         <Grid container gap={1}>
-                            <Grid item xs>
+                            <Grid item xs={4}>
                                 <TextField
                                     fullWidth
                                     variant="outlined"
                                     label="Фамилия"
-                                    value={createdEmployee.lastName}
+                                    value={createdParticipant.lastName}
                                     onChange={(e) =>
-                                        setCreatedEmployee({
-                                            ...createdEmployee,
+                                        setCreatedParticipant({
+                                            ...createdParticipant,
                                             lastName: e.target.value,
                                         })
                                     }
                                 ></TextField>
                             </Grid>
-                            <Grid item xs>
+                            <Grid item xs={4}>
                                 <TextField
                                     fullWidth
                                     variant="outlined"
                                     label="Имя"
-                                    value={createdEmployee.firstName}
+                                    value={createdParticipant.firstName}
                                     onChange={(e) =>
-                                        setCreatedEmployee({
-                                            ...createdEmployee,
+                                        setCreatedParticipant({
+                                            ...createdParticipant,
                                             firstName: e.target.value,
                                         })
                                     }
                                 ></TextField>
                             </Grid>
-                            <Grid item xs>
+                            <Grid item xs={4}>
                                 <TextField
                                     fullWidth
                                     variant="outlined"
                                     label="Отчество"
-                                    value={createdEmployee.patronymic}
+                                    value={createdParticipant.patronymic}
                                     onChange={(e) =>
-                                        setCreatedEmployee({
-                                            ...createdEmployee,
+                                        setCreatedParticipant({
+                                            ...createdParticipant,
                                             patronymic: e.target.value,
+                                        })
+                                    }
+                                ></TextField>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    label="Организация"
+                                    value={createdParticipant.organization}
+                                    onChange={(e) =>
+                                        setCreatedParticipant({
+                                            ...createdParticipant,
+                                            organization: e.target.value,
+                                        })
+                                    }
+                                ></TextField>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    label="Должность"
+                                    value={createdParticipant.position}
+                                    onChange={(e) =>
+                                        setCreatedParticipant({
+                                            ...createdParticipant,
+                                            position: e.target.value,
                                         })
                                     }
                                 ></TextField>
@@ -134,7 +166,7 @@ const EmployeeList = ({
                                     fullWidth
                                     variant="outlined"
                                     color="primary"
-                                    onClick={createEmployee}
+                                    onClick={createParticipant}
                                 >
                                     Создать
                                 </Button>
@@ -158,7 +190,7 @@ const EmployeeList = ({
                                 variant="outlined"
                                 onClick={() => setCreationToggle(true)}
                             >
-                                Новый организатор
+                                Новый участник
                             </Button>
                         </Grid>
                     </Grid>
@@ -168,4 +200,4 @@ const EmployeeList = ({
     );
 };
 
-export default EmployeeList;
+export default ParticipantList;

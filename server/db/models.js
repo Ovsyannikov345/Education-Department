@@ -136,24 +136,7 @@ const Participant = sequelize.define(
 
 const EventParticipants = sequelize.define(
     "EventParticipants",
-    {
-        eventId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: Event,
-                key: "id",
-            },
-            allowNull: false,
-        },
-        participantId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: Participant,
-                key: "id",
-            },
-            allowNull: false,
-        },
-    },
+    {},
     { timestamps: false }
 );
 
@@ -304,6 +287,14 @@ Student.belongsToMany(Event, {
     through: "EventOrganizers",
 });
 
+Event.belongsToMany(Participant, {
+    through: "EventParticipants",
+});
+
+Participant.belongsToMany(Event, {
+    through: "EventParticipants",
+});
+
 Student.hasMany(Offense, {
     foreignKey: "studentId",
 });
@@ -319,7 +310,6 @@ module.exports = {
     Direction,
     Subdirection,
     Participant,
-    EventParticipants,
     Employee,
     Student,
     Offense,

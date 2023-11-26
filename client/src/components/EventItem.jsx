@@ -3,6 +3,7 @@ import React from "react";
 import moment from "moment";
 
 const EventItem = ({ event }) => {
+    // TODO Delete button.
     return (
         <Grid
             container

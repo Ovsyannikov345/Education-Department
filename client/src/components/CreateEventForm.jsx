@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     Container,
     FormControl,
@@ -9,13 +11,12 @@ import {
     TextField,
     Button,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getDepartments } from "../api/departmentsApi";
-import { getDirections } from "../api/directionsApi";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
+import { getDepartments } from "../api/departmentsApi";
+import { getDirections } from "../api/directionsApi";
 import OrganizersModal from "../modal/OrganizersModal/OrganizersModal";
+import ParticipantsModal from "../modal/ParticipantsModal/ParticipantsModal";
 
 const CreateEventForm = ({ creationHandler }) => {
     const [event, setEvent] = useState({
@@ -30,6 +31,7 @@ const CreateEventForm = ({ creationHandler }) => {
         subdirectionId: null,
         employees: [],
         students: [],
+        participants: [],
     });
 
     const [departments, setDepartments] = useState([]);
@@ -43,6 +45,7 @@ const CreateEventForm = ({ creationHandler }) => {
     const [currentSubdirection, setCurrentSubdirection] = useState("");
 
     const [organizersModalOpen, setOrganizersModalOpen] = useState(false);
+    const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
 
     const loadDepartments = async () => {
         const departments = await getDepartments();
@@ -132,12 +135,22 @@ const CreateEventForm = ({ creationHandler }) => {
     };
 
     const addStudent = (student) => {
-        if (
-            event.students.find((std) => std.id === student.id) === undefined
-        ) {
+        if (event.students.find((std) => std.id === student.id) === undefined) {
             setEvent({
                 ...event,
                 students: [...event.students, student],
+            });
+        }
+    };
+
+    const addParticipant = (participant) => {
+        if (
+            event.participants.find((prt) => prt.id === participant.id) ===
+            undefined
+        ) {
+            setEvent({
+                ...event,
+                participants: [...event.participants, participant],
             });
         }
     };
@@ -156,6 +169,13 @@ const CreateEventForm = ({ creationHandler }) => {
         });
     };
 
+    const removeParticipant = (id) => {
+        setEvent({
+            ...event,
+            participants: event.participants.filter((prt) => prt.id !== id),
+        });
+    };
+
     return (
         <>
             <OrganizersModal
@@ -167,6 +187,13 @@ const CreateEventForm = ({ creationHandler }) => {
                 currentStudents={event.students}
                 addStudentHandler={addStudent}
                 removeStudentHandler={removeStudent}
+            />
+            <ParticipantsModal
+                isOpen={participantsModalOpen}
+                closeHandler={() => setParticipantsModalOpen(false)}
+                currentParticipants={event.participants}
+                addParticipantHandler={addParticipant}
+                removeParticipantHandler={removeParticipant}
             />
             <Container>
                 <Grid
@@ -197,6 +224,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 variant="outlined"
                                 fullWidth
                                 style={{ padding: 10 }}
+                                onClick={(e) => setParticipantsModalOpen(true)}
                             >
                                 Участники
                             </Button>

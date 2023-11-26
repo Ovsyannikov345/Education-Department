@@ -1,8 +1,12 @@
 import { Dialog, Typography, Container, Tabs, Tab } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import {getEmployees,postEmployee,deleteEmployee} from "../../api/employeeApi";
-import {getStudents, postStudent, deleteStudent} from "../../api/studentsApi";
-import OrganizersList from "./EmployeeList";
+import {
+    getEmployees,
+    postEmployee,
+    deleteEmployee,
+} from "../../api/employeeApi";
+import { getStudents, postStudent, deleteStudent } from "../../api/studentsApi";
+import EmployeeList from "./EmployeeList";
 import StudentList from "./StudentList";
 
 const OrganizersModal = ({
@@ -15,6 +19,7 @@ const OrganizersModal = ({
     addStudentHandler,
     removeStudentHandler,
 }) => {
+    // TODO Sort in alphabetic order for user convenience.
     const [loadedEmployees, setLoadedEmployees] = useState([]);
     const [availableEmployees, setAvailableEmployees] = useState([]);
 
@@ -51,8 +56,10 @@ const OrganizersModal = ({
     }, [currentEmployees, loadedEmployees]);
 
     useEffect(() => {
-        setAvailableStudents(loadedStudents.filter((std) => !currentStudents.includes(std)));
-    }, [currentStudents, loadedStudents])
+        setAvailableStudents(
+            loadedStudents.filter((std) => !currentStudents.includes(std))
+        );
+    }, [currentStudents, loadedStudents]);
 
     const changeTab = (e, tabIndex) => {
         setCurrentTabIndex(tabIndex);
@@ -131,7 +138,12 @@ const OrganizersModal = ({
 
     return (
         <Dialog fullWidth open={isOpen} onClose={closeModal}>
-            <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
+            <Typography
+                variant="h5"
+                paddingLeft={3}
+                marginTop={1}
+                textAlign={"center"}
+            >
                 Организаторы мероприятия
             </Typography>
             <Container>
@@ -140,7 +152,7 @@ const OrganizersModal = ({
                     <Tab label="Студенты" />
                 </Tabs>
                 {currentTabIndex === 0 && (
-                    <OrganizersList
+                    <EmployeeList
                         employees={currentEmployees}
                         availableEmployees={availableEmployees}
                         addEmployeeHandler={addEmployee}
@@ -150,13 +162,13 @@ const OrganizersModal = ({
                     />
                 )}
                 {currentTabIndex === 1 && (
-                    <StudentList 
-                    students={currentStudents}
-                    availableStudents={availableStudents}
-                    addStudentHandler={addStudent}
-                    createStudentHandler={createStudent}
-                    removeStudentHandler={removeStudent}
-                    deleteStudentHandler={removeStudentPermanent}
+                    <StudentList
+                        students={currentStudents}
+                        availableStudents={availableStudents}
+                        addStudentHandler={addStudent}
+                        createStudentHandler={createStudent}
+                        removeStudentHandler={removeStudent}
+                        deleteStudentHandler={removeStudentPermanent}
                     />
                 )}
             </Container>
