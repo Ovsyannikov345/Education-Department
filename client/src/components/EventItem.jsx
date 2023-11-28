@@ -6,7 +6,7 @@ import DeleteConfirmationModal from "../modal/DeleteConfirmationModal/DeleteConf
 const EventItem = ({ event, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-    const deleteEvent = async () => {
+    const deleteEvent = () => {
         deleteHandler(event.id);
     };
 
