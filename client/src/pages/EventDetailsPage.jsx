@@ -587,7 +587,7 @@ const EventDetailsPage = (props) => {
                             <Tab label="Участники" />
                         </Tabs>
                     </Grid>
-                    <Grid item xs={10} justifySelf={"center"}>
+                    <Grid item xs={10}>
                         {currentTabIndex === 0 && (
                             <EmployeeList
                                 employees={event.Employees}
@@ -596,6 +596,7 @@ const EventDetailsPage = (props) => {
                                 createEmployeeHandler={createEmployee}
                                 removeEmployeeHandler={removeEmployee}
                                 deleteEmployeeHandler={removeEmployeePermanent}
+                                readonly={!editModeToggle}
                             />
                         )}
                         {currentTabIndex === 1 && (
@@ -606,6 +607,7 @@ const EventDetailsPage = (props) => {
                                 createStudentHandler={createStudent}
                                 removeStudentHandler={removeStudent}
                                 deleteStudentHandler={removeStudentPermanent}
+                                readonly={!editModeToggle}
                             />
                         )}
                         {currentTabIndex === 2 && (
@@ -618,6 +620,7 @@ const EventDetailsPage = (props) => {
                                 deleteParticipantHandler={
                                     removeParticipantPermanent
                                 }
+                                readonly={!editModeToggle}
                             />
                         )}
                     </Grid>

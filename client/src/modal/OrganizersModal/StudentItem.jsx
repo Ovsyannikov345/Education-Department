@@ -4,7 +4,12 @@ import RemoveIcon from "@mui/icons-material/PersonRemove";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
 
-const StudentItem = ({ student, removeHandler, deleteHandler }) => {
+const StudentItem = ({
+    student,
+    removeHandler,
+    deleteHandler,
+    readonly = false,
+}) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const deleteStudent = () => {
@@ -31,13 +36,27 @@ const StudentItem = ({ student, removeHandler, deleteHandler }) => {
                     <Grid item xs>
                         <Typography>{`${student.groupName} ${student.lastName} ${student.firstName} ${student.patronymic}`}</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                        <IconButton onClick={(e) => removeHandler(student.id)}>
-                            <RemoveIcon color="primary" />
-                        </IconButton>
-                        <IconButton onClick={(e) => setDeleteModalOpen(true)}>
-                            <DeleteIcon color="error" />
-                        </IconButton>
+                    <Grid
+                        item
+                        xs={2}
+                        container
+                        justifyContent={"flex-end"}
+                        minHeight={45}
+                    >
+                        {!readonly && (
+                            <>
+                                <IconButton
+                                    onClick={(e) => removeHandler(student.id)}
+                                >
+                                    <RemoveIcon color="primary" />
+                                </IconButton>
+                                <IconButton
+                                    onClick={(e) => setDeleteModalOpen(true)}
+                                >
+                                    <DeleteIcon color="error" />
+                                </IconButton>
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>

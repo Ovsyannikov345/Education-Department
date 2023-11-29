@@ -4,7 +4,12 @@ import RemoveIcon from "@mui/icons-material/PersonRemove";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
 
-const EmployeeItem = ({ organizer, removeHandler, deleteHandler }) => {
+const EmployeeItem = ({
+    organizer,
+    removeHandler,
+    deleteHandler,
+    readonly = false,
+}) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const deleteEmployee = () => {
@@ -31,17 +36,27 @@ const EmployeeItem = ({ organizer, removeHandler, deleteHandler }) => {
                     <Grid item xs>
                         <Typography>{`${organizer.lastName} ${organizer.firstName} ${organizer.patronymic}`}</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                        <IconButton
-                            onClick={(e) => removeHandler(organizer.id)}
-                        >
-                            <RemoveIcon color="primary" />
-                        </IconButton>
-                        <IconButton
-                            onClick={(e) => setDeleteModalOpen(true)}
-                        >
-                            <DeleteIcon color="error" />
-                        </IconButton>
+                    <Grid
+                        item
+                        xs={2}
+                        container
+                        justifyContent={"flex-end"}
+                        minHeight={45}
+                    >
+                        {!readonly && (
+                            <>
+                                <IconButton
+                                    onClick={(e) => removeHandler(organizer.id)}
+                                >
+                                    <RemoveIcon color="primary" />
+                                </IconButton>
+                                <IconButton
+                                    onClick={(e) => setDeleteModalOpen(true)}
+                                >
+                                    <DeleteIcon color="error" />
+                                </IconButton>
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>

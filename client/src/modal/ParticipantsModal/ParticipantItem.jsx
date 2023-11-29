@@ -4,7 +4,12 @@ import RemoveIcon from "@mui/icons-material/PersonRemove";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
 
-const ParticipantItem = ({ participant, removeHandler, deleteHandler }) => {
+const ParticipantItem = ({
+    participant,
+    removeHandler,
+    deleteHandler,
+    readonly = false,
+}) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const deleteParticipant = () => {
@@ -31,15 +36,29 @@ const ParticipantItem = ({ participant, removeHandler, deleteHandler }) => {
                     <Grid item xs>
                         <Typography>{`${participant.lastName} ${participant.firstName} ${participant.patronymic} ${participant.organization} ${participant.position}`}</Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                        <IconButton
-                            onClick={(e) => removeHandler(participant.id)}
-                        >
-                            <RemoveIcon color="primary" />
-                        </IconButton>
-                        <IconButton onClick={(e) => setDeleteModalOpen(true)}>
-                            <DeleteIcon color="error" />
-                        </IconButton>
+                    <Grid
+                        item
+                        xs={2}
+                        container
+                        justifyContent={"flex-end"}
+                        minHeight={45}
+                    >
+                        {!readonly && (
+                            <>
+                                <IconButton
+                                    onClick={(e) =>
+                                        removeHandler(participant.id)
+                                    }
+                                >
+                                    <RemoveIcon color="primary" />
+                                </IconButton>
+                                <IconButton
+                                    onClick={(e) => setDeleteModalOpen(true)}
+                                >
+                                    <DeleteIcon color="error" />
+                                </IconButton>
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>
