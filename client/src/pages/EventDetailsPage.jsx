@@ -82,22 +82,20 @@ const EventDetailsPage = (props) => {
     }, [loadedDirections, event.Direction.id]);
 
     const availableStudents = useMemo(() => {
-        return loadedStudents.filter((std) => !event.Students.includes(std));
+        return loadedStudents.filter(
+            (std) => !event.Students.some((s) => s.id === std.id)
+        );
     }, [loadedStudents, event.Students]);
 
     const availableEmployees = useMemo(() => {
-        return loadedEmployees.filter((emp) => !event.Employees.includes(emp));
+        return loadedEmployees.filter(
+            (emp) => !event.Employees.some((e) => e.id === emp.id)
+        );
     }, [loadedEmployees, event.Employees]);
 
     const availableParticipants = useMemo(() => {
-        console.log("loaded");
-        console.log(
-            loadedParticipants.filter(
-                (prt) => !event.Participants.includes(prt)
-            )
-        );
         return loadedParticipants.filter(
-            (prt) => !event.Participants.includes(prt)
+            (prt) => !event.Participants.some((p) => p.id === prt.id)
         );
     }, [loadedParticipants, event.Participants]);
 
