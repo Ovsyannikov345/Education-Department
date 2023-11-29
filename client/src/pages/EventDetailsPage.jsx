@@ -41,15 +41,11 @@ const EventDetailsPage = (props) => {
         Department: {
             name: "",
         },
-        Subdepartment: {
-            name: "",
-        },
+        Subdepartment: null,
         Direction: {
             name: "",
         },
-        Subdirection: {
-            name: "",
-        },
+        Subdirection: null,
         Employees: [],
         Students: [],
         Participants: [],
@@ -319,8 +315,38 @@ const EventDetailsPage = (props) => {
         }
     };
 
+    const changeDepartment = (departmentName) => {
+        const department = loadedDepartments.find(
+            (dep) => dep.name === departmentName
+        );
+
+        if (department.id !== event.Department.id) {
+            setEvent({
+                ...event,
+                departmentId: department.id,
+                Department: department,
+                subdepartmentId: null,
+                Subdepartment: null,
+            });
+        }
+    };
+
+    const changeSubdepartment = (subdepartmentName) => {
+        const subdepartment = event.Department.Subdepartments.find(
+            (subdep) => subdep.name === subdepartmentName
+        );
+
+        setEvent({
+            ...event,
+            subdepartmentId: subdepartment.id,
+            Subdepartment: subdepartment,
+        });
+    };
+
+    //TODO same for directions.
+
     const applyChanges = () => {
-        //
+        // TODO Check for valid selections before saving.
         setEditModeToggle(false);
     };
 
@@ -383,7 +409,7 @@ const EventDetailsPage = (props) => {
                             fullWidth
                             label="Название мероприятия"
                             value={event.name}
-                            InputProps={{ readOnly: true }}
+                            InputProps={{ readOnly: !editModeToggle }}
                             onChange={(e) =>
                                 setEvent({
                                     ...event,
@@ -395,7 +421,7 @@ const EventDetailsPage = (props) => {
                     <Grid item xs={2.5}>
                         <DatePicker
                             label="Дата"
-                            readOnly
+                            readOnly={!editModeToggle}
                             value={
                                 event.date === ""
                                     ? null
@@ -416,7 +442,7 @@ const EventDetailsPage = (props) => {
                     <Grid item xs={2.4}>
                         <TimePicker
                             label="Время"
-                            readOnly
+                            readOnly={!editModeToggle}
                             value={
                                 event.time === ""
                                     ? null
@@ -440,7 +466,7 @@ const EventDetailsPage = (props) => {
                             minRows={3}
                             label="Описание мероприятия"
                             value={event.description}
-                            InputProps={{ readOnly: true }}
+                            InputProps={{ readOnly: !editModeToggle }}
                             onChange={(e) =>
                                 setEvent({
                                     ...event,
@@ -457,7 +483,7 @@ const EventDetailsPage = (props) => {
                             minRows={3}
                             label="Планируемый результат"
                             value={event.plannedResult}
-                            InputProps={{ readOnly: true }}
+                            InputProps={{ readOnly: !editModeToggle }}
                             onChange={(e) =>
                                 setEvent({
                                     ...event,
@@ -477,9 +503,9 @@ const EventDetailsPage = (props) => {
                                 id="department-select"
                                 value={event.Department.name}
                                 label="Подразделение"
-                                readOnly
+                                readOnly={!editModeToggle}
                                 onChange={(e) =>
-                                    console.log("Department changed")
+                                    changeDepartment(e.target.value)
                                 }
                             >
                                 {loadedDepartments.map((dep) => (
@@ -500,11 +526,15 @@ const EventDetailsPage = (props) => {
                                     fullWidth
                                     labelId="subdepartment-label"
                                     id="subdepartment-select"
-                                    value={event.Subdepartment.name}
+                                    value={
+                                        event.Subdepartment === null
+                                            ? ""
+                                            : event.Subdepartment.name
+                                    }
                                     label="Факультет"
-                                    readOnly
+                                    readOnly={!editModeToggle}
                                     onChange={(e) =>
-                                        console.log("Subdepartment changed")
+                                        changeSubdepartment(e.target.value)
                                     }
                                 >
                                     {availableSubdepartments.map((subdep) => (
@@ -532,7 +562,7 @@ const EventDetailsPage = (props) => {
                                 id="direction-select"
                                 value={event.Direction.name}
                                 label="Направление"
-                                readOnly
+                                readOnly={!editModeToggle}
                                 onChange={(e) =>
                                     console.log("Direction changed")
                                 }
@@ -557,7 +587,7 @@ const EventDetailsPage = (props) => {
                                     id="subdirection-select"
                                     value={event.Subdirection.name}
                                     label="Тема"
-                                    readOnly
+                                    readOnly={!editModeToggle}
                                     onChange={(e) =>
                                         console.log("Subdirection changed")
                                     }
