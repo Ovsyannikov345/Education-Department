@@ -9,6 +9,7 @@ function AddEventPage() {
 
 	return (
 		<CreateEventForm creationHandler={createEvent}/>
+		// TODO margin bottom.
 	);
 }
 

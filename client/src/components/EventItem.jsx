@@ -2,9 +2,12 @@ import { Button, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import moment from "moment";
 import DeleteConfirmationModal from "../modal/DeleteConfirmationModal/DeleteConfirmationModal";
+import { useNavigate } from "react-router-dom";
 
 const EventItem = ({ event, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    const router = useNavigate();
 
     const deleteEvent = () => {
         deleteHandler(event.id);
@@ -60,7 +63,7 @@ const EventItem = ({ event, deleteHandler }) => {
                 </Grid>
                 <Grid item xs={12} container columnGap={2}>
                     <Grid item>
-                        <Button variant="outlined">Подробнее</Button>
+                        <Button variant="outlined" onClick={() => router("/events/" + event.id)}>Подробнее</Button>
                     </Grid>
                     <Grid item>
                         <Button

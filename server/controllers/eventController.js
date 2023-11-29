@@ -31,7 +31,15 @@ class EventController {
 
         const event = await Event.findOne({
             where: { id: id },
-            include: [{ model: Department }, { model: Direction }],
+            include: [
+                { model: Subdepartment },
+                { model: Subdirection },
+                { model: Department },
+                { model: Direction },
+                { model: Employee },
+                { model: Student },
+                { model: Participant },
+            ],
         });
 
         return res.json(event);
