@@ -31,7 +31,7 @@ const EventItem = ({ event, deleteHandler }) => {
                 sx={{ border: 1, borderColor: "#1976d29F" }}
             >
                 <Grid item xs={12}>
-                    <Typography variant="h4" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
+                    <Typography variant="h5" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
                         {event.name}
                     </Typography>
                 </Grid>
