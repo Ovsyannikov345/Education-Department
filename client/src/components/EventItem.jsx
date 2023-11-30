@@ -1,8 +1,10 @@
-import { Button, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, Grid, Typography } from "@mui/material";
+import EventIcon from "@mui/icons-material/Event";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import moment from "moment";
 import DeleteConfirmationModal from "../modal/DeleteConfirmationModal/DeleteConfirmationModal";
-import { useNavigate } from "react-router-dom";
 
 const EventItem = ({ event, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -22,45 +24,85 @@ const EventItem = ({ event, deleteHandler }) => {
             />
             <Grid
                 container
-                rowGap={2}
-                alignItems={"baseline"}
+                rowGap={1}
                 marginTop={3}
                 padding={2}
                 borderRadius={2}
                 sx={{ border: 1, borderColor: "#1976d29F" }}
             >
-                <Grid item xs={4}>
-                    <Typography variant="h4">{event.name}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant="h5">{event.Department.name}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant="subtitle1">{event.Direction.name}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant="subtitle1">{moment(event.date).format("DD-MM-YYYY")}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                    <Typography variant="h5">
-                        {event.Subdepartment === null ? "" : event.Subdepartment.name}
+                <Grid item xs={12}>
+                    <Typography variant="h4" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
+                        {event.name}
                     </Typography>
                 </Grid>
-                <Grid item xs={4}>
-                    <Typography variant="subtitle1">
-                        {event.Subdirection === null ? "" : event.Subdirection.name}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} container columnGap={2}>
-                    <Grid item>
-                        <Button variant="outlined" onClick={() => router("/events/" + event.id)}>
-                            Подробнее
-                        </Button>
+                <Grid item container xs={3} alignContent={"space-between"}>
+                    <Grid item container xs={12}>
+                        <Grid container item xs={12}>
+                            <Grid container item xs={1.1} alignItems={"center"}>
+                                <EventIcon />
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6">{moment(event.date).format("DD-MM-YYYY")}</Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} pb={3}>
+                            <Grid container item xs={1.1} alignItems={"center"}>
+                                <AccessTimeIcon />
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6">{moment.utc(event.date).format("HH:mm")}</Typography>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <Button variant="outlined" color="error" onClick={() => setDeleteModalOpen(true)}>
-                            Удалить
-                        </Button>
+                    <Grid container item xs={12} gap={2}>
+                        <Grid item>
+                            <Button variant="outlined" onClick={() => router("/events/" + event.id)}>
+                                Подробнее
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button variant="outlined" color="error" onClick={() => setDeleteModalOpen(true)}>
+                                Удалить
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item container xs={9}>
+                    <Grid item xs={5}>
+                        <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
+                            <b>Подразделение</b>
+                        </Typography>
+                        <Typography variant="h6">{event.Department.name}</Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                        <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
+                            <b>Направление</b>
+                        </Typography>
+                        <Typography variant="h6">{event.Direction.name}</Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                        {event.Subdepartment && (
+                            <>
+                                <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
+                                    <b>Факультет</b>
+                                </Typography>
+                                <Typography variant="h6">
+                                    {event.Subdepartment === null ? "" : event.Subdepartment.name}
+                                </Typography>
+                            </>
+                        )}
+                    </Grid>
+                    <Grid item xs={7}>
+                        {event.Subdirection && (
+                            <>
+                                <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
+                                    <b>Тема</b>
+                                </Typography>
+                                <Typography variant="h6">
+                                    {event.Subdirection === null ? "" : event.Subdirection.name}
+                                </Typography>
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Grid>

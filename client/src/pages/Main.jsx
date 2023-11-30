@@ -10,7 +10,6 @@ function MainPage() {
         const events = await getEvents();
 
         setEvents(events);
-        console.log(events);
     };
 
     const removeEvent = async (id) => {
