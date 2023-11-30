@@ -75,6 +75,43 @@ class EventController {
         return res.json();
     }
 
+    async update(req, res) {
+        const { id } = req.params;
+        console.log("===================================");
+        console.log(id);
+        // TODO Make client do that.
+        const event = {
+            id: req.body.id,
+            name: req.body.name,
+            description: req.body.description,
+            plannedResult: req.body.plannedResult,
+            date: `${req.body.date}T${req.body.time}:00.000Z`,
+            departmentId: req.body.departmentId,
+            subdepartmentId: req.body.subdepartmentId,
+            directionId: req.body.directionId,
+            subdirectionId: req.body.subdirectionId,
+            employees: req.body.Employees,
+            students: req.body.Students,
+            participants: req.body.Participants,
+        };
+        console.log(req.body);
+        console.log(event);
+        if (parseInt(id) !== event.id) {
+            console.log(id);
+            console.log(event.id);
+            console.log("id's not equal");
+            return res.status(400).send();
+        }
+
+        try {
+            const result = Event.update(event, { where: { id: id } });
+            console.log(result);
+            return res.status(200).send();
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     async delete(req, res) {
         const { id } = req.params;
 

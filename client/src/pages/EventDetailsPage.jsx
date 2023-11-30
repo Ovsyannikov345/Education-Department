@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
-import { getEvent } from "../api/eventsApi";
+import { getEvent, putEvent } from "../api/eventsApi";
 import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
 import { getStudents, postStudent, deleteStudent } from "../api/studentsApi";
@@ -51,6 +51,7 @@ const EventDetailsPage = (props) => {
         Participants: [],
     });
 
+    const [loadedEvent, setLoadedEvent] = useState({});
     const [loadedDepartments, setLoadedDepartments] = useState([]);
     const [loadedDirections, setLoadedDirections] = useState([]);
     const [loadedStudents, setLoadedStudents] = useState([]);
@@ -113,6 +114,12 @@ const EventDetailsPage = (props) => {
             const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
 
             setEvent({
+                ...loadedEvent,
+                date: formattedDate,
+                time: formattedTime,
+            });
+
+            setLoadedEvent({
                 ...loadedEvent,
                 date: formattedDate,
                 time: formattedTime,
@@ -371,13 +378,33 @@ const EventDetailsPage = (props) => {
         });
     };
 
-    const applyChanges = () => {
-        // TODO Check for valid selections before saving.
-        setEditModeToggle(false);
+    const applyChanges = async () => {
+        if (event.Subdepartment === null && availableSubdepartments.length > 0) {
+            console.log("invalid subdepartment.");
+            return;
+            // TODO Exception message.
+        }
+
+        if (event.Subdirection === null && availableSubdirections.length > 0) {
+            console.log("invalid subdirection.");
+            return;
+            // TODO Exception message.
+        }
+
+        const status = await putEvent(event);
+
+        if (status === 200) {
+            console.log("event updated");
+            setLoadedEvent(event);
+            setEditModeToggle(false);
+        }
+        else {
+            console.log("update failed");
+        }
     };
 
     const declineChanges = () => {
-        //
+        setEvent(loadedEvent);
         setEditModeToggle(false);
     };
 

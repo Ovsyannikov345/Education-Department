@@ -18,10 +18,19 @@ const postEvent = async (event) => {
     return response.status;
 };
 
+const putEvent = async (event) => {
+    try {
+        const response = await host.put(`/events/${event.id}`, event);
+        return response.status;
+    } catch (err) {
+        return 404;
+    }
+};
+
 const deleteEvent = async (id) => {
     const response = await host.delete(`/events/${id}`);
 
     return response;
-}
+};
 
-export { getEvent, getEvents, postEvent, deleteEvent };
+export { getEvent, getEvents, postEvent, putEvent, deleteEvent };
