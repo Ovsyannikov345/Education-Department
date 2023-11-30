@@ -343,7 +343,33 @@ const EventDetailsPage = (props) => {
         });
     };
 
-    //TODO same for directions.
+    const changeDirection = (directionName) => {
+        const direction = loadedDirections.find(
+            (dir) => dir.name === directionName
+        );
+
+        if (direction.id !== event.Direction.id) {
+            setEvent({
+                ...event,
+                directionId: direction.id,
+                Direction: direction,
+                subdirectionId: null,
+                Subdirection: null,
+            });
+        }
+    };
+
+    const changeSubdirection = (subdirectionName) => {
+        const subdirection = event.Direction.Subdirections.find(
+            (subdir) => subdir.name === subdirectionName
+        );
+
+        setEvent({
+            ...event,
+            subdirectionId: subdirection.id,
+            Subdirection: subdirection,
+        });
+    };
 
     const applyChanges = () => {
         // TODO Check for valid selections before saving.
@@ -564,7 +590,7 @@ const EventDetailsPage = (props) => {
                                 label="Направление"
                                 readOnly={!editModeToggle}
                                 onChange={(e) =>
-                                    console.log("Direction changed")
+                                    changeDirection(e.target.value)
                                 }
                             >
                                 {loadedDirections.map((dir) => (
@@ -585,11 +611,15 @@ const EventDetailsPage = (props) => {
                                     fullWidth
                                     labelId="subdirection-label"
                                     id="subdirection-select"
-                                    value={event.Subdirection.name}
+                                    value={
+                                        event.Subdirection === null
+                                            ? ""
+                                            : event.Subdirection.name
+                                    }
                                     label="Тема"
                                     readOnly={!editModeToggle}
                                     onChange={(e) =>
-                                        console.log("Subdirection changed")
+                                        changeSubdirection(e.target.value)
                                     }
                                 >
                                     {availableSubdirections.map((subdir) => (
