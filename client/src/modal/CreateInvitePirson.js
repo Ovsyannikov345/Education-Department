@@ -28,14 +28,13 @@ function CreateInvitePirson({ show = false, hide }) {
         //     });
     };
 
-
     return (
         <Modal
             open={show}
             onClose={hide}
             aria-labelledby="add-invitee-modal-title"
             aria-describedby="add-invitee-modal-description"
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         >
             <Box
                 sx={{
@@ -51,51 +50,45 @@ function CreateInvitePirson({ show = false, hide }) {
                     flexDirection: "column",
                 }}
             >
-                <Typography
-                    id="add-invitee-modal-title"
-                    variant="h6"
-                    component="h2"
-                    gutterBottom
-                >
+                <Typography id="add-invitee-modal-title" variant="h6" component="h2" gutterBottom>
                     Добавить приглашенного
                 </Typography>
                 <TextField
                     sx={{ mt: 2 }}
                     label="Фамилия"
                     value={newInviteeLastName}
-                    onChange={e => setNewInviteeLastName(e.target.value)}
+                    onChange={(e) => setNewInviteeLastName(e.target.value)}
                 />
                 <TextField
                     sx={{ mt: 2 }}
                     label="Имя"
                     value={newInviteeName}
-                    onChangeCapture={e => setNewInviteeName(e.target.value)}
+                    onChangeCapture={(e) => setNewInviteeName(e.target.value)}
                 />
                 <TextField
                     sx={{ mt: 2 }}
                     label="Отчество"
                     value={newInviteeSurename}
-                    onChangeCapture={e => setNewSurename(e.target.value)}
+                    onChangeCapture={(e) => setNewSurename(e.target.value)}
                 />
                 <TextField
                     sx={{ mt: 2 }}
                     label="Организация приглашенного"
                     value={newInviteeOrganization}
-                    onChange={e => setNewInviteeOrganization(e.target.value)}
+                    onChange={(e) => setNewInviteeOrganization(e.target.value)}
                 />
                 <TextField
                     sx={{ mt: 2 }}
                     label="Должность приглашенного"
                     value={newInviteePosition}
-                    onChangeCapture={e => setNewInviteePosition(e.target.value)}
+                    onChangeCapture={(e) => setNewInviteePosition(e.target.value)}
                 />
                 <Button sx={{ mt: 2 }} variant="outlined" onClick={handleAddInvitee}>
                     Добавить
                 </Button>
             </Box>
         </Modal>
-    )
-
+    );
 }
 
-export default CreateInvitePirson
+export default CreateInvitePirson;

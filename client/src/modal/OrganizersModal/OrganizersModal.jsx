@@ -1,10 +1,6 @@
 import { Dialog, Typography, Container, Tabs, Tab } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import {
-    getEmployees,
-    postEmployee,
-    deleteEmployee,
-} from "../../api/employeeApi";
+import { getEmployees, postEmployee, deleteEmployee } from "../../api/employeeApi";
 import { getStudents, postStudent, deleteStudent } from "../../api/studentsApi";
 import EmployeeList from "./EmployeeList";
 import StudentList from "./StudentList";
@@ -50,15 +46,11 @@ const OrganizersModal = ({
     }, []);
 
     useEffect(() => {
-        setAvailableEmployees(
-            loadedEmployees.filter((emp) => !currentEmployees.includes(emp))
-        );
+        setAvailableEmployees(loadedEmployees.filter((emp) => !currentEmployees.includes(emp)));
     }, [currentEmployees, loadedEmployees]);
 
     useEffect(() => {
-        setAvailableStudents(
-            loadedStudents.filter((std) => !currentStudents.includes(std))
-        );
+        setAvailableStudents(loadedStudents.filter((std) => !currentStudents.includes(std)));
     }, [currentStudents, loadedStudents]);
 
     const changeTab = (e, tabIndex) => {
@@ -88,10 +80,7 @@ const OrganizersModal = ({
     const addEmployee = (employeeString) => {
         const data = employeeString.split(" ");
         const employeeToAdd = availableEmployees.find(
-            (emp) =>
-                emp.lastName === data[0] &&
-                emp.firstName === data[1] &&
-                emp.patronymic === data[2]
+            (emp) => emp.lastName === data[0] && emp.firstName === data[1] && emp.patronymic === data[2]
         );
 
         addEmployeeHandler(employeeToAdd);
@@ -138,12 +127,7 @@ const OrganizersModal = ({
 
     return (
         <Dialog fullWidth open={isOpen} onClose={closeModal}>
-            <Typography
-                variant="h5"
-                paddingLeft={3}
-                marginTop={1}
-                textAlign={"center"}
-            >
+            <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
                 Организаторы мероприятия
             </Typography>
             <Container>

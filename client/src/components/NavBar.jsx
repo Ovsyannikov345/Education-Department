@@ -11,11 +11,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
-import {
-    ADDEVENT_ROUTE,
-    OFFENSIVE_ROUTE,
-    REPORTS_ROUTE,
-} from "../utils/consts";
+import { ADDEVENT_ROUTE, OFFENSIVE_ROUTE, REPORTS_ROUTE } from "../utils/consts";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import GavelIcon from "@mui/icons-material/Gavel";
@@ -43,19 +39,11 @@ function NavBar() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
-                    ></Typography>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}></Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
-            <Drawer
-                anchor="left"
-                open={drawerOpen}
-                onClose={toggleDrawer(false)}
-            >
+            <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
                 <Box
                     sx={{ width: 250 }}
                     role="presentation"
@@ -63,27 +51,15 @@ function NavBar() {
                     onKeyDown={toggleDrawer(false)}
                 >
                     <List>
-                        <ListItem
-                            button
-                            sx={{ cursor: "pointer" }}
-                            onClick={() => navigate(ADDEVENT_ROUTE)}
-                        >
+                        <ListItem button sx={{ cursor: "pointer" }} onClick={() => navigate(ADDEVENT_ROUTE)}>
                             <AddBoxIcon />
                             <ListItemText primary="Добавить мероприятие" />
                         </ListItem>
-                        <ListItem
-                            button
-                            sx={{ cursor: "pointer" }}
-                            onClick={() => navigate(OFFENSIVE_ROUTE)}
-                        >
+                        <ListItem button sx={{ cursor: "pointer" }} onClick={() => navigate(OFFENSIVE_ROUTE)}>
                             <GavelIcon />
                             <ListItemText primary="Учет правонарушений" />
                         </ListItem>
-                        <ListItem
-                            button
-                            sx={{ cursor: "pointer" }}
-                            onClick={() => navigate(REPORTS_ROUTE)}
-                        >
+                        <ListItem button sx={{ cursor: "pointer" }} onClick={() => navigate(REPORTS_ROUTE)}>
                             <SummarizeIcon />
                             <ListItemText primary="Просмотреть отчеты" />
                         </ListItem>

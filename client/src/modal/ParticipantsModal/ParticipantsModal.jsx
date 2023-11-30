@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Dialog, Typography, Container } from "@mui/material";
-import {
-    getParticipants,
-    postParticipant,
-    deleteParticipant,
-} from "../../api/participantApi";
+import { getParticipants, postParticipant, deleteParticipant } from "../../api/participantApi";
 import ParticipantList from "./ParticipantList";
 
 const ParticipantsModal = ({
@@ -34,11 +30,7 @@ const ParticipantsModal = ({
     }, []);
 
     useEffect(() => {
-        setAvailableParticipants(
-            loadedParticipants.filter(
-                (prt) => !currentParticipants.includes(prt)
-            )
-        );
+        setAvailableParticipants(loadedParticipants.filter((prt) => !currentParticipants.includes(prt)));
     }, [currentParticipants, loadedParticipants]);
 
     const createParticipant = async (createdParticipant) => {
@@ -74,20 +66,13 @@ const ParticipantsModal = ({
 
         if (response.status === 200) {
             removeParticipantHandler(id);
-            setLoadedParticipants(
-                loadedParticipants.filter((prt) => prt.id !== id)
-            );
+            setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
         }
     };
 
     return (
         <Dialog fullWidth open={isOpen} onClose={closeModal}>
-            <Typography
-                variant="h5"
-                paddingLeft={3}
-                marginTop={1}
-                textAlign={"center"}
-            >
+            <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
                 Участники мероприятия
             </Typography>
             <Container>

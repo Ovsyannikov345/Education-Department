@@ -1,34 +1,34 @@
-import React, { useEffect } from "react"
+import React, { useEffect } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import CreatePersont from "../CreateInvitePirson"
+import CreatePersont from "../CreateInvitePirson";
 import { useState } from "react";
 import { Box, Modal, Button } from "@mui/material";
 import { useContext } from "react";
-import { Context } from '../../index'
+import { Context } from "../../index";
 // import { fatchAll } from "../../api/invitesApi";
 
 function InvitePersonsTable({ show = false, hide }) {
-    const { eventStore } = useContext(Context)
+    const { eventStore } = useContext(Context);
 
     const [addInviteeModal, setAddInviteeModel] = useState(false);
     const [refreshData, setRefreshData] = useState(false);
 
     const columns = [
         {
-            field: 'full_name',
-            headerName: 'Полное имя',
+            field: "full_name",
+            headerName: "Полное имя",
             width: 250,
             editable: true,
         },
         {
-            field: 'organization',
-            headerName: 'Организация',
+            field: "organization",
+            headerName: "Организация",
             width: 230,
             editable: true,
         },
         {
-            field: 'position',
-            headerName: 'Должность',
+            field: "position",
+            headerName: "Должность",
             width: 230,
             editable: true,
         },
@@ -36,16 +36,16 @@ function InvitePersonsTable({ show = false, hide }) {
 
     useEffect(() => {
         // fatchAll().then(data => eventStore.setIvints(data))
-    }, [eventStore, refreshData])
+    }, [eventStore, refreshData]);
 
     return (
         <>
             <Modal
                 open={show}
                 onClose={hide}
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
             >
-                <Box sx={{ display: 'flex', flexDirection: 'column', width: 1000, bgcolor: 'white' }}>
+                <Box sx={{ display: "flex", flexDirection: "column", width: 1000, bgcolor: "white" }}>
                     <Box sx={{ height: 600 }}>
                         <DataGrid
                             rows={eventStore.invites}
@@ -81,22 +81,20 @@ function InvitePersonsTable({ show = false, hide }) {
                         >
                             Обновить
                         </Button>
-                        <Button
-                            variant="contained"
-                            color="success"
-                            sx={{ mr: 2 }}
-                        >
+                        <Button variant="contained" color="success" sx={{ mr: 2 }}>
                             Добавить
                         </Button>
                     </Box>
                 </Box>
             </Modal>
-            <CreatePersont show={addInviteeModal} hide={() => {
-                setAddInviteeModel(false)
-            }} />
+            <CreatePersont
+                show={addInviteeModal}
+                hide={() => {
+                    setAddInviteeModel(false);
+                }}
+            />
         </>
-    )
+    );
 }
 
-export default InvitePersonsTable
-
+export default InvitePersonsTable;

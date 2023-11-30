@@ -33,44 +33,32 @@ const EventItem = ({ event, deleteHandler }) => {
                     <Typography variant="h4">{event.name}</Typography>
                 </Grid>
                 <Grid item xs={4}>
-                    <Typography variant="h5">
-                        {event.Department.name}
-                    </Typography>
+                    <Typography variant="h5">{event.Department.name}</Typography>
                 </Grid>
                 <Grid item xs={4}>
-                    <Typography variant="subtitle1">
-                        {event.Direction.name}
-                    </Typography>
+                    <Typography variant="subtitle1">{event.Direction.name}</Typography>
                 </Grid>
                 <Grid item xs={4}>
-                    <Typography variant="subtitle1">
-                        {moment(event.date).format("DD-MM-YYYY")}
-                    </Typography>
+                    <Typography variant="subtitle1">{moment(event.date).format("DD-MM-YYYY")}</Typography>
                 </Grid>
                 <Grid item xs={4}>
                     <Typography variant="h5">
-                        {event.Subdepartment === null
-                            ? ""
-                            : event.Subdepartment.name}
+                        {event.Subdepartment === null ? "" : event.Subdepartment.name}
                     </Typography>
                 </Grid>
                 <Grid item xs={4}>
                     <Typography variant="subtitle1">
-                        {event.Subdirection === null
-                            ? ""
-                            : event.Subdirection.name}
+                        {event.Subdirection === null ? "" : event.Subdirection.name}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} container columnGap={2}>
                     <Grid item>
-                        <Button variant="outlined" onClick={() => router("/events/" + event.id)}>Подробнее</Button>
+                        <Button variant="outlined" onClick={() => router("/events/" + event.id)}>
+                            Подробнее
+                        </Button>
                     </Grid>
                     <Grid item>
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={() => setDeleteModalOpen(true)}
-                        >
+                        <Button variant="outlined" color="error" onClick={() => setDeleteModalOpen(true)}>
                             Удалить
                         </Button>
                     </Grid>

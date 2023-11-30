@@ -21,11 +21,7 @@ import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
 import { getStudents, postStudent, deleteStudent } from "../api/studentsApi";
 import { getEmployees, postEmployee, deleteEmployee } from "../api/employeeApi";
-import {
-    getParticipants,
-    postParticipant,
-    deleteParticipant,
-} from "../api/participantApi";
+import { getParticipants, postParticipant, deleteParticipant } from "../api/participantApi";
 import moment from "moment";
 import StudentList from "../modal/OrganizersModal/StudentList";
 import EmployeeList from "../modal/OrganizersModal/EmployeeList";
@@ -63,37 +59,27 @@ const EventDetailsPage = (props) => {
     const [editModeToggle, setEditModeToggle] = useState(false);
 
     const availableSubdepartments = useMemo(() => {
-        const department = loadedDepartments.find(
-            (dep) => dep.id === event.Department.id
-        );
+        const department = loadedDepartments.find((dep) => dep.id === event.Department.id);
 
         return department !== undefined ? department.Subdepartments : [];
     }, [loadedDepartments, event.Department.id]);
 
     const availableSubdirections = useMemo(() => {
-        const direction = loadedDirections.find(
-            (dir) => dir.id === event.Direction.id
-        );
+        const direction = loadedDirections.find((dir) => dir.id === event.Direction.id);
 
         return direction !== undefined ? direction.Subdirections : [];
     }, [loadedDirections, event.Direction.id]);
 
     const availableStudents = useMemo(() => {
-        return loadedStudents.filter(
-            (std) => !event.Students.some((s) => s.id === std.id)
-        );
+        return loadedStudents.filter((std) => !event.Students.some((s) => s.id === std.id));
     }, [loadedStudents, event.Students]);
 
     const availableEmployees = useMemo(() => {
-        return loadedEmployees.filter(
-            (emp) => !event.Employees.some((e) => e.id === emp.id)
-        );
+        return loadedEmployees.filter((emp) => !event.Employees.some((e) => e.id === emp.id));
     }, [loadedEmployees, event.Employees]);
 
     const availableParticipants = useMemo(() => {
-        return loadedParticipants.filter(
-            (prt) => !event.Participants.some((p) => p.id === prt.id)
-        );
+        return loadedParticipants.filter((prt) => !event.Participants.some((p) => p.id === prt.id));
     }, [loadedParticipants, event.Participants]);
 
     const router = useNavigate();
@@ -108,9 +94,7 @@ const EventDetailsPage = (props) => {
                 router("/events");
             }
 
-            const formattedDate = moment
-                .utc(loadedEvent.date)
-                .format("YYYY-MM-DD");
+            const formattedDate = moment.utc(loadedEvent.date).format("YYYY-MM-DD");
             const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
 
             setEvent({
@@ -244,10 +228,7 @@ const EventDetailsPage = (props) => {
     const addEmployee = (employeeString) => {
         const data = employeeString.split(" ");
         const employeeToAdd = availableEmployees.find(
-            (emp) =>
-                emp.lastName === data[0] &&
-                emp.firstName === data[1] &&
-                emp.patronymic === data[2]
+            (emp) => emp.lastName === data[0] && emp.firstName === data[1] && emp.patronymic === data[2]
         );
 
         setEvent({
@@ -316,16 +297,12 @@ const EventDetailsPage = (props) => {
 
         if (response.status === 200) {
             removeParticipant(id);
-            setLoadedParticipants(
-                loadedParticipants.filter((prt) => prt.id !== id)
-            );
+            setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
         }
     };
 
     const changeDepartment = (departmentName) => {
-        const department = loadedDepartments.find(
-            (dep) => dep.name === departmentName
-        );
+        const department = loadedDepartments.find((dep) => dep.name === departmentName);
 
         if (department.id !== event.Department.id) {
             setEvent({
@@ -339,9 +316,7 @@ const EventDetailsPage = (props) => {
     };
 
     const changeSubdepartment = (subdepartmentName) => {
-        const subdepartment = event.Department.Subdepartments.find(
-            (subdep) => subdep.name === subdepartmentName
-        );
+        const subdepartment = event.Department.Subdepartments.find((subdep) => subdep.name === subdepartmentName);
 
         setEvent({
             ...event,
@@ -351,9 +326,7 @@ const EventDetailsPage = (props) => {
     };
 
     const changeDirection = (directionName) => {
-        const direction = loadedDirections.find(
-            (dir) => dir.name === directionName
-        );
+        const direction = loadedDirections.find((dir) => dir.name === directionName);
 
         if (direction.id !== event.Direction.id) {
             setEvent({
@@ -367,9 +340,7 @@ const EventDetailsPage = (props) => {
     };
 
     const changeSubdirection = (subdirectionName) => {
-        const subdirection = event.Direction.Subdirections.find(
-            (subdir) => subdir.name === subdirectionName
-        );
+        const subdirection = event.Direction.Subdirections.find((subdir) => subdir.name === subdirectionName);
 
         setEvent({
             ...event,
@@ -397,8 +368,7 @@ const EventDetailsPage = (props) => {
             console.log("event updated");
             setLoadedEvent(event);
             setEditModeToggle(false);
-        }
-        else {
+        } else {
             console.log("update failed");
         }
     };
@@ -424,10 +394,7 @@ const EventDetailsPage = (props) => {
                     </Grid>
                     {!editModeToggle && (
                         <Grid item xs={2}>
-                            <Button
-                                variant="outlined"
-                                onClick={() => setEditModeToggle(true)}
-                            >
+                            <Button variant="outlined" onClick={() => setEditModeToggle(true)}>
                                 Редактировать
                             </Button>
                         </Grid>
@@ -435,20 +402,12 @@ const EventDetailsPage = (props) => {
                     {editModeToggle && (
                         <>
                             <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    onClick={() => applyChanges()}
-                                >
+                                <Button variant="outlined" color="primary" onClick={() => applyChanges()}>
                                     Сохранить
                                 </Button>
                             </Grid>
                             <Grid item xs={2}>
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    onClick={() => declineChanges()}
-                                >
+                                <Button variant="outlined" color="error" onClick={() => declineChanges()}>
                                     Отмена
                                 </Button>
                             </Grid>
@@ -475,19 +434,13 @@ const EventDetailsPage = (props) => {
                         <DatePicker
                             label="Дата"
                             readOnly={!editModeToggle}
-                            value={
-                                event.date === ""
-                                    ? null
-                                    : moment.utc(event.date, "YYYY-MM-DD")
-                            }
+                            value={event.date === "" ? null : moment.utc(event.date, "YYYY-MM-DD")}
                             onChange={(newDate) =>
                                 newDate === null
                                     ? setEvent({ ...event, date: "" })
                                     : setEvent({
                                           ...event,
-                                          date: moment(newDate).format(
-                                              "YYYY-MM-DD"
-                                          ),
+                                          date: moment(newDate).format("YYYY-MM-DD"),
                                       })
                             }
                         ></DatePicker>
@@ -496,11 +449,7 @@ const EventDetailsPage = (props) => {
                         <TimePicker
                             label="Время"
                             readOnly={!editModeToggle}
-                            value={
-                                event.time === ""
-                                    ? null
-                                    : moment(event.time, "HH:mm")
-                            }
+                            value={event.time === "" ? null : moment(event.time, "HH:mm")}
                             onChange={(newTime) =>
                                 newTime === null
                                     ? setEvent({ ...event, time: "" })
@@ -547,9 +496,7 @@ const EventDetailsPage = (props) => {
                     </Grid>
                     <Grid item xs={5.5}>
                         <FormControl fullWidth>
-                            <InputLabel id="department-label">
-                                Подразделение
-                            </InputLabel>
+                            <InputLabel id="department-label">Подразделение</InputLabel>
                             <Select
                                 fullWidth
                                 labelId="department-label"
@@ -557,9 +504,7 @@ const EventDetailsPage = (props) => {
                                 value={event.Department.name}
                                 label="Подразделение"
                                 readOnly={!editModeToggle}
-                                onChange={(e) =>
-                                    changeDepartment(e.target.value)
-                                }
+                                onChange={(e) => changeDepartment(e.target.value)}
                             >
                                 {loadedDepartments.map((dep) => (
                                     <MenuItem key={dep.id} value={dep.name}>
@@ -572,29 +517,18 @@ const EventDetailsPage = (props) => {
                     <Grid item xs={5.5}>
                         {availableSubdepartments.length > 0 ? (
                             <FormControl fullWidth>
-                                <InputLabel id="subdepartment-label">
-                                    Факультет
-                                </InputLabel>
+                                <InputLabel id="subdepartment-label">Факультет</InputLabel>
                                 <Select
                                     fullWidth
                                     labelId="subdepartment-label"
                                     id="subdepartment-select"
-                                    value={
-                                        event.Subdepartment === null
-                                            ? ""
-                                            : event.Subdepartment.name
-                                    }
+                                    value={event.Subdepartment === null ? "" : event.Subdepartment.name}
                                     label="Факультет"
                                     readOnly={!editModeToggle}
-                                    onChange={(e) =>
-                                        changeSubdepartment(e.target.value)
-                                    }
+                                    onChange={(e) => changeSubdepartment(e.target.value)}
                                 >
                                     {availableSubdepartments.map((subdep) => (
-                                        <MenuItem
-                                            key={subdep.id}
-                                            value={subdep.name}
-                                        >
+                                        <MenuItem key={subdep.id} value={subdep.name}>
                                             {subdep.name}
                                         </MenuItem>
                                     ))}
@@ -606,9 +540,7 @@ const EventDetailsPage = (props) => {
                     </Grid>
                     <Grid item xs={5.5}>
                         <FormControl fullWidth>
-                            <InputLabel id="direction-label">
-                                Направление
-                            </InputLabel>
+                            <InputLabel id="direction-label">Направление</InputLabel>
                             <Select
                                 fullWidth
                                 labelId="direction-label"
@@ -616,9 +548,7 @@ const EventDetailsPage = (props) => {
                                 value={event.Direction.name}
                                 label="Направление"
                                 readOnly={!editModeToggle}
-                                onChange={(e) =>
-                                    changeDirection(e.target.value)
-                                }
+                                onChange={(e) => changeDirection(e.target.value)}
                             >
                                 {loadedDirections.map((dir) => (
                                     <MenuItem key={dir.id} value={dir.name}>
@@ -631,29 +561,18 @@ const EventDetailsPage = (props) => {
                     <Grid item xs={5.5}>
                         {availableSubdirections.length > 0 ? (
                             <FormControl fullWidth>
-                                <InputLabel id="subdirection-label">
-                                    Тема
-                                </InputLabel>
+                                <InputLabel id="subdirection-label">Тема</InputLabel>
                                 <Select
                                     fullWidth
                                     labelId="subdirection-label"
                                     id="subdirection-select"
-                                    value={
-                                        event.Subdirection === null
-                                            ? ""
-                                            : event.Subdirection.name
-                                    }
+                                    value={event.Subdirection === null ? "" : event.Subdirection.name}
                                     label="Тема"
                                     readOnly={!editModeToggle}
-                                    onChange={(e) =>
-                                        changeSubdirection(e.target.value)
-                                    }
+                                    onChange={(e) => changeSubdirection(e.target.value)}
                                 >
                                     {availableSubdirections.map((subdir) => (
-                                        <MenuItem
-                                            key={subdir.id}
-                                            value={subdir.name}
-                                        >
+                                        <MenuItem key={subdir.id} value={subdir.name}>
                                             {subdir.name}
                                         </MenuItem>
                                     ))}
@@ -664,11 +583,7 @@ const EventDetailsPage = (props) => {
                         )}
                     </Grid>
                     <Grid item xs={12}>
-                        <Tabs
-                            centered
-                            value={currentTabIndex}
-                            onChange={changeTab}
-                        >
+                        <Tabs centered value={currentTabIndex} onChange={changeTab}>
                             <Tab label="Сотрудники" />
                             <Tab label="Студенты" />
                             <Tab label="Участники" />
@@ -704,9 +619,7 @@ const EventDetailsPage = (props) => {
                                 addParticipantHandler={addParticipant}
                                 createParticipantHandler={createParticipant}
                                 removeParticipantHandler={removeParticipant}
-                                deleteParticipantHandler={
-                                    removeParticipantPermanent
-                                }
+                                deleteParticipantHandler={removeParticipantPermanent}
                                 readonly={!editModeToggle}
                             />
                         )}

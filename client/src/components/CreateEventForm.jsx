@@ -65,9 +65,7 @@ const CreateEventForm = ({ creationHandler }) => {
     }, []);
 
     useEffect(() => {
-        const selectedDepartment = departments.find(
-            (dep) => dep.name === currentDepartment
-        );
+        const selectedDepartment = departments.find((dep) => dep.name === currentDepartment);
 
         if (selectedDepartment) {
             if (selectedDepartment.id !== event.departmentId) {
@@ -81,9 +79,7 @@ const CreateEventForm = ({ creationHandler }) => {
     }, [currentDepartment, departments, event]);
 
     useEffect(() => {
-        const selectedSubdepartment = subdepartments.find(
-            (subdep) => subdep.name === currentSubdepartment
-        );
+        const selectedSubdepartment = subdepartments.find((subdep) => subdep.name === currentSubdepartment);
 
         if (selectedSubdepartment) {
             setEvent({ ...event, subdepartmentId: selectedSubdepartment.id });
@@ -91,9 +87,7 @@ const CreateEventForm = ({ creationHandler }) => {
     }, [currentSubdepartment, subdepartments, event]);
 
     useEffect(() => {
-        const selectedDirection = directions.find(
-            (dir) => dir.name === currentDirection
-        );
+        const selectedDirection = directions.find((dir) => dir.name === currentDirection);
 
         if (selectedDirection) {
             if (selectedDirection.id !== event.directionId) {
@@ -107,9 +101,7 @@ const CreateEventForm = ({ creationHandler }) => {
     }, [currentDirection, directions, event]);
 
     useEffect(() => {
-        const selectedSubdirection = subdirections.find(
-            (subdir) => subdir.name === currentSubdirection
-        );
+        const selectedSubdirection = subdirections.find((subdir) => subdir.name === currentSubdirection);
 
         if (selectedSubdirection) {
             setEvent({ ...event, subdirectionId: selectedSubdirection.id });
@@ -126,9 +118,7 @@ const CreateEventForm = ({ creationHandler }) => {
     };
 
     const addEmployee = (employee) => {
-        if (
-            event.employees.find((emp) => emp.id === employee.id) === undefined
-        ) {
+        if (event.employees.find((emp) => emp.id === employee.id) === undefined) {
             setEvent({
                 ...event,
                 employees: [...event.employees, employee],
@@ -146,10 +136,7 @@ const CreateEventForm = ({ creationHandler }) => {
     };
 
     const addParticipant = (participant) => {
-        if (
-            event.participants.find((prt) => prt.id === participant.id) ===
-            undefined
-        ) {
+        if (event.participants.find((prt) => prt.id === participant.id) === undefined) {
             setEvent({
                 ...event,
                 participants: [...event.participants, participant],
@@ -205,17 +192,9 @@ const CreateEventForm = ({ creationHandler }) => {
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
             <Container>
-                <Grid
-                    container
-                    mt={2}
-                    rowGap={2}
-                    columnGap={2}
-                    alignItems={"baseline"}
-                >
+                <Grid container mt={2} rowGap={2} columnGap={2} alignItems={"baseline"}>
                     <Grid item xs={3}>
-                        <Typography variant="h5">
-                            Создать мероприятие
-                        </Typography>
+                        <Typography variant="h5">Создать мероприятие</Typography>
                     </Grid>
                     <Grid item xs={5} container columnGap={2}>
                         <Grid item xs={5}>
@@ -241,18 +220,14 @@ const CreateEventForm = ({ creationHandler }) => {
                     </Grid>
                     <Grid item xs={5}>
                         <FormControl fullWidth>
-                            <InputLabel id="department-label">
-                                Подразделение
-                            </InputLabel>
+                            <InputLabel id="department-label">Подразделение</InputLabel>
                             <Select
                                 fullWidth
                                 labelId="department-label"
                                 id="department-select"
                                 value={currentDepartment}
                                 label="Подразделение"
-                                onChange={(e) =>
-                                    setCurrentDepartment(e.target.value)
-                                }
+                                onChange={(e) => setCurrentDepartment(e.target.value)}
                             >
                                 {departments.map((dep) => (
                                     <MenuItem key={dep.id} value={dep.name}>
@@ -265,24 +240,17 @@ const CreateEventForm = ({ creationHandler }) => {
                     <Grid item xs={5}>
                         {subdepartments.length > 0 ? (
                             <FormControl fullWidth>
-                                <InputLabel id="subdepartment-label">
-                                    Факультет
-                                </InputLabel>
+                                <InputLabel id="subdepartment-label">Факультет</InputLabel>
                                 <Select
                                     fullWidth
                                     labelId="subdepartment-label"
                                     id="subdepartment-select"
                                     value={currentSubdepartment}
                                     label="Факультет"
-                                    onChange={(e) =>
-                                        setCurrentSubdepartment(e.target.value)
-                                    }
+                                    onChange={(e) => setCurrentSubdepartment(e.target.value)}
                                 >
                                     {subdepartments.map((subdep) => (
-                                        <MenuItem
-                                            key={subdep.id}
-                                            value={subdep.name}
-                                        >
+                                        <MenuItem key={subdep.id} value={subdep.name}>
                                             {subdep.name}
                                         </MenuItem>
                                     ))}
@@ -294,18 +262,14 @@ const CreateEventForm = ({ creationHandler }) => {
                     </Grid>
                     <Grid item xs={5}>
                         <FormControl fullWidth>
-                            <InputLabel id="direction-label">
-                                Направление
-                            </InputLabel>
+                            <InputLabel id="direction-label">Направление</InputLabel>
                             <Select
                                 fullWidth
                                 labelId="direction-label"
                                 id="direction-select"
                                 value={currentDirection}
                                 label="Направление"
-                                onChange={(e) =>
-                                    setCurrentDirection(e.target.value)
-                                }
+                                onChange={(e) => setCurrentDirection(e.target.value)}
                             >
                                 {directions.map((dir) => (
                                     <MenuItem key={dir.id} value={dir.name}>
@@ -318,24 +282,17 @@ const CreateEventForm = ({ creationHandler }) => {
                     <Grid item xs={5}>
                         {subdirections.length > 0 ? (
                             <FormControl fullWidth>
-                                <InputLabel id="subdirection-label">
-                                    Тема
-                                </InputLabel>
+                                <InputLabel id="subdirection-label">Тема</InputLabel>
                                 <Select
                                     fullWidth
                                     labelId="subdirection-label"
                                     id="subdirection-select"
                                     value={currentSubdirection}
                                     label="Тема"
-                                    onChange={(e) =>
-                                        setCurrentSubdirection(e.target.value)
-                                    }
+                                    onChange={(e) => setCurrentSubdirection(e.target.value)}
                                 >
                                     {subdirections.map((subdir) => (
-                                        <MenuItem
-                                            key={subdir.id}
-                                            value={subdir.name}
-                                        >
+                                        <MenuItem key={subdir.id} value={subdir.name}>
                                             {subdir.name}
                                         </MenuItem>
                                     ))}
@@ -352,9 +309,7 @@ const CreateEventForm = ({ creationHandler }) => {
                             label="Название мероприятия"
                             required
                             value={event.name}
-                            onChange={(e) =>
-                                setEvent({ ...event, name: e.target.value })
-                            }
+                            onChange={(e) => setEvent({ ...event, name: e.target.value })}
                         ></TextField>
                     </Grid>
                     <Grid item xs={6}>
@@ -393,17 +348,11 @@ const CreateEventForm = ({ creationHandler }) => {
                         <Grid item xs={5}>
                             <DatePicker
                                 label="Дата проведения"
-                                value={
-                                    event.date === ""
-                                        ? null
-                                        : moment(event.date)
-                                }
+                                value={event.date === "" ? null : moment(event.date)}
                                 onChange={(newDate) =>
                                     setEvent({
                                         ...event,
-                                        date: moment(newDate).format(
-                                            "YYYY-MM-DD"
-                                        ),
+                                        date: moment(newDate).format("YYYY-MM-DD"),
                                     })
                                 }
                             ></DatePicker>
@@ -411,11 +360,7 @@ const CreateEventForm = ({ creationHandler }) => {
                         <Grid item xs={5}>
                             <TimePicker
                                 label="Время проведения"
-                                value={
-                                    event.time === ""
-                                        ? null
-                                        : moment(event.time, "HH:mm")
-                                }
+                                value={event.time === "" ? null : moment(event.time, "HH:mm")}
                                 onChange={(newTime) =>
                                     setEvent({
                                         ...event,
@@ -427,12 +372,7 @@ const CreateEventForm = ({ creationHandler }) => {
                     </Grid>
                     <Grid item xs={6}></Grid>
                     <Grid item xs={6}>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            style={{ padding: 10 }}
-                            onClick={submit}
-                        >
+                        <Button fullWidth variant="contained" style={{ padding: 10 }} onClick={submit}>
                             Создать
                         </Button>
                     </Grid>

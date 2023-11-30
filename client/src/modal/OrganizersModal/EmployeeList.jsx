@@ -57,9 +57,7 @@ const EmployeeList = ({
             {!readonly && (
                 <>
                     <FormControl fullWidth>
-                        <InputLabel id="employee-label">
-                            Добавить организавтора
-                        </InputLabel>
+                        <InputLabel id="employee-label">Добавить организавтора</InputLabel>
                         <Select
                             fullWidth
                             labelId="employee-label"
@@ -72,30 +70,20 @@ const EmployeeList = ({
                                     <MenuItem
                                         key={emp.id}
                                         value={`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
-                                        onClick={(e) =>
-                                            addEmployeeHandler(
-                                                e.target.innerText
-                                            )
-                                        }
+                                        onClick={(e) => addEmployeeHandler(e.target.innerText)}
                                     >
                                         {`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
                                     </MenuItem>
                                 ))
                             ) : (
-                                <MenuItem key={1}>
-                                    Нет доступных организаторов
-                                </MenuItem>
+                                <MenuItem key={1}>Нет доступных организаторов</MenuItem>
                             )}
                         </Select>
                     </FormControl>
-                    <Container
-                        style={{ padding: 0, justifyContent: "flex-start" }}
-                    >
+                    <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                         {creationToggle ? (
                             <FormControl fullWidth>
-                                <Typography variant="h6">
-                                    Новый организатор
-                                </Typography>
+                                <Typography variant="h6">Новый организатор</Typography>
                                 <Grid container gap={1}>
                                     <Grid item xs>
                                         <TextField
@@ -140,12 +128,7 @@ const EmployeeList = ({
                                         ></TextField>
                                     </Grid>
                                 </Grid>
-                                <Grid
-                                    container
-                                    marginTop={2}
-                                    marginBottom={2}
-                                    gap={2}
-                                >
+                                <Grid container marginTop={2} marginBottom={2} gap={2}>
                                     <Grid item xs={2}>
                                         <Button
                                             fullWidth
@@ -171,10 +154,7 @@ const EmployeeList = ({
                         ) : (
                             <Grid container marginTop={2} marginBottom={2}>
                                 <Grid item xs>
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => setCreationToggle(true)}
-                                    >
+                                    <Button variant="outlined" onClick={() => setCreationToggle(true)}>
                                         Новый организатор
                                     </Button>
                                 </Grid>

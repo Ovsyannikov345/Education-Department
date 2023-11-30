@@ -9,23 +9,13 @@ const DeleteConfirmationModal = ({ isOpen, acceptHandler, declineHandler }) => {
 
     return (
         <Dialog open={isOpen} onClose={closeModal}>
-            <Typography
-                variant="h5"
-                paddingLeft={3}
-                paddingRight={3}
-                marginTop={1}
-                textAlign={"center"}
-            >
+            <Typography variant="h5" paddingLeft={3} paddingRight={3} marginTop={1} textAlign={"center"}>
                 Подтвердите удаление
             </Typography>
             <Container>
                 <Grid container justifyContent={"space-between"} marginTop={2} marginBottom={2}>
                     <Grid item>
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={acceptHandler}
-                        >
+                        <Button variant="outlined" color="error" onClick={acceptHandler}>
                             Удалить
                         </Button>
                     </Grid>

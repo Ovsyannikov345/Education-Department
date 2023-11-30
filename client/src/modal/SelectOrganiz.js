@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import { Box, Button, Modal } from "@mui/material";
 
 function SelectOrgaiz({ show = false, hide }) {
@@ -6,15 +6,17 @@ function SelectOrgaiz({ show = false, hide }) {
         <Modal
             open={show}
             onClose={hide}
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         >
-            <Box sx={{ display: 'flex', flexDirection: 'column', width: 500, bgcolor: 'white' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: "center" }}>
-                    <Button sx={{ width: "300px", mt: 2 }}
+            <Box sx={{ display: "flex", flexDirection: "column", width: 500, bgcolor: "white" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <Button
+                        sx={{ width: "300px", mt: 2 }}
                         // onClick={ }
-                        variant="outlined">
+                        variant="outlined"
+                    >
                         Студенты организаторы
-                    </Button >
+                    </Button>
                     <Button sx={{ width: "300px", mt: 2 }} variant="outlined">
                         Преподаватели организаторы
                     </Button>
@@ -24,7 +26,7 @@ function SelectOrgaiz({ show = false, hide }) {
                 </Box>
             </Box>
         </Modal>
-    )
+    );
 }
 
-export default SelectOrgaiz
+export default SelectOrgaiz;

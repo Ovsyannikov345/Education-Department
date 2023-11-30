@@ -10,11 +10,7 @@ const EventList = ({ events, deleteHandler }) => {
     return (
         <Stack gap={1}>
             {events.map((event) => (
-                <EventItem
-                    key={event.id}
-                    event={event}
-                    deleteHandler={deleteHandler}
-                />
+                <EventItem key={event.id} event={event} deleteHandler={deleteHandler} />
             ))}
         </Stack>
     );

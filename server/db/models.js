@@ -134,11 +134,7 @@ const Participant = sequelize.define(
     { timestamps: false }
 );
 
-const EventParticipants = sequelize.define(
-    "EventParticipants",
-    {},
-    { timestamps: false }
-);
+const EventParticipants = sequelize.define("EventParticipants", {}, { timestamps: false });
 
 const Employee = sequelize.define(
     "Employee",

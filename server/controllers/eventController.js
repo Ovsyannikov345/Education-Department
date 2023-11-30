@@ -65,9 +65,7 @@ class EventController {
         try {
             createdEvent.addEmployees(event.employees.map((emp) => emp.id));
             createdEvent.addStudents(event.students.map((std) => std.id));
-            createdEvent.addParticipants(
-                event.participants.map((prt) => prt.id)
-            );
+            createdEvent.addParticipants(event.participants.map((prt) => prt.id));
         } catch (e) {
             console.log(e);
         }
@@ -77,8 +75,6 @@ class EventController {
 
     async update(req, res) {
         const { id } = req.params;
-        console.log("===================================");
-        console.log(id);
         // TODO Make client do that.
         const event = {
             id: req.body.id,
@@ -94,18 +90,12 @@ class EventController {
             students: req.body.Students,
             participants: req.body.Participants,
         };
-        console.log(req.body);
-        console.log(event);
         if (parseInt(id) !== event.id) {
-            console.log(id);
-            console.log(event.id);
-            console.log("id's not equal");
             return res.status(400).send();
         }
 
         try {
-            const result = Event.update(event, { where: { id: id } });
-            console.log(result);
+            await Event.update(event, { where: { id: id } });
             return res.status(200).send();
         } catch (err) {
             console.log(err);

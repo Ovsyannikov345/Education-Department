@@ -59,9 +59,7 @@ const StudentList = ({
             {!readonly && (
                 <>
                     <FormControl fullWidth>
-                        <InputLabel id="student-label">
-                            Добавить студента
-                        </InputLabel>
+                        <InputLabel id="student-label">Добавить студента</InputLabel>
                         <Select
                             fullWidth
                             labelId="student-label"
@@ -74,30 +72,20 @@ const StudentList = ({
                                     <MenuItem
                                         key={std.id}
                                         value={`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
-                                        onClick={(e) =>
-                                            addStudentHandler(
-                                                e.target.innerText
-                                            )
-                                        }
+                                        onClick={(e) => addStudentHandler(e.target.innerText)}
                                     >
                                         {`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
                                     </MenuItem>
                                 ))
                             ) : (
-                                <MenuItem key={1}>
-                                    Нет доступных студентов
-                                </MenuItem>
+                                <MenuItem key={1}>Нет доступных студентов</MenuItem>
                             )}
                         </Select>
                     </FormControl>
-                    <Container
-                        style={{ padding: 0, justifyContent: "flex-start" }}
-                    >
+                    <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                         {creationToggle ? (
                             <FormControl fullWidth>
-                                <Typography variant="h6">
-                                    Новый студент
-                                </Typography>
+                                <Typography variant="h6">Новый студент</Typography>
                                 <Grid container gap={1}>
                                     <Grid item xs={2}>
                                         <TextField
@@ -156,12 +144,7 @@ const StudentList = ({
                                         ></TextField>
                                     </Grid>
                                 </Grid>
-                                <Grid
-                                    container
-                                    marginTop={2}
-                                    marginBottom={2}
-                                    gap={2}
-                                >
+                                <Grid container marginTop={2} marginBottom={2} gap={2}>
                                     <Grid item xs={2}>
                                         <Button
                                             fullWidth
@@ -187,10 +170,7 @@ const StudentList = ({
                         ) : (
                             <Grid container marginTop={2} marginBottom={2}>
                                 <Grid item xs>
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => setCreationToggle(true)}
-                                    >
+                                    <Button variant="outlined" onClick={() => setCreationToggle(true)}>
                                         Новый студент
                                     </Button>
                                 </Grid>

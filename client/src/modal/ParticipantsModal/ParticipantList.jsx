@@ -65,9 +65,7 @@ const ParticipantList = ({
             {!readonly && (
                 <>
                     <FormControl fullWidth>
-                        <InputLabel id="participant-label">
-                            Добавить участника
-                        </InputLabel>
+                        <InputLabel id="participant-label">Добавить участника</InputLabel>
                         <Select
                             fullWidth
                             labelId="participant-label"
@@ -80,30 +78,20 @@ const ParticipantList = ({
                                     <MenuItem
                                         key={prt.id}
                                         value={`${prt.lastName} ${prt.firstName} ${prt.patronymic} ${prt.organization} ${prt.position}`}
-                                        onClick={(e) =>
-                                            addParticipantHandler(
-                                                e.target.innerText
-                                            )
-                                        }
+                                        onClick={(e) => addParticipantHandler(e.target.innerText)}
                                     >
                                         {`${prt.lastName} ${prt.firstName} ${prt.patronymic} ${prt.organization} ${prt.position}`}
                                     </MenuItem>
                                 ))
                             ) : (
-                                <MenuItem key={1}>
-                                    Нет доступных участников
-                                </MenuItem>
+                                <MenuItem key={1}>Нет доступных участников</MenuItem>
                             )}
                         </Select>
                     </FormControl>
-                    <Container
-                        style={{ padding: 0, justifyContent: "flex-start" }}
-                    >
+                    <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                         {creationToggle ? (
                             <FormControl fullWidth>
-                                <Typography variant="h6">
-                                    Новый участник
-                                </Typography>
+                                <Typography variant="h6">Новый участник</Typography>
                                 <Grid container gap={1}>
                                     <Grid item xs={4}>
                                         <TextField
@@ -138,9 +126,7 @@ const ParticipantList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Отчество"
-                                            value={
-                                                createdParticipant.patronymic
-                                            }
+                                            value={createdParticipant.patronymic}
                                             onChange={(e) =>
                                                 setCreatedParticipant({
                                                     ...createdParticipant,
@@ -154,14 +140,11 @@ const ParticipantList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Организация"
-                                            value={
-                                                createdParticipant.organization
-                                            }
+                                            value={createdParticipant.organization}
                                             onChange={(e) =>
                                                 setCreatedParticipant({
                                                     ...createdParticipant,
-                                                    organization:
-                                                        e.target.value,
+                                                    organization: e.target.value,
                                                 })
                                             }
                                         ></TextField>
@@ -181,12 +164,7 @@ const ParticipantList = ({
                                         ></TextField>
                                     </Grid>
                                 </Grid>
-                                <Grid
-                                    container
-                                    marginTop={2}
-                                    marginBottom={2}
-                                    gap={2}
-                                >
+                                <Grid container marginTop={2} marginBottom={2} gap={2}>
                                     <Grid item xs={2}>
                                         <Button
                                             fullWidth
@@ -212,10 +190,7 @@ const ParticipantList = ({
                         ) : (
                             <Grid container marginTop={2} marginBottom={2}>
                                 <Grid item xs>
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => setCreationToggle(true)}
-                                    >
+                                    <Button variant="outlined" onClick={() => setCreationToggle(true)}>
                                         Новый участник
                                     </Button>
                                 </Grid>

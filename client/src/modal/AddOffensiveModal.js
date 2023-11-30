@@ -1,8 +1,8 @@
 import { Box, Button, TextField, Modal, Typography } from "@mui/material";
 import React from "react";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Textarea } from "@mui/joy";
 
 function AddOffensiveModal({ show = false, hide }) {
@@ -10,7 +10,7 @@ function AddOffensiveModal({ show = false, hide }) {
         <Modal
             open={show}
             onClose={hide}
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         >
             <Box
                 sx={{
@@ -26,108 +26,71 @@ function AddOffensiveModal({ show = false, hide }) {
                     flexDirection: "column",
                 }}
             >
-                <Typography
-                    id="add-invitee-modal-title"
-                    variant="h6"
-                    component="h2"
-                    gutterBottom
-                >
+                <Typography id="add-invitee-modal-title" variant="h6" component="h2" gutterBottom>
                     Добавить правонарушение
                 </Typography>
-                <Box
-                    display={"flex"}
-                    flexDirection={"row"}
-                >
-                    <Box
-                        display={"flex"}
-                        flexDirection={"column"}
-                        width={400}
-                        sx={{ mr: 2 }}
-                    >
+                <Box display={"flex"} flexDirection={"row"}>
+                    <Box display={"flex"} flexDirection={"column"} width={400} sx={{ mr: 2 }}>
                         <TextField
                             sx={{ mt: 2 }}
                             label="Фамилия"
-                        // value={newInviteeLastName}
-                        // onChange={e => setNewInviteeLastName(e.target.value)}
+                            // value={newInviteeLastName}
+                            // onChange={e => setNewInviteeLastName(e.target.value)}
                         />
                         <TextField
                             sx={{ mt: 2 }}
                             label="Имя"
-                        // value={newInviteeName}
-                        // onChangeCapture={e => setNewInviteeName(e.target.value)}
+                            // value={newInviteeName}
+                            // onChangeCapture={e => setNewInviteeName(e.target.value)}
                         />
                         <TextField
                             sx={{ mt: 2 }}
                             label="Отчество"
-                        // value={newInviteeSurename}
-                        // onChangeCapture={e => setNewSurename(e.target.value)}
+                            // value={newInviteeSurename}
+                            // onChangeCapture={e => setNewSurename(e.target.value)}
                         />
                         <TextField
                             sx={{ mt: 2 }}
                             label="Группа"
-                        // value={newInviteeOrganization}
-                        // onChange={e => setNewInviteeOrganization(e.target.value)}
+                            // value={newInviteeOrganization}
+                            // onChange={e => setNewInviteeOrganization(e.target.value)}
                         />
                     </Box>
-                    <Box
-                        display={'flex'}
-                        flexDirection={'column'}
-                        width={400}
-                    >
+                    <Box display={"flex"} flexDirection={"column"} width={400}>
                         <TextField
                             sx={{ mt: 2 }}
                             label="Статья"
-                        // value={newInviteePosition}
-                        // onChangeCapture={e => setNewInviteePosition(e.target.value)}
+                            // value={newInviteePosition}
+                            // onChangeCapture={e => setNewInviteePosition(e.target.value)}
                         />
                         <Textarea
                             size="lg"
                             placeholder="Решение суда"
-                            sx={{ mt: 2}}
-                        // value={newInviteePosition}
-                        // onChangeCapture={e => setNewInviteePosition(e.target.value)}
+                            sx={{ mt: 2 }}
+                            // value={newInviteePosition}
+                            // onChangeCapture={e => setNewInviteePosition(e.target.value)}
                         />
-                        <Box
-                            display={"flex"}
-                            flexDirection={"row"}
-                        >
+                        <Box display={"flex"} flexDirection={"row"}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    sx={{ mt: 2, mr: 2 }}
-                                    label="Дата совершения"
-                                />
+                                <DatePicker sx={{ mt: 2, mr: 2 }} label="Дата совершения" />
                             </LocalizationProvider>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    sx={{ mt: 2 }}
-                                    label="Дата решения суда"
-                                />
+                                <DatePicker sx={{ mt: 2 }} label="Дата решения суда" />
                             </LocalizationProvider>
                         </Box>
                     </Box>
                 </Box>
-                <Box
-                    display={"flex"}
-                    justifyContent={"space-between"}
-                >
-                    <Button
-                        sx={{ mt: 2 }}
-                        variant="outlined"
-                        color="success"
-                    >
+                <Box display={"flex"} justifyContent={"space-between"}>
+                    <Button sx={{ mt: 2 }} variant="outlined" color="success">
                         Добавить
                     </Button>
-                    <Button
-                        sx={{ mt: 2 }}
-                        variant="outlined"
-                        color="error"
-                    >
+                    <Button sx={{ mt: 2 }} variant="outlined" color="error">
                         Отмена
                     </Button>
                 </Box>
             </Box>
         </Modal>
-    )
+    );
 }
 
-export default AddOffensiveModal
+export default AddOffensiveModal;
