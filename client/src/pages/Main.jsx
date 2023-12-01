@@ -8,6 +8,15 @@ import EventFilter from "../components/EventFilter.jsx";
 function MainPage() {
     const [events, setEvents] = useState([]);
     const [sortOption, setSortOption] = useState("date desc");
+    const [searchQuery, setSearchQuery] = useState({
+        name: "",
+        departments: [],
+        subdepartments: [],
+        directions: [],
+        subdirections: [],
+        startDate: null,
+        endDate: null,
+    });
 
     const sortedEvents = useMemo(() => {
         switch (sortOption) {
@@ -21,6 +30,11 @@ function MainPage() {
                 return [...events];
         }
     }, [events, sortOption]);
+
+    const filteredEvents = useMemo(() => {
+        // TODO if start date < end date.
+        // TODO filter.
+    });
 
     const loadEvents = async () => {
         const events = await getEvents();
@@ -43,7 +57,7 @@ function MainPage() {
     return (
         <Grid container alignItems={"flex-start"} mb={5}>
             <Grid container item xs={3}>
-                <EventFilter />
+                <EventFilter queryHandler={setSearchQuery} />
             </Grid>
             <Grid container item xs={9} pl={2} pr={2}>
                 <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>

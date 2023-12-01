@@ -18,7 +18,8 @@ import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
 import moment from "moment";
 
-const EventFilter = () => {
+const EventFilter = ({ queryHandler }) => {
+    const [name, setName] = useState("");
     const [selectedDepartments, setSelectedDepartments] = useState([]);
     const [selectedSubdepartments, setSelectedSubdepartments] = useState([]);
     const [selectedDirections, setSelectedDirections] = useState([]);
@@ -66,8 +67,39 @@ const EventFilter = () => {
         loadDirections();
     }, []);
 
+    useEffect(
+        () =>
+            queryHandler({
+                name: name,
+                departments: selectedDepartments,
+                subdepartments: selectedSubdepartments,
+                directions: selectedDirections,
+                subdirections: selectedSubdirections,
+                startDate: startDate,
+                endDate: endDate,
+            }),
+        [
+            name,
+            selectedDepartments,
+            selectedSubdepartments,
+            selectedDirections,
+            selectedSubdirections,
+            startDate,
+            endDate,
+            queryHandler,
+        ]
+    );
+
     const changeDepartments = (departments) => {
         setSelectedDepartments(departments);
+
+        setSelectedSubdepartments(
+            selectedSubdepartments.filter((subdep) =>
+                selectedDepartments.includes((dep) =>
+                    dep.Subdepartments.map((s) => s.id).includes((id) => id === subdep.id)
+                )
+            )
+        );
     };
 
     const changeSubdepartments = (subdepartments) => {
@@ -76,6 +108,14 @@ const EventFilter = () => {
 
     const changeDirections = (directions) => {
         setSelectedDirections(directions);
+
+        setSelectedSubdirections(
+            selectedSubdirections.filter((subdir) =>
+                selectedDirections.includes((dir) =>
+                    dir.Subdirections.map((d) => d.id).includes((id) => id === subdir.id)
+                )
+            )
+        );
     };
 
     const changeSubdirections = (subdirections) => {
@@ -99,7 +139,13 @@ const EventFilter = () => {
                                 Поиск и фильтрация
                             </Typography>
                         </Grid>
-                        <TextField label="Название" fullWidth autoComplete="off" />
+                        <TextField
+                            label="Название"
+                            fullWidth
+                            autoComplete="off"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
                         <FormControl fullWidth>
                             <InputLabel id="department-label">Отделы</InputLabel>
                             <Select
