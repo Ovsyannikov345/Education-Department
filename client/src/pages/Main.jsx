@@ -1,4 +1,4 @@
-import { Container, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { getEvents, deleteEvent } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
@@ -41,11 +41,11 @@ function MainPage() {
     }, []);
 
     return (
-        <Grid container alignItems={"flex-start"}>
-            <Grid container item xs={2} border={1} borderColor={"red"}>
+        <Grid container alignItems={"flex-start"} mb={5}>
+            <Grid container item xs={3}>
                 <EventFilter />
             </Grid>
-            <Grid container item xs={10} pl={2} pr={2} border={1}>
+            <Grid container item xs={9} pl={2} pr={2}>
                 <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                     <Grid item>
                         <Typography variant="h4">Список мероприятий</Typography>
