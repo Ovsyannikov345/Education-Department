@@ -37,21 +37,13 @@ const EventItem = ({ event, deleteHandler }) => {
                 </Grid>
                 <Grid item container xs={3} alignContent={"space-between"}>
                     <Grid item container xs={12}>
-                        <Grid container item xs={12}>
-                            <Grid container item xs={1.1} alignItems={"center"}>
-                                <EventIcon />
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="h6">{moment.utc(event.date).format("DD-MM-YYYY")}</Typography>
-                            </Grid>
+                        <Grid container item xs={12} alignItems={"center"} gap={0.5}>
+                            <EventIcon />
+                            <Typography variant="h6">{moment.utc(event.date).format("DD-MM-YYYY")}</Typography>
                         </Grid>
-                        <Grid container item xs={12} pb={3}>
-                            <Grid container item xs={1.1} alignItems={"center"}>
-                                <AccessTimeIcon />
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="h6">{moment.utc(event.date).format("HH:mm")}</Typography>
-                            </Grid>
+                        <Grid container item xs={12} gap={0.5} pb={3} alignItems={"center"}>
+                            <AccessTimeIcon />
+                            <Typography variant="h6">{moment.utc(event.date).format("HH:mm")}</Typography>
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} gap={2}>
