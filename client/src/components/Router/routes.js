@@ -9,7 +9,7 @@ import {
 import MainPage from "../../pages/Main";
 import AddEvent from "../../pages/AddEventPage";
 import EventDetailsPage from "../../pages/EventDetailsPage";
-import OffensivePage from "../../pages/OffensivePage";
+import OffensesPage from "../../pages/OffensesPage";
 import AddOffensivePage from "../../pages/AddOffensivePage";
 import ReportsPage from "../../pages/ReportsPage";
 
@@ -28,7 +28,7 @@ export const publicRoutes = [
     },
     {
         path: OFFENSIVES_ROUTE,
-        Component: OffensivePage,
+        Component: OffensesPage,
     },
     {
         path: ADDOFFENSIVE_ROUTE,

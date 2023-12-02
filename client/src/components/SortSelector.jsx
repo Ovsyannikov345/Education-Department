@@ -1,7 +1,7 @@
 import { MenuItem, Select } from "@mui/material";
 import React from "react";
 
-const EventSortSelector = ({ options, value, changeHandler }) => {
+const SortSelector = ({ options, value, changeHandler }) => {
     return (
         <Select variant="outlined" value={value} onChange={(e) => changeHandler(e.target.value)}>
             {options.map((option) => (
@@ -13,4 +13,4 @@ const EventSortSelector = ({ options, value, changeHandler }) => {
     );
 };
 
-export default EventSortSelector;
+export default SortSelector;

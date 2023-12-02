@@ -26,6 +26,7 @@ const EventList = ({ events, deleteHandler }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // TODO Change to conditionsl rendering. events => pageEvents
     if (events.length === 0) {
         return (
             <Typography variant="h4" mt={2}>

@@ -2,7 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { getEvents, deleteEvent } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
-import EventSortSelector from "../components/EventSortSelector.jsx";
+import SortSelector from "../components/SortSelector.jsx";
 import EventFilter from "../components/EventFilter.jsx";
 import moment from "moment";
 
@@ -32,6 +32,7 @@ function MainPage() {
         }
     }, [events, sortOption]);
 
+    // TODO fix case sensivity.
     const filteredEvents = useMemo(() => {
         const startDate = searchQuery.startDate != null ? moment(searchQuery.startDate) : null;
         const endDate = searchQuery.endDate != null ? moment(searchQuery.endDate) : null;
@@ -93,7 +94,7 @@ function MainPage() {
                         <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
                     </Grid>
                     <Grid item>
-                        <EventSortSelector
+                        <SortSelector
                             options={[
                                 { value: "alphabetic", name: "По алфавиту" },
                                 { value: "date desc", name: "Сначала новые" },
