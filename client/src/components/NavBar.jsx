@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import {
+    AppBar,
+    Box,
+    Toolbar,
+    Typography,
+    Button,
+    IconButton,
+    Drawer,
+    List,
+    ListItem,
+    ListItemText,
+    Grid,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ADDEVENT_ROUTE, OFFENSIVE_ROUTE, REPORTS_ROUTE } from "../utils/consts";
+import { MAINPAGE_ROUTE, ADDEVENT_ROUTE, OFFENSIVE_ROUTE, REPORTS_ROUTE } from "../utils/consts";
+import DehazeIcon from "@mui/icons-material/Dehaze";
+import EventIcon from "@mui/icons-material/Event";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import GavelIcon from "@mui/icons-material/Gavel";
@@ -29,18 +33,42 @@ function NavBar() {
         <Box>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={toggleDrawer(true)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}></Typography>
-                    <Button color="inherit">Login</Button>
+                    <Grid container alignItems={"center"} justifyContent={"space-between"}>
+                        <Grid item container xs={6} alignItems={"center"} columnGap={2}>
+                            <Grid item xs={0.5}>
+                                <IconButton
+                                    size="large"
+                                    edge="start"
+                                    color="inherit"
+                                    aria-label="menu"
+                                    sx={{ mr: 2 }}
+                                    onClick={toggleDrawer(true)}
+                                >
+                                    <DehazeIcon />
+                                </IconButton>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Typography variant="h5">Отдел по воспитательной работе</Typography>
+                            </Grid>
+                            <Grid item xs={2} p={1}>
+                            <img
+                                src="./BruLogo.png"
+                                alt="logo"
+                                style={{ maxWidth: "100px", height: "auto", borderRadius: "10px" }}
+                            />
+                        </Grid>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <Button
+                                color="inherit"
+                                variant="outlined"
+                                size="large"
+                                sx={{ justifySelf: "flex-end" }}
+                            >
+                                Войти
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </Toolbar>
             </AppBar>
             <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -51,17 +79,21 @@ function NavBar() {
                     onKeyDown={toggleDrawer(false)}
                 >
                     <List>
-                        <ListItem button sx={{ cursor: "pointer" }} onClick={() => navigate(ADDEVENT_ROUTE)}>
+                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(MAINPAGE_ROUTE)}>
+                            <EventIcon />
+                            <ListItemText primary="Мероприятия" style={{ marginLeft: 5 }} />
+                        </ListItem>
+                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(ADDEVENT_ROUTE)}>
                             <AddBoxIcon />
-                            <ListItemText primary="Добавить мероприятие" />
+                            <ListItemText primary="Создать мероприятие" style={{ marginLeft: 5 }} />
                         </ListItem>
-                        <ListItem button sx={{ cursor: "pointer" }} onClick={() => navigate(OFFENSIVE_ROUTE)}>
+                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(OFFENSIVE_ROUTE)}>
                             <GavelIcon />
-                            <ListItemText primary="Учет правонарушений" />
+                            <ListItemText primary="Правонарушения" style={{ marginLeft: 5 }} />
                         </ListItem>
-                        <ListItem button sx={{ cursor: "pointer" }} onClick={() => navigate(REPORTS_ROUTE)}>
+                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(REPORTS_ROUTE)}>
                             <SummarizeIcon />
-                            <ListItemText primary="Просмотреть отчеты" />
+                            <ListItemText primary="Просмотреть отчеты" style={{ marginLeft: 5 }} />
                         </ListItem>
                     </List>
                 </Box>
