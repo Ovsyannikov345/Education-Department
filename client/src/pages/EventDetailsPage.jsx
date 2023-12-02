@@ -316,7 +316,9 @@ const EventDetailsPage = (props) => {
     };
 
     const changeSubdepartment = (subdepartmentName) => {
-        const subdepartment = event.Department.Subdepartments.find((subdep) => subdep.name === subdepartmentName);
+        const subdepartment = loadedDepartments
+            .find((dep) => dep.id === event.Department.id)
+            .Subdepartments.find((subdep) => subdep.name === subdepartmentName);
 
         setEvent({
             ...event,
@@ -340,7 +342,9 @@ const EventDetailsPage = (props) => {
     };
 
     const changeSubdirection = (subdirectionName) => {
-        const subdirection = event.Direction.Subdirections.find((subdir) => subdir.name === subdirectionName);
+        const subdirection = loadedDirections
+            .find((dir) => dir.id === event.Direction.id)
+            .Subdirections.find((subdir) => subdir.name === subdirectionName);
 
         setEvent({
             ...event,
@@ -501,7 +505,7 @@ const EventDetailsPage = (props) => {
                                 fullWidth
                                 labelId="department-label"
                                 id="department-select"
-                                value={event.Department.name}
+                                value={loadedDepartments.length > 0 ? event.Department.name : ""}
                                 label="Подразделение"
                                 readOnly={!editModeToggle}
                                 onChange={(e) => changeDepartment(e.target.value)}
@@ -545,7 +549,7 @@ const EventDetailsPage = (props) => {
                                 fullWidth
                                 labelId="direction-label"
                                 id="direction-select"
-                                value={event.Direction.name}
+                                value={loadedDirections.length > 0 ? event.Direction.name : ""}
                                 label="Направление"
                                 readOnly={!editModeToggle}
                                 onChange={(e) => changeDirection(e.target.value)}
