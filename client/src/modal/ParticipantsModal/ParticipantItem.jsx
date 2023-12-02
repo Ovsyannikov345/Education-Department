@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Grid, IconButton, Paper, Typography } from "@mui/material";
+import { Grid, IconButton, Paper, Tooltip, Typography } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/PersonRemove";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import Zoom from "@mui/material/Zoom";
 import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
 
 const ParticipantItem = ({ participant, removeHandler, deleteHandler, readonly = false }) => {
@@ -31,12 +32,16 @@ const ParticipantItem = ({ participant, removeHandler, deleteHandler, readonly =
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (
                             <>
-                                <IconButton onClick={(e) => removeHandler(participant.id)}>
-                                    <RemoveIcon color="primary" />
-                                </IconButton>
-                                <IconButton onClick={(e) => setDeleteModalOpen(true)}>
-                                    <DeleteIcon color="error" />
-                                </IconButton>
+                                <Tooltip title="Убрать" TransitionComponent={Zoom} followCursor>
+                                    <IconButton onClick={(e) => removeHandler(participant.id)}>
+                                        <RemoveIcon color="primary" />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Удалить" TransitionComponent={Zoom} followCursor>
+                                    <IconButton onClick={(e) => setDeleteModalOpen(true)}>
+                                        <DeleteIcon color="error" />
+                                    </IconButton>
+                                </Tooltip>
                             </>
                         )}
                     </Grid>
