@@ -104,7 +104,9 @@ function MainPage() {
                         />
                     </Grid>
                 </Grid>
-                <EventList events={filteredEvents} deleteHandler={removeEvent} />
+                <Grid item xs={12}>
+                    <EventList events={filteredEvents} deleteHandler={removeEvent} />
+                </Grid>
             </Grid>
         </Grid>
     );
