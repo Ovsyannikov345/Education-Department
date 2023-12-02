@@ -42,7 +42,7 @@ const EventItem = ({ event, deleteHandler }) => {
                                 <EventIcon />
                             </Grid>
                             <Grid item>
-                                <Typography variant="h6">{moment(event.date).format("DD-MM-YYYY")}</Typography>
+                                <Typography variant="h6">{moment.utc(event.date).format("DD-MM-YYYY")}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} pb={3}>

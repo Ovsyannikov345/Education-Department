@@ -90,6 +90,16 @@ const EventFilter = ({ queryHandler }) => {
         ]
     );
 
+    const resetFilter = () => {
+        setName("");
+        setSelectedDepartments([]);
+        setSelectedSubdepartments([]);
+        setSelectedDirections([]);
+        setSelectedSubdirections([]);
+        setStartDate(null);
+        setEndDate(null);
+    };
+
     const changeDepartments = (departments) => {
         setSelectedDepartments(departments);
 
@@ -271,6 +281,11 @@ const EventFilter = ({ queryHandler }) => {
                                     </Button>
                                 </Grid>
                             )}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button fullWidth variant="outlined" onClick={resetFilter}>
+                                Сбросить все
+                            </Button>
                         </Grid>
                     </Grid>
                 </Paper>

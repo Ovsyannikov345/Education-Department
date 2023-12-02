@@ -4,6 +4,7 @@ import { getEvents, deleteEvent } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
 import EventSortSelector from "../components/EventSortSelector.jsx";
 import EventFilter from "../components/EventFilter.jsx";
+import moment from "moment";
 
 function MainPage() {
     const [events, setEvents] = useState([]);
@@ -32,9 +33,36 @@ function MainPage() {
     }, [events, sortOption]);
 
     const filteredEvents = useMemo(() => {
-        // TODO if start date < end date.
-        // TODO filter.
-    });
+        const startDate = searchQuery.startDate != null ? moment(searchQuery.startDate) : null;
+        const endDate = searchQuery.endDate != null ? moment(searchQuery.endDate) : null;
+
+        const isGapValid = startDate == null || endDate == null ? true : endDate.isSameOrAfter(startDate);
+
+        const filteredEvents = sortedEvents.filter(
+            (event) =>
+                event.name.includes(searchQuery.name) &&
+                (searchQuery.departments.length > 0
+                    ? searchQuery.departments.map((dep) => dep.id).includes(event.Department.id)
+                    : true) &&
+                (searchQuery.subdepartments.length > 0
+                    ? event.Subdepartment == null ||
+                      searchQuery.subdepartments.map((subdep) => subdep.id).includes(event.Subdepartment.id)
+                    : true) &&
+                (searchQuery.directions.length > 0
+                    ? searchQuery.directions.map((dir) => dir.id).includes(event.Direction.id)
+                    : true) &&
+                (searchQuery.subdirections.length > 0
+                    ? event.Subdirection == null ||
+                      searchQuery.subdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
+                    : true) &&
+                (isGapValid && startDate != null
+                    ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate)
+                    : true) &&
+                (isGapValid && endDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrBefore(endDate) : true)
+        );
+
+        return filteredEvents;
+    }, [sortedEvents, searchQuery]);
 
     const loadEvents = async () => {
         const events = await getEvents();
@@ -62,7 +90,7 @@ function MainPage() {
             <Grid container item xs={9} pl={2} pr={2}>
                 <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                     <Grid item>
-                        <Typography variant="h4">Список мероприятий</Typography>
+                        <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
                     </Grid>
                     <Grid item>
                         <EventSortSelector
@@ -76,7 +104,7 @@ function MainPage() {
                         />
                     </Grid>
                 </Grid>
-                <EventList events={sortedEvents} deleteHandler={removeEvent} />
+                <EventList events={filteredEvents} deleteHandler={removeEvent} />
             </Grid>
         </Grid>
     );
