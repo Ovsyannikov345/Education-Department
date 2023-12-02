@@ -1,32 +1,38 @@
 import {
     ADDEVENT_ROUTE,
     MAINPAGE_ROUTE,
-    OFFENSIVE_ROUTE,
+    OFFENSIVES_ROUTE,
+    ADDOFFENSIVE_ROUTE,
     REPORTS_ROUTE,
     EVENTDETAILS_ROUTE,
 } from "../../utils/consts";
-import AddEvent from "../../pages/AddEventPage";
 import MainPage from "../../pages/Main";
-import OffensivePage from "../../pages/OffensivePage";
-import ReportsPage from "../../pages/ReportsPage";
+import AddEvent from "../../pages/AddEventPage";
 import EventDetailsPage from "../../pages/EventDetailsPage";
+import OffensivePage from "../../pages/OffensivePage";
+import AddOffensivePage from "../../pages/AddOffensivePage";
+import ReportsPage from "../../pages/ReportsPage";
 
 export const publicRoutes = [
     {
-        path: ADDEVENT_ROUTE,
-        Component: AddEvent,
-    },
-    {
         path: MAINPAGE_ROUTE,
         Component: MainPage,
+    },
+    {
+        path: ADDEVENT_ROUTE,
+        Component: AddEvent,
     },
     {
         path: EVENTDETAILS_ROUTE,
         Component: EventDetailsPage,
     },
     {
-        path: OFFENSIVE_ROUTE,
+        path: OFFENSIVES_ROUTE,
         Component: OffensivePage,
+    },
+    {
+        path: ADDOFFENSIVE_ROUTE,
+        Component: AddOffensivePage,
     },
     {
         path: REPORTS_ROUTE,

@@ -13,7 +13,13 @@ import {
     Grid,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { MAINPAGE_ROUTE, ADDEVENT_ROUTE, OFFENSIVE_ROUTE, REPORTS_ROUTE } from "../utils/consts";
+import {
+    MAINPAGE_ROUTE,
+    ADDEVENT_ROUTE,
+    OFFENSIVES_ROUTE,
+    REPORTS_ROUTE,
+    ADDOFFENSIVE_ROUTE,
+} from "../utils/consts";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import EventIcon from "@mui/icons-material/Event";
 import AddBoxIcon from "@mui/icons-material/AddBox";
@@ -51,12 +57,12 @@ function NavBar() {
                                 <Typography variant="h5">Отдел по воспитательной работе</Typography>
                             </Grid>
                             <Grid item xs={2} p={1}>
-                            <img
-                                src="./BruLogo.png"
-                                alt="logo"
-                                style={{ maxWidth: "100px", height: "auto", borderRadius: "10px" }}
-                            />
-                        </Grid>
+                                <img
+                                    src="./BruLogo.png"
+                                    alt="logo"
+                                    style={{ maxWidth: "100px", height: "auto", borderRadius: "10px" }}
+                                />
+                            </Grid>
                         </Grid>
                         <Grid item xs={1}>
                             <Button
@@ -73,7 +79,7 @@ function NavBar() {
             </AppBar>
             <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
                 <Box
-                    sx={{ width: 250 }}
+                    sx={{ width: 260 }}
                     role="presentation"
                     onClick={toggleDrawer(false)}
                     onKeyDown={toggleDrawer(false)}
@@ -87,9 +93,13 @@ function NavBar() {
                             <AddBoxIcon />
                             <ListItemText primary="Создать мероприятие" style={{ marginLeft: 5 }} />
                         </ListItem>
-                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(OFFENSIVE_ROUTE)}>
+                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(OFFENSIVES_ROUTE)}>
                             <GavelIcon />
                             <ListItemText primary="Правонарушения" style={{ marginLeft: 5 }} />
+                        </ListItem>
+                        <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(ADDOFFENSIVE_ROUTE)}>
+                            <AddBoxIcon />
+                            <ListItemText primary="Создать правонарушение" style={{ marginLeft: 5 }} />
                         </ListItem>
                         <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(REPORTS_ROUTE)}>
                             <SummarizeIcon />
