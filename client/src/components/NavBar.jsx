@@ -58,7 +58,7 @@ function NavBar() {
                             </Grid>
                             <Grid item xs={2} p={1}>
                                 <img
-                                    src="./BruLogo.png"
+                                    src="../images/BruLogo.png"
                                     alt="logo"
                                     style={{ maxWidth: "100px", height: "auto", borderRadius: "10px" }}
                                 />
