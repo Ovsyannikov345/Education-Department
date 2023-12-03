@@ -20,7 +20,6 @@ const AddOffensivePage = () => {
 
     return (
         <CreateOffenseForm creationHandler={createOffense} />
-        // TODO margin bottom.
     );
 };
 

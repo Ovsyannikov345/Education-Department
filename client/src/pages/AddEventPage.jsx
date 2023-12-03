@@ -7,10 +7,7 @@ function AddEventPage() {
         await postEvent(event);
     };
 
-    return (
-        <CreateEventForm creationHandler={createEvent} />
-        // TODO margin bottom.
-    );
+    return <CreateEventForm creationHandler={createEvent} />;
 }
 
 export default AddEventPage;

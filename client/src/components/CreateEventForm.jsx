@@ -193,7 +193,7 @@ const CreateEventForm = ({ creationHandler }) => {
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
             <Container>
-                <Grid container mt={2} rowGap={2} columnGap={2} alignItems={"baseline"}>
+                <Grid container mt={2} mb={3} rowGap={2} columnGap={2} alignItems={"baseline"}>
                     <Grid item xs={3}>
                         <Typography variant="h5">Создать мероприятие</Typography>
                     </Grid>
