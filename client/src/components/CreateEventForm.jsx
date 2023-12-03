@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MAINPAGE_ROUTE } from "../utils/consts";
 import {
     Container,
     FormControl,
@@ -113,8 +114,8 @@ const CreateEventForm = ({ creationHandler }) => {
     const submit = (e) => {
         e.preventDefault();
         creationHandler(event);
-        // TODO use utils/consts.
-        router("/events");
+
+        router(MAINPAGE_ROUTE);
     };
 
     const addEmployee = (employee) => {
@@ -187,8 +188,7 @@ const CreateEventForm = ({ creationHandler }) => {
             <IconButton
                 color="primary"
                 style={{ marginTop: 10, marginLeft: 10 }}
-                // TODO use utils/consts.
-                onClick={() => router("/events")}
+                onClick={() => router(MAINPAGE_ROUTE)}
             >
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
