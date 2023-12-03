@@ -16,6 +16,23 @@ const getOffenses = async () => {
     }
 };
 
+const postOffense = async (offense) => {
+    try {
+        const response = await host.post("/offenses", offense);
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while posting the offense. Code: " + error.response.status);
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
+};
+
 const deleteOffense = async (id) => {
     try {
         const response = await host.delete(`/offenses/${id}`);
@@ -32,4 +49,4 @@ const deleteOffense = async (id) => {
     }
 };
 
-export { getOffenses, deleteOffense };
+export { getOffenses, postOffense, deleteOffense };

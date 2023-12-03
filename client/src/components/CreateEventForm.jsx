@@ -113,7 +113,7 @@ const CreateEventForm = ({ creationHandler }) => {
     const submit = (e) => {
         e.preventDefault();
         creationHandler(event);
-
+        // TODO use utils/consts.
         router("/events");
     };
 
@@ -187,6 +187,7 @@ const CreateEventForm = ({ creationHandler }) => {
             <IconButton
                 color="primary"
                 style={{ marginTop: 10, marginLeft: 10 }}
+                // TODO use utils/consts.
                 onClick={() => router("/events")}
             >
                 <BackIcon></BackIcon>Список мероприятий

@@ -76,7 +76,7 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
-                            <b>Штраф</b>
+                            <b>Взыскание</b>
                         </Typography>
                         <Typography variant="h6">{offense.penalty}</Typography>
                     </Grid>

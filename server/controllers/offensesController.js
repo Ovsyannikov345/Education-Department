@@ -13,6 +13,18 @@ class OffensesController {
         }
     }
 
+    async post(req, res) {
+        const offense = { ...req.body };
+
+        try {
+            const createdOffense = await Offense.create(offense);
+
+            return res.status(201).json(createdOffense);
+        } catch (error) {
+            res.sendStatus(500);
+        }
+    }
+
     async delete(req, res) {
         const { id } = req.params;
 

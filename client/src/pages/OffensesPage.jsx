@@ -61,7 +61,7 @@ function OffensesPage() {
     useEffect(() => {
         const loadOffenses = async () => {
             const response = await getOffenses();
-
+            // TODO if no response.
             if (response.status < 300) {
                 setOffenses(response.data);
             } else {
