@@ -19,39 +19,39 @@ const EventList = ({ events, deleteHandler }) => {
 
     useEffect(() => {
         setPageEvents(events.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE));
-    }, [events, page])
+    }, [events, page]);
 
     const changePage = (event, value) => {
         setPage(value);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    // TODO Change to conditionsl rendering. events => pageEvents
-    if (events.length === 0) {
-        return (
-            <Typography variant="h4" mt={2}>
-                Мероприятия не найдены
-            </Typography>
-        );
-    }
-
     return (
-        <Stack gap={1}>
-            {pageEvents.map((event) => (
-                <EventItem key={event.id} event={event} deleteHandler={deleteHandler} />
-            ))}
-            <Container>
-                <Grid container justifyContent="center">
-                    <Pagination
-                        count={pagesCount}
-                        color="primary"
-                        shape="rounded"
-                        page={page}
-                        onChange={changePage}
-                    ></Pagination>
-                </Grid>
-            </Container>
-        </Stack>
+        <>
+            {pageEvents.length === 0 && (
+                <Typography variant="h4" mt={2}>
+                    Мероприятия не найдены
+                </Typography>
+            )}
+            {pageEvents.length > 0 && (
+                <Stack gap={1}>
+                    {pageEvents.map((event) => (
+                        <EventItem key={event.id} event={event} deleteHandler={deleteHandler} />
+                    ))}
+                    <Container>
+                        <Grid container justifyContent="center">
+                            <Pagination
+                                count={pagesCount}
+                                color="primary"
+                                shape="rounded"
+                                page={page}
+                                onChange={changePage}
+                            ></Pagination>
+                        </Grid>
+                    </Container>
+                </Stack>
+            )}
+        </>
     );
 };
 
