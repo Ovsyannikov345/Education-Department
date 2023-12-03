@@ -73,6 +73,7 @@ class EventController {
         return res.json();
     }
 
+    // TODO rename to PUT.
     async update(req, res) {
         const { id } = req.params;
         // TODO Make client do that.

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { OFFENSIVES_ROUTE } from "../utils/consts";
 import {
     Container,
@@ -16,10 +16,12 @@ import {
 import BackIcon from "@mui/icons-material/ArrowBackIos";
 import { DatePicker } from "@mui/x-date-pickers";
 import moment from "moment";
+import { getOffense, putOffense } from "../api/offensesApi";
 import { getStudents, postStudent } from "../api/studentsApi";
 
-const CreateOffenseForm = ({ creationHandler }) => {
+const OffenseDetailsPage = () => {
     const [offense, setOffense] = useState({
+        id: null,
         studentId: null,
         Student: null,
         offenseDate: null,
@@ -30,6 +32,17 @@ const CreateOffenseForm = ({ creationHandler }) => {
 
     const [students, setStudents] = useState([]);
 
+    const [editModeToggle, setEditModeToggle] = useState(false);
+    const [editedOffense, setEditedOffense] = useState({
+        id: null,
+        studentId: null,
+        Student: null,
+        offenseDate: null,
+        article: "",
+        courtDecision: "",
+        penalty: "",
+    });
+
     const [studentCreationToggle, setStudentCreationToggle] = useState(false);
     const [newStudent, setNewStudent] = useState({
         lastName: "",
@@ -38,21 +51,42 @@ const CreateOffenseForm = ({ creationHandler }) => {
         groupName: "",
     });
 
+    const router = useNavigate();
+
+    const { id } = useParams();
+
     useEffect(() => {
+        const loadOffense = async () => {
+            const response = await getOffense(id);
+
+            if (response) {
+                if (response.status < 300) {
+                    setOffense(response.data);
+                } else {
+                    console.log("Error while loading offense.");
+                }
+            } else {
+                console.log("Server did not respond.");
+            }
+        };
+
         const loadStudents = async () => {
             // TODO exception handling.
             const loadedStudents = await getStudents();
             setStudents(loadedStudents);
         };
 
+        loadOffense();
         loadStudents();
-    }, []);
+    }, [id]);
 
-    const router = useNavigate();
+    useEffect(() => {
+        setEditedOffense({ ...offense });
+    }, [offense]);
 
     const changeSudent = (id) => {
-        setOffense({
-            ...offense,
+        setEditedOffense({
+            ...editedOffense,
             studentId: id,
             Student: students.find((std) => std.id === id),
         });
@@ -64,22 +98,34 @@ const CreateOffenseForm = ({ creationHandler }) => {
         const createdStudent = response.data;
 
         setStudents([...students, createdStudent]);
-        changeSudent(createdStudent.id);
+        setEditedOffense({
+            ...editedOffense,
+            studentId: createdStudent.id,
+            Student: createdStudent,
+        });
 
         setStudentCreationToggle(false);
-        // TODO resetStudent.
+        setNewStudent({ lastName: "", firstName: "", patronymic: "", groupName: "" });
     };
 
-    const submit = async (e) => {
-        e.preventDefault();
-        
-        const success = await creationHandler(offense);
-
-        if (success) {
-            router(OFFENSIVES_ROUTE);
+    const applyChanges = async () => {
+        const response = await putOffense(editedOffense);
+        if (response) {
+            if (response.status < 300) {
+                setOffense(editedOffense);
+                setEditModeToggle(false);
+            } else {
+                console.log("Error while updating offense.");
+            }
         } else {
-            // TODO view error.
+            console.log("Server did not respond.");
         }
+    };
+
+    const declineChanges = () => {
+        setEditedOffense(offense);
+        setEditModeToggle(false);
+        setStudentCreationToggle(false);
     };
 
     return (
@@ -94,8 +140,41 @@ const CreateOffenseForm = ({ creationHandler }) => {
             <Container>
                 <Grid container mb={3}>
                     <Grid container item xs={6} mt={2} rowGap={2} columnGap={2} alignItems={"baseline"}>
-                        <Grid item xs={12}>
-                            <Typography variant="h5">Создать правонарушение</Typography>
+                        <Grid container item xs={12}>
+                            <Grid item xs>
+                                <Typography variant="h5">Детали правонарушения</Typography>
+                            </Grid>
+                            <Grid container item xs>
+                                {!editModeToggle && (
+                                    <Grid item xs={2}>
+                                        <Button variant="outlined" onClick={() => setEditModeToggle(true)}>
+                                            Редактировать
+                                        </Button>
+                                    </Grid>
+                                )}
+                                {editModeToggle && (
+                                    <>
+                                        <Grid item xs>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={() => applyChanges()}
+                                            >
+                                                Сохранить
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                onClick={() => declineChanges()}
+                                            >
+                                                Отмена
+                                            </Button>
+                                        </Grid>
+                                    </>
+                                )}
+                            </Grid>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth>
@@ -104,7 +183,8 @@ const CreateOffenseForm = ({ creationHandler }) => {
                                     fullWidth
                                     labelId="student-label"
                                     id="student-select"
-                                    value={offense.studentId ?? ""}
+                                    value={students.length > 0 ? editedOffense.studentId ?? "" : ""}
+                                    readOnly={!editModeToggle}
                                     label="Студент"
                                     onChange={(e) => changeSudent(e.target.value)}
                                 >
@@ -116,14 +196,14 @@ const CreateOffenseForm = ({ creationHandler }) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        {!studentCreationToggle && (
+                        {!studentCreationToggle && editModeToggle && (
                             <Grid item xs={12}>
                                 <Button variant="outlined" onClick={() => setStudentCreationToggle(true)}>
                                     Новый студент
                                 </Button>
                             </Grid>
                         )}
-                        {studentCreationToggle && (
+                        {studentCreationToggle && editModeToggle && (
                             <FormControl fullWidth>
                                 <Grid container item xs={12} gap={1}>
                                     <Grid item xs={5.9}>
@@ -205,12 +285,15 @@ const CreateOffenseForm = ({ creationHandler }) => {
                         <Grid item xs={12}>
                             <DatePicker
                                 label="Дата совершения"
+                                readOnly={!editModeToggle}
                                 value={
-                                    offense.offenseDate != null ? moment(offense.offenseDate, "YYYY-MM-DD") : null
+                                    editedOffense.offenseDate != null
+                                        ? moment(editedOffense.offenseDate, "YYYY-MM-DD")
+                                        : null
                                 }
                                 onChange={(newDate) =>
-                                    setOffense({
-                                        ...offense,
+                                    setEditedOffense({
+                                        ...editedOffense,
                                         offenseDate: moment(newDate).format("YYYY-MM-DD"),
                                     })
                                 }
@@ -223,8 +306,9 @@ const CreateOffenseForm = ({ creationHandler }) => {
                                 label="Статья"
                                 multiline
                                 maxRows={2}
-                                value={offense.article}
-                                onChange={(e) => setOffense({ ...offense, article: e.target.value })}
+                                InputProps={{ readOnly: !editModeToggle }}
+                                value={editedOffense.article}
+                                onChange={(e) => setEditedOffense({ ...editedOffense, article: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -234,8 +318,11 @@ const CreateOffenseForm = ({ creationHandler }) => {
                                 label="Решение суда"
                                 multiline
                                 maxRows={7}
-                                value={offense.courtDecision}
-                                onChange={(e) => setOffense({ ...offense, courtDecision: e.target.value })}
+                                InputProps={{ readOnly: !editModeToggle }}
+                                value={editedOffense.courtDecision}
+                                onChange={(e) =>
+                                    setEditedOffense({ ...editedOffense, courtDecision: e.target.value })
+                                }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -245,14 +332,10 @@ const CreateOffenseForm = ({ creationHandler }) => {
                                 label="Взыскание"
                                 multiline
                                 maxRows={2}
-                                value={offense.penalty}
-                                onChange={(e) => setOffense({ ...offense, penalty: e.target.value })}
+                                InputProps={{ readOnly: !editModeToggle }}
+                                value={editedOffense.penalty}
+                                onChange={(e) => setEditedOffense({ ...editedOffense, penalty: e.target.value })}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button fullWidth variant="contained" style={{ padding: 10 }} onClick={submit}>
-                                Создать
-                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -261,4 +344,4 @@ const CreateOffenseForm = ({ creationHandler }) => {
     );
 };
 
-export default CreateOffenseForm;
+export default OffenseDetailsPage;

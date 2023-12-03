@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { OFFENSEDETAILS_ROUTE } from "../utils/consts";
 import { Button, Grid, Typography } from "@mui/material";
 import moment from "moment";
 import DeleteConfirmationModal from "../modal/DeleteConfirmationModal/DeleteConfirmationModal";
@@ -6,6 +8,8 @@ import EvenIcon from "@mui/icons-material/Event";
 
 const OffenseItem = ({ offense, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    const router = useNavigate();
 
     const deleteOffense = () => {
         deleteHandler(offense.id);
@@ -83,7 +87,7 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                 </Grid>
                 <Grid container item xs={12} gap={2}>
                     <Grid item>
-                        <Button variant="outlined" color="primary">
+                        <Button variant="outlined" color="primary" onClick={() => router(`/offenses/${offense.id}`)}>
                             Подробнее
                         </Button>
                     </Grid>
