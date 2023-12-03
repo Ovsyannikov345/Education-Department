@@ -10,7 +10,7 @@ import MainPage from "../../pages/Main";
 import AddEvent from "../../pages/AddEventPage";
 import EventDetailsPage from "../../pages/EventDetailsPage";
 import OffensesPage from "../../pages/OffensesPage";
-import AddOffensivePage from "../../pages/AddOffensivePage";
+import AddOffensePage from "../../pages/AddOffensePage";
 import ReportsPage from "../../pages/ReportsPage";
 
 export const publicRoutes = [
@@ -32,7 +32,7 @@ export const publicRoutes = [
     },
     {
         path: ADDOFFENSIVE_ROUTE,
-        Component: AddOffensivePage,
+        Component: AddOffensePage,
     },
     {
         path: REPORTS_ROUTE,
