@@ -61,11 +61,14 @@ function OffensesPage() {
     useEffect(() => {
         const loadOffenses = async () => {
             const response = await getOffenses();
-            // TODO if no response.
-            if (response.status < 300) {
-                setOffenses(response.data);
+            if (response) {
+                if (response.status < 300) {
+                    setOffenses(response.data);
+                } else {
+                    console.log("Error while loading offenses");
+                }
             } else {
-                console.log("Error while loading offenses");
+                console.log("Server did not respond.");
             }
         };
 
@@ -91,7 +94,9 @@ function OffensesPage() {
             <Grid container item xs={9} pl={2} pr={2}>
                 <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                     <Grid item>
-                        <Typography variant="h4">Список правонарушений {`(${filteredOffenses.length})`}</Typography>
+                        <Typography variant="h4">
+                            Список правонарушений {`(${filteredOffenses.length})`}
+                        </Typography>
                     </Grid>
                     <Grid item>
                         <SortSelector
