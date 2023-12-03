@@ -32,7 +32,6 @@ function MainPage() {
         }
     }, [events, sortOption]);
 
-    // TODO fix case sensivity.
     const filteredEvents = useMemo(() => {
         const startDate = searchQuery.startDate != null ? moment(searchQuery.startDate) : null;
         const endDate = searchQuery.endDate != null ? moment(searchQuery.endDate) : null;
@@ -41,7 +40,7 @@ function MainPage() {
 
         const filteredEvents = sortedEvents.filter(
             (event) =>
-                event.name.includes(searchQuery.name) &&
+                event.name.toLowerCase().includes(searchQuery.name.toLowerCase()) &&
                 (searchQuery.departments.length > 0
                     ? searchQuery.departments.map((dep) => dep.id).includes(event.Department.id)
                     : true) &&
