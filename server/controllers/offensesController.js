@@ -8,7 +8,7 @@ class OffensesController {
             });
 
             return res.json(offenses);
-        } catch (e) {
+        } catch (error) {
             return res.sendStatus(500);
         }
     }
@@ -41,7 +41,7 @@ class OffensesController {
 
             return res.status(201).json(createdOffense);
         } catch (error) {
-            res.sendStatus(500);
+            return res.sendStatus(500);
         }
     }
 
@@ -63,19 +63,27 @@ class OffensesController {
 
             return res.sendStatus(204);
         } catch (error) {
-            res.sendStatus(500);
+            return res.sendStatus(500);
         }
     }
 
     async delete(req, res) {
-        // TODO validate id.
         const { id } = req.params;
+
+        if (isNaN(id)) {
+            return res.sendStatus(400);
+        }
+
+        if (Offense.findOne({ where: { id: id } }) == null) {
+            return res.sendStatus(404);
+        }
 
         try {
             await Offense.destroy({ where: { id: id } });
-            res.sendStatus(204);
+
+            return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(404);
+            return res.sendStatus(500);
         }
     }
 }

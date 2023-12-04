@@ -51,13 +51,31 @@ const CreateEventForm = ({ creationHandler }) => {
     const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
 
     const loadDepartments = async () => {
-        const departments = await getDepartments();
-        setDepartments(departments);
+        const response = await getDepartments();
+
+        if (response) {
+            if (response.status < 300) {
+                setDepartments(response.data);
+            } else {
+                console.log("Error while loading departments");
+            }
+        } else {
+            console.log("Server did not respond.");
+        }
     };
 
     const loadDirections = async () => {
-        const directions = await getDirections();
-        setDirections(directions);
+        const response = await getDirections();
+
+        if (response) {
+            if (response.status < 300) {
+                setDirections(response.data);
+            } else {
+                console.log("Error while loading directions");
+            }
+        } else {
+            console.log("Server did not respond.");
+        }
     };
 
     useEffect(() => {
@@ -111,11 +129,28 @@ const CreateEventForm = ({ creationHandler }) => {
 
     const router = useNavigate();
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault();
-        creationHandler(event);
 
-        router(MAINPAGE_ROUTE);
+        const success = await creationHandler({
+            name: event.name,
+            description: event.description,
+            plannedResult: event.plannedResult,
+            date: `${event.date}T${event.time}:00.000Z`,
+            departmentId: event.departmentId,
+            subdepartmentId: event.subdepartmentId,
+            directionId: event.directionId,
+            subdirectionId: event.subdirectionId,
+            employees: [...event.employees],
+            students: [...event.students],
+            participants: [...event.participants],
+        });
+
+        if (success) {
+            router(MAINPAGE_ROUTE);
+        } else {
+            // TODO view error.
+        }
     };
 
     const addEmployee = (employee) => {

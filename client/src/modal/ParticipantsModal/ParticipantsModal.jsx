@@ -20,9 +20,17 @@ const ParticipantsModal = ({
     };
 
     const loadParticipants = async () => {
-        const loadedParticipants = await getParticipants();
+        const response = await getParticipants();
 
-        setLoadedParticipants(loadedParticipants);
+        if (response) {
+            if (response.status < 300) {
+                setLoadedParticipants(response.data);
+            } else {
+                console.log("Error while loading participants");
+            }
+        } else {
+            console.log("Server did not respond");
+        }
     };
 
     useEffect(() => {
@@ -35,11 +43,16 @@ const ParticipantsModal = ({
 
     const createParticipant = async (createdParticipant) => {
         const response = await postParticipant(createdParticipant);
-        if (response.status === 200) {
-            addParticipantHandler(response.data);
-            setLoadedParticipants([...loadedParticipants, response.data]);
+
+        if (response) {
+            if (response.status < 300) {
+                addParticipantHandler(response.data);
+                setLoadedParticipants([...loadedParticipants, response.data]);
+            } else {
+                console.log("Error while creating the participant");
+            }
         } else {
-            console.log("Creation failed with code " + response.status);
+            console.log("Server did not respond");
         }
     };
 
@@ -64,9 +77,15 @@ const ParticipantsModal = ({
     const removeParticipantPermanent = async (id) => {
         const response = await deleteParticipant(id);
 
-        if (response.status === 200) {
-            removeParticipantHandler(id);
-            setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
+        if (response) {
+            if (response.status < 300) {
+                removeParticipantHandler(id);
+                setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
+            } else {
+                console.log("Error while deleting the participant");
+            }
+        } else {
+            console.log("Server did not respond");
         }
     };
 

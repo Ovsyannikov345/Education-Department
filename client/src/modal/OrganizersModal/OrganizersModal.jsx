@@ -29,15 +29,31 @@ const OrganizersModal = ({
     };
 
     const loadEmployees = async () => {
-        const loadedEmployees = await getEmployees();
+        const response = await getEmployees();
 
-        setLoadedEmployees(loadedEmployees);
+        if (response) {
+            if (response.status < 300) {
+                setLoadedEmployees(response.data);
+            } else {
+                console.log("Error while loading employees");
+            }
+        } else {
+            console.log("Server did not respond");
+        }
     };
 
     const loadStudents = async () => {
-        const loadedStudents = await getStudents();
+        const response = await getStudents();
 
-        setLoadedStudents(loadedStudents);
+        if (response) {
+            if (response.status < 300) {
+                setLoadedStudents(response.data);
+            } else {
+                console.log("Error while loading students");
+            }
+        } else {
+            console.log("Server did not respond");
+        }
     };
 
     useEffect(() => {
@@ -59,21 +75,32 @@ const OrganizersModal = ({
 
     const createEmployee = async (createdEmployee) => {
         const response = await postEmployee(createdEmployee);
-        if (response.status === 200) {
-            addEmployeeHandler(response.data);
-            setLoadedEmployees([...loadedEmployees, response.data]);
+
+        if (response) {
+            if (response.status < 300) {
+                console.log(response.data);
+                addEmployeeHandler(response.data);
+                setLoadedEmployees([...loadedEmployees, response.data]);
+            } else {
+                console.log("Error while creating the employee");
+            }
         } else {
-            console.log("Creation failed with code " + response.status);
+            console.log("Server did not respond");
         }
     };
 
     const createStudent = async (createdStudent) => {
         const response = await postStudent(createdStudent);
-        if (response.status === 200) {
-            addStudentHandler(response.data);
-            setLoadedStudents([...loadedStudents, response.data]);
+
+        if (response) {
+            if (response.status < 300) {
+                addStudentHandler(response.data);
+                setLoadedStudents([...loadedStudents, response.data]);
+            } else {
+                console.log("Error while creating the student");
+            }
         } else {
-            console.log("Creation failed with code " + response.status);
+            console.log("Server did not respond");
         }
     };
 
@@ -110,18 +137,30 @@ const OrganizersModal = ({
     const removeEmployeePermanent = async (id) => {
         const response = await deleteEmployee(id);
 
-        if (response.status === 200) {
-            removeEmployeeHandler(id);
-            setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
+        if (response) {
+            if (response.status < 300) {
+                removeEmployeeHandler(id);
+                setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
+            } else {
+                console.log("Error while deleting the employee");
+            }
+        } else {
+            console.log("Server did not respond");
         }
     };
 
     const removeStudentPermanent = async (id) => {
         const response = await deleteStudent(id);
 
-        if (response.status === 200) {
-            removeStudentHandler(id);
-            setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
+        if (response) {
+            if (response.status < 300) {
+                removeStudentHandler(id);
+                setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
+            } else {
+                console.log("Error while deleting the student");
+            }
+        } else {
+            console.log("Server did not respond");
         }
     };
 

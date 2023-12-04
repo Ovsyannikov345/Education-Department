@@ -40,9 +40,17 @@ const CreateOffenseForm = ({ creationHandler }) => {
 
     useEffect(() => {
         const loadStudents = async () => {
-            // TODO exception handling.
-            const loadedStudents = await getStudents();
-            setStudents(loadedStudents);
+            const response = await getStudents();
+
+            if (response) {
+                if (response.status < 300) {
+                    setStudents(response.data);
+                } else {
+                    console.log("Error while loading students");
+                }
+            } else {
+                console.log("Server did not respond.");
+            }
         };
 
         loadStudents();
@@ -59,20 +67,33 @@ const CreateOffenseForm = ({ creationHandler }) => {
     };
 
     const createStudent = async () => {
-        // TODO exception handling.
         const response = await postStudent(newStudent);
-        const createdStudent = response.data;
 
-        setStudents([...students, createdStudent]);
-        changeSudent(createdStudent.id);
+        if (response) {
+            if (response.status < 300) {
+                const createdStudent = response.data;
 
-        setStudentCreationToggle(false);
-        // TODO resetStudent.
+                setStudents([...students, createdStudent]);
+                changeSudent(createdStudent.id);
+
+                setStudentCreationToggle(false);
+                setNewStudent({
+                    lastName: "",
+                    firstName: "",
+                    patronymic: "",
+                    groupName: "",
+                });
+            } else {
+                console.log("Error while creating the student");
+            }
+        } else {
+            console.log("Server did not respond");
+        }
     };
 
     const submit = async (e) => {
         e.preventDefault();
-        
+
         const success = await creationHandler(offense);
 
         if (success) {

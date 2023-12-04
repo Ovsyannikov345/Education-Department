@@ -52,15 +52,31 @@ const EventFilter = ({ queryHandler }) => {
 
     useEffect(() => {
         const loadDepartments = async () => {
-            const departments = await getDepartments();
+            const response = await getDepartments();
 
-            setDepartments(departments !== null ? departments : null);
+            if (response) {
+                if (response.status < 300) {
+                    setDepartments(response.data);
+                } else {
+                    console.log("Error while loading departments");
+                }
+            } else {
+                console.log("Server did not respond.");
+            }
         };
 
         const loadDirections = async () => {
-            const directions = await getDirections();
+            const response = await getDirections();
 
-            setDirections(directions !== null ? directions : []);
+            if (response) {
+                if (response.status < 300) {
+                    setDirections(response.data);
+                } else {
+                    console.log("Error while loading directions");
+                }
+            } else {
+                console.log("Server did not respond.");
+            }
         };
 
         loadDepartments();

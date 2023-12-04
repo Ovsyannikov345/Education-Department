@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { OFFENSEDETAILS_ROUTE } from "../utils/consts";
 import { Button, Grid, Typography } from "@mui/material";
 import moment from "moment";
 import DeleteConfirmationModal from "../modal/DeleteConfirmationModal/DeleteConfirmationModal";

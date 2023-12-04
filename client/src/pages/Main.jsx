@@ -65,16 +65,30 @@ function MainPage() {
     }, [sortedEvents, searchQuery]);
 
     const loadEvents = async () => {
-        const events = await getEvents();
+        const response = await getEvents();
 
-        setEvents(events);
+        if (response) {
+            if (response.status < 300) {
+                setEvents(response.data);
+            } else {
+                console.log("Error while loading events");
+            }
+        } else {
+            console.log("Server did not respond.");
+        }
     };
 
     const removeEvent = async (id) => {
         const response = await deleteEvent(id);
 
-        if (response.status === 200) {
-            setEvents(events.filter((event) => event.id !== id));
+        if (response) {
+            if (response.status < 300) {
+                setEvents(events.filter((event) => event.id !== id));
+            } else {
+                console.log("Error while deleting the event");
+            }
+        } else {
+            console.log("Server did not respond.");
         }
     };
 

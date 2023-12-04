@@ -2,9 +2,13 @@ const { Employee } = require("../db/models");
 
 class EmployeeController {
     async getAll(req, res) {
-        const employees = await Employee.findAll();
+        try {
+            const employees = await Employee.findAll();
 
-        return res.json(employees);
+            return res.json(employees);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 
     async create(req, res) {
@@ -12,17 +16,33 @@ class EmployeeController {
             ...req.body,
         };
 
-        const result = await Employee.create(employee);
+        try {
+            const result = await Employee.create(employee);
 
-        return res.json(result.dataValues);
+            return res.status(201).json(result);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 
     async delete(req, res) {
         const { id } = req.params;
 
-        await Employee.destroy({ where: { id: id } });
+        if (isNaN(id)) {
+            return res.sendStatus(400);
+        }
 
-        return res.json();
+        if (Employee.findOne({ where: { id: id } }) == null) {
+            return res.sendStatus(404);
+        }
+
+        try {
+            await Employee.destroy({ where: { id: id } });
+
+            return res.sendStatus(204);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 }
 

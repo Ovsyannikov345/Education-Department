@@ -71,9 +71,17 @@ const OffenseDetailsPage = () => {
         };
 
         const loadStudents = async () => {
-            // TODO exception handling.
-            const loadedStudents = await getStudents();
-            setStudents(loadedStudents);
+            const response = await getStudents();
+
+            if (response) {
+                if (response.status < 300) {
+                    setStudents(response.data);
+                } else {
+                    console.log("Error while loading students");
+                }
+            } else {
+                console.log("Server did not respond.");
+            }
         };
 
         loadOffense();
@@ -93,19 +101,27 @@ const OffenseDetailsPage = () => {
     };
 
     const createStudent = async () => {
-        // TODO exception handling.
         const response = await postStudent(newStudent);
-        const createdStudent = response.data;
 
-        setStudents([...students, createdStudent]);
-        setEditedOffense({
-            ...editedOffense,
-            studentId: createdStudent.id,
-            Student: createdStudent,
-        });
+        if (response) {
+            if (response.status < 300) {
+                const createdStudent = response.data;
 
-        setStudentCreationToggle(false);
-        setNewStudent({ lastName: "", firstName: "", patronymic: "", groupName: "" });
+                setStudents([...students, createdStudent]);
+                setEditedOffense({
+                    ...editedOffense,
+                    studentId: createdStudent.id,
+                    Student: createdStudent,
+                });
+
+                setStudentCreationToggle(false);
+                setNewStudent({ lastName: "", firstName: "", patronymic: "", groupName: "" });
+            } else {
+                console.log("Error while creating the student");
+            }
+        } else {
+            console.log("Server did not respond.");
+        }
     };
 
     const applyChanges = async () => {

@@ -2,11 +2,15 @@ const { Department, Subdepartment } = require("../db/models");
 
 class DepartmentController {
     async getAll(req, res) {
-        const departments = await Department.findAll({
-            include: { model: Subdepartment },
-        });
+        try {
+            const departments = await Department.findAll({
+                include: { model: Subdepartment },
+            });
 
-        return res.json(departments);
+            return res.json(departments);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 }
 

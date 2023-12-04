@@ -2,25 +2,45 @@ const { Participant } = require("../db/models");
 
 class ParticipantController {
     async getAll(req, res) {
-        const participants = await Participant.findAll();
+        try {
+            const participants = await Participant.findAll();
 
-        return res.json(participants);
+            return res.json(participants);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 
     async create(req, res) {
         const participant = { ...req.body };
 
-        const result = await Participant.create(participant);
+        try {
+            const result = await Participant.create(participant);
 
-        return res.json(result.dataValues);
+            return res.status(201).json(result);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 
     async delete(req, res) {
         const { id } = req.params;
 
-        await Participant.destroy({ where: { id: id } });
+        if (isNaN(id)) {
+            return res.sendStatus(400);
+        }
 
-        return res.json();
+        if (Participant.findOne({ where: { id: id } }) == null) {
+            return res.sendStatus(404);
+        }
+
+        try {
+            await Participant.destroy({ where: { id: id } });
+
+            return res.sendStatus(204);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 }
 

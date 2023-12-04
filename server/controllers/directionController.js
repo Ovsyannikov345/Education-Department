@@ -2,11 +2,15 @@ const { Direction, Subdirection } = require("../db/models");
 
 class DirectionController {
     async getAll(req, res) {
-        const directions = await Direction.findAll({
-            include: { model: Subdirection },
-        });
+        try {
+            const directions = await Direction.findAll({
+                include: { model: Subdirection },
+            });
 
-        return res.json(directions);
+            return res.json(directions);
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     }
 }
 

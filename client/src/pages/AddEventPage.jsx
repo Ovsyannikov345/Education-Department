@@ -4,7 +4,19 @@ import { postEvent } from "../api/eventsApi";
 
 function AddEventPage() {
     const createEvent = async (event) => {
-        await postEvent(event);
+        const response = await postEvent(event);
+
+        if (response) {
+            if (response.status < 300) {
+                return true;
+            } else {
+                console.log("Error while creating the offense. Code: " + response.status);
+            }
+        } else {
+            console.log("Server did not respond.");
+        }
+
+        return false;
     };
 
     return <CreateEventForm creationHandler={createEvent} />;

@@ -61,6 +61,7 @@ function OffensesPage() {
     useEffect(() => {
         const loadOffenses = async () => {
             const response = await getOffenses();
+
             if (response) {
                 if (response.status < 300) {
                     setOffenses(response.data);
@@ -78,11 +79,14 @@ function OffensesPage() {
     const removeOffense = async (id) => {
         const response = await deleteOffense(id);
 
-        if (response.status < 300) {
-            console.log("Offense deleted");
-            setOffenses(offenses.filter((off) => off.id !== id));
+        if (response) {
+            if (response.status < 300) {
+                setOffenses(offenses.filter((off) => off.id !== id));
+            } else {
+                console.log("Error while deleting offense");
+            }
         } else {
-            console.log("Error while deleting offese");
+            console.log("Server did not respond.");
         }
     };
 

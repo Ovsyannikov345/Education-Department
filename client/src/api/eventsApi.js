@@ -1,36 +1,93 @@
 import { host } from ".";
 
 const getEvents = async () => {
-    const response = await host.get("/events");
+    try {
+        const response = await host.get("/events");
 
-    return response.data;
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while loading events. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
 };
 
 const getEvent = async (id) => {
-    const response = await host.get(`/events/${id}`);
+    try {
+        const response = await host.get(`/events/${id}`);
 
-    return response.data;
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while loading the event. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
 };
 
 const postEvent = async (event) => {
-    const response = await host.post("/events", event);
+    try {
+        const response = await host.post("/events", event);
 
-    return response.status;
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while posting the event. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
 };
 
 const putEvent = async (event) => {
     try {
         const response = await host.put(`/events/${event.id}`, event);
-        return response.status;
-    } catch (err) {
-        return 404;
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while updating the event. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
     }
 };
 
 const deleteEvent = async (id) => {
-    const response = await host.delete(`/events/${id}`);
+    try {
+        const response = await host.delete(`/events/${id}`);
 
-    return response;
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while deleting the event. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
 };
 
 export { getEvent, getEvents, postEvent, putEvent, deleteEvent };

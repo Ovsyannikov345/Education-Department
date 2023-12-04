@@ -5,6 +5,7 @@ import { postOffense } from "../api/offensesApi";
 const AddOffensePage = () => {
     const createOffense = async (offense) => {
         const response = await postOffense(offense);
+        
         if (response) {
             if (response.status < 300) {
                 return true;

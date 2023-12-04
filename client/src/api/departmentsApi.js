@@ -1,9 +1,21 @@
 import { host } from ".";
 
 const getDepartments = async () => {
-    const response = await host.get("/departments");
+    try {
+        const response = await host.get("/departments");
 
-    return response.data;
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while loading departments. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
 };
 
 export { getDepartments };
