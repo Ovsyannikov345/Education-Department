@@ -91,7 +91,21 @@ class EventController {
         }
 
         try {
-            await Event.update(event, { where: { id: id } });
+            const a = await Event.update(event, { where: { id: id } });
+
+            const eventRecord = await Event.findOne({ where: { id: id } });
+
+            const employees = await eventRecord.getEmployees();
+            const students = await eventRecord.getStudents();
+            const participants = await eventRecord.getParticipants();
+
+            eventRecord.removeEmployees(employees);
+            eventRecord.removeStudents(students);
+            eventRecord.removeParticipants(participants);
+
+            eventRecord.addEmployees(event.employees.map((emp) => emp.id));
+            eventRecord.addStudents(event.students.map((std) => std.id));
+            eventRecord.addParticipants(event.participants.map((prt) => prt.id));
 
             return res.sendStatus(204);
         } catch (error) {
