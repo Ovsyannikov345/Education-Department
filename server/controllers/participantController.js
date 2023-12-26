@@ -30,7 +30,7 @@ class ParticipantController {
             return res.sendStatus(400);
         }
 
-        if (Participant.findOne({ where: { id: id } }) == null) {
+        if ((await Participant.findOne({ where: { id: id } })) == null) {
             return res.sendStatus(404);
         }
 

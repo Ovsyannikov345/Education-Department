@@ -32,7 +32,7 @@ class EmployeeController {
             return res.sendStatus(400);
         }
 
-        if (Employee.findOne({ where: { id: id } }) == null) {
+        if ((await Employee.findOne({ where: { id: id } })) == null) {
             return res.sendStatus(404);
         }
 

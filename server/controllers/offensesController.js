@@ -74,7 +74,7 @@ class OffensesController {
             return res.sendStatus(400);
         }
 
-        if (Offense.findOne({ where: { id: id } }) == null) {
+        if ((await Offense.findOne({ where: { id: id } })) == null) {
             return res.sendStatus(404);
         }
 

@@ -120,7 +120,7 @@ class EventController {
             return res.sendStatus(400);
         }
 
-        if (Event.findOne({ where: { id: id } }) == null) {
+        if ((await Event.findOne({ where: { id: id } })) == null) {
             return res.sendStatus(404);
         }
 

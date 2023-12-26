@@ -32,7 +32,7 @@ class StudentController {
             return res.sendStatus(400);
         }
 
-        if (Student.findOne({ where: { id: id } }) == null) {
+        if ((await Student.findOne({ where: { id: id } })) == null) {
             return res.sendStatus(404);
         }
 
