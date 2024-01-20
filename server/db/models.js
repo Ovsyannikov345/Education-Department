@@ -11,6 +11,7 @@ const Event = sequelize.define(
         },
         name: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         departmentId: {
             type: DataTypes.INTEGER,
@@ -28,6 +29,7 @@ const Event = sequelize.define(
         },
         date: {
             type: DataTypes.DATE,
+            allowNull: false,
         },
         plannedResult: {
             type: DataTypes.STRING,
@@ -49,6 +51,7 @@ const Department = sequelize.define(
         },
         name: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     { timestamps: false }
@@ -64,6 +67,7 @@ const Subdepartment = sequelize.define(
         },
         name: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         departmentId: {
             type: DataTypes.INTEGER,
@@ -83,6 +87,7 @@ const Direction = sequelize.define(
         },
         name: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     { timestamps: false }
@@ -98,6 +103,7 @@ const Subdirection = sequelize.define(
         },
         name: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         directionId: {
             type: DataTypes.INTEGER,
@@ -117,9 +123,11 @@ const Participant = sequelize.define(
         },
         firstName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         lastName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         patronymic: {
             type: DataTypes.STRING,
@@ -129,6 +137,7 @@ const Participant = sequelize.define(
         },
         organization: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     { timestamps: false }
@@ -146,9 +155,11 @@ const Employee = sequelize.define(
         },
         firstName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         lastName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         patronymic: {
             type: DataTypes.STRING,
@@ -167,15 +178,18 @@ const Student = sequelize.define(
         },
         firstName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         lastName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         patronymic: {
             type: DataTypes.STRING,
         },
         groupName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     { timestamps: false }
@@ -207,9 +221,11 @@ const Offense = sequelize.define(
         },
         article: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         offenseDate: {
             type: DataTypes.DATE,
+            allowNull: false,
         },
         courtDecision: {
             type: DataTypes.STRING,
