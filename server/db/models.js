@@ -237,28 +237,47 @@ const Offense = sequelize.define(
     { timestamps: false }
 );
 
-const User = sequelize.define("User", {
-    id: {
-        type: DataTypes.INTEGER,
+const User = sequelize.define(
+    "User",
+    {
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        blockedAt: {
+            type: DataTypes.DATE,
+        },
     },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    { updatedAt: false }
+);
+
+const RefreshToken = sequelize.define(
+    "RefreshToken",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        token: {
+            type: DataTypes.STRING,
+        },
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    blockedAt: {
-        type: DataTypes.DATE,
-    }
-}, { updatedAt: false });
+    { updatedAt: false }
+);
 
 Department.hasMany(Event, {
     foreignKey: "departmentId",
@@ -348,4 +367,6 @@ module.exports = {
     Employee,
     Student,
     Offense,
+    User,
+    RefreshToken,
 };
