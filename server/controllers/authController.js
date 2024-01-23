@@ -48,17 +48,15 @@ class AuthController {
                 return res.sendStatus(401);
             }
 
-            if (RefreshToken.findOne({ where: { token: refreshToken } }) == null) {
+            if ((await RefreshToken.findOne({ where: { token: refreshToken } })) == null) {
                 return res.sendStatus(403);
             }
 
             try {
                 const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-                const user = { userId: decoded.userId, role: decoded.role };
-
                 const accessToken = jwt.sign(
-                    { userId: user.id, role: user.role },
+                    { userId: decoded.userId, role: decoded.role },
                     process.env.ACCESS_TOKEN_SECRET,
                     {
                         expiresIn: "10m",
