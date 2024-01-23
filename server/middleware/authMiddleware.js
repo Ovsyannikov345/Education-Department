@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = (req, res, next) => {
+const validateToken = (req, res, next) => {
     var token = req.header("Authorization");
 
     if (!token) {
@@ -21,4 +21,12 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
-module.exports = { authMiddleware };
+const validateAdmin = (req, res, next) => {
+    if (req.role !== "admin") {
+        return res.sendStatus(403);
+    }
+
+    next();
+};
+
+module.exports = { validateToken, validateAdmin };
