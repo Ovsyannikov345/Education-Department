@@ -1,3 +1,5 @@
+export const LOGIN_ROUTE = "/login";
+
 export const MAINPAGE_ROUTE = "/events";
 export const ADDEVENT_ROUTE = "/events/add";
 export const EVENTDETAILS_ROUTE = "/events/:id";
