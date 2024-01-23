@@ -15,7 +15,7 @@ import AddOffensePage from "../../pages/AddOffensePage";
 import OffenseDetailsPage from "../../pages/OffenseDetailsPage";
 import ReportsPage from "../../pages/ReportsPage";
 
-export const publicRoutes = [
+export const userRoutes = [
     {
         path: MAINPAGE_ROUTE,
         Component: MainPage,
