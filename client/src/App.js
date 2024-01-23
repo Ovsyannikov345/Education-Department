@@ -4,7 +4,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import "moment/locale/en-gb";
 import AppRouter from "./components/Router/AppRouter";
 import NavBar from "./components/NavBar";
-import { observer } from "mobx-react-lite";
 
 function App() {
     return (
@@ -17,4 +16,4 @@ function App() {
     );
 }
 
-export default observer(App);
+export default App;
