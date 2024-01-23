@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     AppBar,
     Box,
@@ -27,6 +27,25 @@ import SummarizeIcon from "@mui/icons-material/Summarize";
 import GavelIcon from "@mui/icons-material/Gavel";
 
 function NavBar() {
+    const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
+
+    useEffect(() => {
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+
+        document.body.appendChild(iframe);
+        iframe.contentWindow.addEventListener("storage", () => {
+            setAccessToken(localStorage.getItem("accessToken"));
+        });
+
+        return () => {
+            iframe.contentWindow.removeEventListener("storage", () => {
+                setAccessToken(localStorage.getItem("accessToken"));
+            });
+            document.body.removeChild(iframe);
+        };
+    }, []);
+
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const toggleDrawer = (open) => (event) => {
@@ -42,16 +61,18 @@ function NavBar() {
                     <Grid container alignItems={"center"} justifyContent={"space-between"}>
                         <Grid item container xs={6} alignItems={"center"} columnGap={2}>
                             <Grid item xs={0.5}>
-                                <IconButton
-                                    size="large"
-                                    edge="start"
-                                    color="inherit"
-                                    aria-label="menu"
-                                    sx={{ mr: 2 }}
-                                    onClick={toggleDrawer(true)}
-                                >
-                                    <DehazeIcon />
-                                </IconButton>
+                                {accessToken && (
+                                    <IconButton
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="menu"
+                                        sx={{ mr: 2 }}
+                                        onClick={toggleDrawer(true)}
+                                    >
+                                        <DehazeIcon />
+                                    </IconButton>
+                                )}
                             </Grid>
                             <Grid item xs={8}>
                                 <Typography variant="h5">Отдел по воспитательной работе</Typography>
@@ -65,14 +86,16 @@ function NavBar() {
                             </Grid>
                         </Grid>
                         <Grid item xs={1}>
-                            <Button
-                                color="inherit"
-                                variant="outlined"
-                                size="large"
-                                sx={{ justifySelf: "flex-end" }}
-                            >
-                                Войти
-                            </Button>
+                            {accessToken && (
+                                <Button
+                                    color="inherit"
+                                    variant="outlined"
+                                    size="large"
+                                    sx={{ justifySelf: "flex-end" }}
+                                >
+                                    Войти
+                                </Button>
+                            )}
                         </Grid>
                     </Grid>
                 </Toolbar>
