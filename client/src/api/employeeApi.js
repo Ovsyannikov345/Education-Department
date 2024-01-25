@@ -1,4 +1,5 @@
 import { host } from ".";
+import updateToken from "../utils/updateToken";
 
 const getEmployees = async () => {
     try {
@@ -8,6 +9,10 @@ const getEmployees = async () => {
     } catch (error) {
         if (error.response) {
             console.log("Error while loading employees. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(getEmployees);
+            }
 
             return error.response;
         } else if (error.request) {
@@ -27,6 +32,10 @@ const postEmployee = async (employee) => {
         if (error.response) {
             console.log("Error while posting the employee. Code: " + error.response.status);
 
+            if (error.response.status === 401) {
+                return await updateToken(postEmployee, employee);
+            }
+
             return error.response;
         } else if (error.request) {
             console.log("Server did not respond.");
@@ -44,6 +53,10 @@ const deleteEmployee = async (id) => {
     } catch (error) {
         if (error.response) {
             console.log("Error while deleting the employee. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(deleteEmployee, id);
+            }
 
             return error.response;
         } else if (error.request) {

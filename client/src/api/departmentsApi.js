@@ -1,4 +1,5 @@
 import { host } from ".";
+import updateToken from "../utils/updateToken";
 
 const getDepartments = async () => {
     try {
@@ -8,6 +9,10 @@ const getDepartments = async () => {
     } catch (error) {
         if (error.response) {
             console.log("Error while loading departments. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(getDepartments);
+            }
 
             return error.response;
         } else if (error.request) {

@@ -1,4 +1,5 @@
 import { host } from ".";
+import updateToken from "../utils/updateToken";
 
 const getOffenses = async () => {
     try {
@@ -8,6 +9,10 @@ const getOffenses = async () => {
     } catch (error) {
         if (error.response) {
             console.log("Error while loading offenses. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(getOffenses);
+            }
 
             return error.response;
         } else if (error.request) {
@@ -27,6 +32,10 @@ const getOffense = async (id) => {
         if (error.response) {
             console.log("Error while loading the offense. Code: " + error.response.status);
 
+            if (error.response.status === 401) {
+                return await updateToken(getOffense, id);
+            }
+
             return error.response;
         } else if (error.request) {
             console.log("Server did not respond.");
@@ -44,6 +53,10 @@ const postOffense = async (offense) => {
     } catch (error) {
         if (error.response) {
             console.log("Error while posting the offense. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(postOffense, offense);
+            }
 
             return error.response;
         } else if (error.request) {
@@ -63,6 +76,10 @@ const putOffense = async (offense) => {
         if (error.response) {
             console.log("Error while updating the offense. Code: " + error.response.status);
 
+            if (error.response.status === 401) {
+                return await updateToken(putOffense, offense);
+            }
+
             return error.response;
         } else if (error.request) {
             console.log("Server did not respond.");
@@ -80,6 +97,10 @@ const deleteOffense = async (id) => {
     } catch (error) {
         if (error.response) {
             console.log("Error while deleting offenses. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(deleteOffense, id);
+            }
 
             return error.response;
         } else if (error.request) {

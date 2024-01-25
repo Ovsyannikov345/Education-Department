@@ -1,4 +1,5 @@
 import { host } from ".";
+import updateToken from "../utils/updateToken";
 
 const getEvents = async () => {
     try {
@@ -8,6 +9,10 @@ const getEvents = async () => {
     } catch (error) {
         if (error.response) {
             console.log("Error while loading events. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(getEvents);
+            }
 
             return error.response;
         } else if (error.request) {
@@ -27,6 +32,10 @@ const getEvent = async (id) => {
         if (error.response) {
             console.log("Error while loading the event. Code: " + error.response.status);
 
+            if (error.response.status === 401) {
+                return await updateToken(getEvent, id);
+            }
+
             return error.response;
         } else if (error.request) {
             console.log("Server did not respond.");
@@ -44,6 +53,10 @@ const postEvent = async (event) => {
     } catch (error) {
         if (error.response) {
             console.log("Error while posting the event. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(postEvent, event);
+            }
 
             return error.response;
         } else if (error.request) {
@@ -63,6 +76,10 @@ const putEvent = async (event) => {
         if (error.response) {
             console.log("Error while updating the event. Code: " + error.response.status);
 
+            if (error.response.status === 401) {
+                return await updateToken(putEvent, event);
+            }
+
             return error.response;
         } else if (error.request) {
             console.log("Server did not respond.");
@@ -80,6 +97,10 @@ const deleteEvent = async (id) => {
     } catch (error) {
         if (error.response) {
             console.log("Error while deleting the event. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(deleteEvent, id);
+            }
 
             return error.response;
         } else if (error.request) {
