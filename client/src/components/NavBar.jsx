@@ -4,7 +4,6 @@ import {
     Box,
     Toolbar,
     Typography,
-    Button,
     IconButton,
     Drawer,
     List,
@@ -25,6 +24,7 @@ import EventIcon from "@mui/icons-material/Event";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import GavelIcon from "@mui/icons-material/Gavel";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 function NavBar() {
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
@@ -53,6 +53,13 @@ function NavBar() {
     };
 
     const navigate = useNavigate();
+
+    const logout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("role");
+        window.location.reload();
+    };
 
     return (
         <Box>
@@ -85,16 +92,11 @@ function NavBar() {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid item xs={1}>
+                        <Grid container item xs={1} justifyContent={"flex-end"}>
                             {accessToken && (
-                                <Button
-                                    color="inherit"
-                                    variant="outlined"
-                                    size="large"
-                                    sx={{ justifySelf: "flex-end" }}
-                                >
-                                    Войти
-                                </Button>
+                                <IconButton size="large" color="inherit" onClick={logout}>
+                                    <LogoutIcon fontSize="large" />
+                                </IconButton>
                             )}
                         </Grid>
                     </Grid>
