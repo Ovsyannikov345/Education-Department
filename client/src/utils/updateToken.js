@@ -19,6 +19,8 @@ const updateToken = async (requestFunction, argument) => {
     } catch (error) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userId");
         window.location.reload();
     }
 };
