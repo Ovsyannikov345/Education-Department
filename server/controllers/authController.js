@@ -33,7 +33,7 @@ class AuthController {
 
             await RefreshToken.create({ token: refreshToken });
 
-            res.json({ accessToken: accessToken, refreshToken: refreshToken });
+            res.json({ accessToken: accessToken, refreshToken: refreshToken, role: user.role });
         } catch (err) {
             console.log(err);
             res.status(500).json({ error: "Login failed" });
