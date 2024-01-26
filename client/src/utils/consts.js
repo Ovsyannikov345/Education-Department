@@ -8,4 +8,6 @@ export const ADDOFFENSIVE_ROUTE = "/offenses/add";
 export const OFFENSEDETAILS_ROUTE = "/offenses/:id";
 export const REPORTS_ROUTE = "/reports";
 
+export const ACCOUNTS_ROUTE = "/accounts";
+
 export const ITEMS_PER_PAGE = 10;
