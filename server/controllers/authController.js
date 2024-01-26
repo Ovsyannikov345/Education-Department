@@ -20,6 +20,10 @@ class AuthController {
                 return res.status(401).json({ error: "Authentication failed" });
             }
 
+            if (user.blockedAt != null) {
+                return res.status(403).json({ error: "Account is blocked" });
+            }
+
             const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.ACCESS_TOKEN_SECRET, {
                 expiresIn: "10m",
             });
@@ -33,7 +37,7 @@ class AuthController {
 
             await RefreshToken.create({ token: refreshToken });
 
-            res.json({ accessToken: accessToken, refreshToken: refreshToken, role: user.role });
+            res.json({ accessToken: accessToken, refreshToken: refreshToken, role: user.role, userId: user.id });
         } catch (err) {
             console.log(err);
             res.status(500).json({ error: "Login failed" });
