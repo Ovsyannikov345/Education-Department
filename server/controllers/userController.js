@@ -81,7 +81,9 @@ class UserController {
 
             await User.update({ blockedAt: Date.now() }, { where: { id: id } });
 
-            return res.sendStatus(204);
+            const blockDate = (await User.findOne({ where: { id: id } })).blockedAt;
+
+            return res.status(200).json({ blockedAt: blockDate });
         } catch (err) {
             console.log(err);
             return res.status(500).json({ error: "Error while blocking the user" });
