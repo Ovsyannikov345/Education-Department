@@ -18,12 +18,14 @@ import {
     OFFENSIVES_ROUTE,
     REPORTS_ROUTE,
     ADDOFFENSIVE_ROUTE,
+    ACCOUNTS_ROUTE,
 } from "../utils/consts";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import EventIcon from "@mui/icons-material/Event";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import GavelIcon from "@mui/icons-material/Gavel";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 function NavBar() {
@@ -130,6 +132,12 @@ function NavBar() {
                             <SummarizeIcon />
                             <ListItemText primary="Просмотреть отчеты" style={{ marginLeft: 5 }} />
                         </ListItem>
+                        {localStorage.getItem("role") === "admin" && (
+                            <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(ACCOUNTS_ROUTE)}>
+                                <AccountBoxIcon />
+                                <ListItemText primary="Учетные записи" style={{ marginLeft: 5 }} />
+                            </ListItem>
+                        )}
                     </List>
                 </Box>
             </Drawer>
