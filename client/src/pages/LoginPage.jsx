@@ -46,6 +46,7 @@ const LoginPage = () => {
                     if (response.status < 400) {
                         localStorage.setItem("accessToken", response.data.accessToken);
                         localStorage.setItem("refreshToken", response.data.refreshToken);
+                        localStorage.setItem("role", response.data.role);
                         window.location.reload();
                     } else {
                         displayError(response.data.error);
