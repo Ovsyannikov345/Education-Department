@@ -2,7 +2,6 @@ import { authHost } from ".";
 
 const login = async ({ email, password }) => {
     try {
-        console.log(process.env.API_URL);
         const response = await authHost.post("/login", { email: email, password: password });
 
         return response;
