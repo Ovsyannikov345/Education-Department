@@ -245,6 +245,17 @@ const User = sequelize.define(
             primaryKey: true,
             autoIncrement: true,
         },
+        firstName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        patronymic: {
+            type: DataTypes.STRING,
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
