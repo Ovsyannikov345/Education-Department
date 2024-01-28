@@ -14,6 +14,11 @@ const AccountsPage = () => {
 
     const [sortOption, setSortOption] = useState("date desc");
 
+    const [searchQuery, setSearchQuery] = useState({
+        showBlocked: false,
+        text: "",
+    });
+
     const sortedUsers = useMemo(() => {
         switch (sortOption) {
             case "date asc":
@@ -34,6 +39,15 @@ const AccountsPage = () => {
                 return [...users];
         }
     }, [users, sortOption]);
+
+    const sortedAndFilteredUsers = useMemo(() => {
+        return sortedUsers.filter(
+            (user) =>
+                (searchQuery.showBlocked || user.blockedAt == null) &&
+                ([user.lastName, user.firstName, user.patronymic].join(" ").includes(searchQuery.text) ||
+                    user.email.includes(searchQuery.text))
+        );
+    }, [sortedUsers, searchQuery]);
 
     useEffect(() => {
         const loadData = async () => {
@@ -121,15 +135,29 @@ const AccountsPage = () => {
                     </Grid>
                 </Grid>
                 <Grid container mt={1}>
-                    <FormControlLabel control={<Checkbox />} label="Показывать заблокированные" />
-                    {/* TODO implement */}
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={searchQuery.showBlocked}
+                                onChange={(e) =>
+                                    setSearchQuery({ ...searchQuery, showBlocked: e.target.checked })
+                                }
+                            />
+                        }
+                        label="Показывать заблокированные"
+                    />
                 </Grid>
                 <Grid container item mt={1} xs={6}>
-                    <TextField fullWidth placeholder="Поиск по имени или адресу эл.почты" />
+                    <TextField
+                        fullWidth
+                        placeholder="Поиск по имени или адресу эл.почты"
+                        value={searchQuery.text}
+                        onChange={(e) => setSearchQuery({ ...searchQuery, text: e.target.value })}
+                    />
                 </Grid>
                 <Grid item xs={12}>
-                    {sortedUsers.length > 0 ? (
-                        sortedUsers.map((user) => (
+                    {sortedAndFilteredUsers.length > 0 ? (
+                        sortedAndFilteredUsers.map((user) => (
                             <UserCard
                                 key={user.id}
                                 userData={user}
@@ -139,7 +167,9 @@ const AccountsPage = () => {
                             />
                         ))
                     ) : (
-                        <Typography>Учетные записи не найдены</Typography>
+                        <Typography variant="h5" mt={2}>
+                            Учетные записи не найдены
+                        </Typography>
                     )}
                 </Grid>
             </Grid>
