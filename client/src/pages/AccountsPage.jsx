@@ -93,8 +93,10 @@ const AccountsPage = () => {
 
         const index = users.findIndex((user) => user.id === id);
 
-        users[index].blockedAt = response.data.blockedAt;
+        const updatedUsers = [...users];
 
+        updatedUsers[index] = { ...updatedUsers[index], blockedAt: response.data.blockedAt };
+        setUsers(updatedUsers);
         displaySuccess("Учетная запись заблокирована");
     };
 
@@ -108,8 +110,10 @@ const AccountsPage = () => {
 
         const index = users.findIndex((user) => user.id === id);
 
-        users[index].blockedAt = null;
+        const updatedUsers = [...users];
 
+        updatedUsers[index] = { ...updatedUsers[index], blockedAt: null };
+        setUsers(updatedUsers);
         displaySuccess("Учетная запись разблокирована");
     };
 
