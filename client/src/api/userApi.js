@@ -25,7 +25,23 @@ const getUsers = async () => {
 };
 
 const postUser = async (userData) => {
-    // TODO implement.
+    try {
+        const response = await host.post("/users", userData);
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            if (error.response.status === 401) {
+                return await updateToken(postUser, userData);
+            }
+
+            return error.response;
+        } else if (error.request) {
+            return { data: { error: "Сервис временно недоступен" } };
+        } else {
+            return { data: { error: "Ошибка при создании запроса" } };
+        }
+    }
 };
 
 const blockUser = async (id) => {
