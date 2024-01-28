@@ -1,5 +1,5 @@
 import { Grid, Typography, Snackbar, Alert, Checkbox, FormControlLabel, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SortSelector from "../components/SortSelector";
 import { getUsers, blockUser, unblockUser } from "../api/userApi";
 import UserCard from "../components/UserCard";
@@ -11,6 +11,29 @@ const AccountsPage = () => {
     const [successMessage, setSuccessMessage] = useState("");
 
     const [users, setUsers] = useState([]);
+
+    const [sortOption, setSortOption] = useState("date desc");
+
+    const sortedUsers = useMemo(() => {
+        switch (sortOption) {
+            case "date asc":
+                return [...users].sort(
+                    (a, b) => new Date(a.createdAt.slice(0, -1)) - new Date(b.createdAt.slice(0, -1))
+                );
+            case "date desc":
+                return [...users].sort(
+                    (a, b) => new Date(b.createdAt.slice(0, -1)) - new Date(a.createdAt.slice(0, -1))
+                );
+            case "alphabetic":
+                return [...users].sort((a, b) =>
+                    [a.lastName, a.firstName, a.patronymic]
+                        .join("")
+                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                );
+            default:
+                return [...users];
+        }
+    }, [users, sortOption]);
 
     useEffect(() => {
         const loadData = async () => {
@@ -88,14 +111,12 @@ const AccountsPage = () => {
                     <Grid item>
                         <SortSelector
                             options={[
-                                { value: "alphabetic", name: "По алфавиту" },
                                 { value: "date desc", name: "Сначала новые" },
                                 { value: "date asc", name: "Сначала старые" },
+                                { value: "alphabetic", name: "По алфавиту" },
                             ]}
-                            value={
-                                "alphabetic" //sortOption
-                            }
-                            //changeHandler={setSortOption}
+                            value={sortOption}
+                            changeHandler={setSortOption}
                         />
                     </Grid>
                 </Grid>
@@ -107,8 +128,8 @@ const AccountsPage = () => {
                     <TextField fullWidth placeholder="Поиск по имени или адресу эл.почты" />
                 </Grid>
                 <Grid item xs={12}>
-                    {users.length > 0 ? (
-                        users.map((user) => (
+                    {sortedUsers.length > 0 ? (
+                        sortedUsers.map((user) => (
                             <UserCard
                                 key={user.id}
                                 userData={user}
