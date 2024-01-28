@@ -1,10 +1,13 @@
-import { Grid, Typography, Snackbar, Alert, Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { Grid, Typography, Snackbar, Alert, Checkbox, FormControlLabel, TextField, Button } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import SortSelector from "../components/SortSelector";
 import { getUsers, blockUser, unblockUser } from "../api/userApi";
 import UserCard from "../components/UserCard";
+import CreateUserModal from "../modal/CreateUserModal/CreateUserModal";
 
 const AccountsPage = () => {
+    const [createModalOpen, setCreateModalOpen] = useState(false);
+
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [success, setSuccess] = useState(false);
@@ -117,77 +120,91 @@ const AccountsPage = () => {
         displaySuccess("Учетная запись разблокирована");
     };
 
-    // TODO implement user creation.
+    const addUser = (user) => {
+        setUsers([...users, user]);
+        displaySuccess("Учетная запись создана");
+    };
 
     return (
-        <Grid container justifyContent={"center"} mb={5}>
-            <Grid container item xs={8}>
-                <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
-                    <Grid item>
-                        <Typography variant="h4">Учетные записи</Typography>
+        <>
+            <CreateUserModal
+                open={createModalOpen}
+                closeHandler={() => setCreateModalOpen(false)}
+                errorCallback={displayError}
+                successCallback={addUser}
+            />
+            <Grid container justifyContent={"center"} mb={5}>
+                <Grid container item xs={8}>
+                    <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
+                        <Grid item container xs={8} gap={3}>
+                            <Typography variant="h4">Учетные записи</Typography>
+                            <Button variant="contained" onClick={() => setCreateModalOpen(true)}>
+                                Создать
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <SortSelector
+                                options={[
+                                    { value: "date desc", name: "Сначала новые" },
+                                    { value: "date asc", name: "Сначала старые" },
+                                    { value: "alphabetic", name: "По алфавиту" },
+                                ]}
+                                value={sortOption}
+                                changeHandler={setSortOption}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <SortSelector
-                            options={[
-                                { value: "date desc", name: "Сначала новые" },
-                                { value: "date asc", name: "Сначала старые" },
-                                { value: "alphabetic", name: "По алфавиту" },
-                            ]}
-                            value={sortOption}
-                            changeHandler={setSortOption}
+                    <Grid container mt={1}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={searchQuery.showBlocked}
+                                    onChange={(e) =>
+                                        setSearchQuery({ ...searchQuery, showBlocked: e.target.checked })
+                                    }
+                                />
+                            }
+                            label="Показывать заблокированные"
                         />
                     </Grid>
+                    <Grid container item mt={1} xs={6}>
+                        <TextField
+                            fullWidth
+                            placeholder="Поиск по имени или адресу эл.почты"
+                            value={searchQuery.text}
+                            onChange={(e) => setSearchQuery({ ...searchQuery, text: e.target.value })}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        {sortedAndFilteredUsers.length > 0 ? (
+                            sortedAndFilteredUsers.map((user) => (
+                                <UserCard
+                                    key={user.id}
+                                    userData={user}
+                                    blockHandler={blockUserById}
+                                    unblockHandler={unblockUserById}
+                                    currentUserId={localStorage.getItem("userId")}
+                                />
+                            ))
+                        ) : (
+                            <Typography variant="h5" mt={2}>
+                                Учетные записи не найдены
+                            </Typography>
+                        )}
+                    </Grid>
                 </Grid>
-                <Grid container mt={1}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={searchQuery.showBlocked}
-                                onChange={(e) =>
-                                    setSearchQuery({ ...searchQuery, showBlocked: e.target.checked })
-                                }
-                            />
-                        }
-                        label="Показывать заблокированные"
-                    />
-                </Grid>
-                <Grid container item mt={1} xs={6}>
-                    <TextField
-                        fullWidth
-                        placeholder="Поиск по имени или адресу эл.почты"
-                        value={searchQuery.text}
-                        onChange={(e) => setSearchQuery({ ...searchQuery, text: e.target.value })}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    {sortedAndFilteredUsers.length > 0 ? (
-                        sortedAndFilteredUsers.map((user) => (
-                            <UserCard
-                                key={user.id}
-                                userData={user}
-                                blockHandler={blockUserById}
-                                unblockHandler={unblockUserById}
-                                currentUserId={localStorage.getItem("userId")}
-                            />
-                        ))
-                    ) : (
-                        <Typography variant="h5" mt={2}>
-                            Учетные записи не найдены
-                        </Typography>
-                    )}
-                </Grid>
+                <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                    <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                    <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                        {successMessage}
+                    </Alert>
+                </Snackbar>
             </Grid>
-            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
-                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
-                    {errorMessage}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
-                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
-                    {successMessage}
-                </Alert>
-            </Snackbar>
-        </Grid>
+        </>
     );
 };
 
