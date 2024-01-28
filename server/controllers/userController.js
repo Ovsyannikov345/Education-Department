@@ -53,8 +53,13 @@ class UserController {
 
             // TODO real mail.
             console.log("Email sent. Preview URL: " + nodemailer.getTestMessageUrl(result));
-            // TODO dont send user
-            return res.status(200).json(user);
+
+            const createdUser = await User.findOne({
+                where: { email: user.email },
+                attributes: { exclude: ["password"] },
+            });
+
+            return res.status(200).json(createdUser);
         } catch (err) {
             console.log(err);
             return res.status(500).json({ error: "Error while creating a user" });
@@ -62,6 +67,7 @@ class UserController {
     }
 
     async block(req, res) {
+        // TODO unable to block self.
         try {
             const { id } = req.params;
 
