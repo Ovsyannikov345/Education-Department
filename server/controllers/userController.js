@@ -198,7 +198,7 @@ class UserController {
 
             // TODO real mail.
             console.log("Email sent. Preview URL: " + nodemailer.getTestMessageUrl(result));
-            // TODO dont send user
+
             return res.sendStatus(204);
         } catch (err) {
             console.log(err);
