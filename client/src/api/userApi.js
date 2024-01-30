@@ -89,7 +89,25 @@ const unblockUser = async (id) => {
 };
 
 const changeUserPassword = async (userData) => {
-    // TODO implement.
+    try {
+        const response = await host.put(`/users/${localStorage.getItem("userId")}/password`, userData);
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while changing password. Code: " + error.response.status);
+
+            if (error.response.status === 401) {
+                return await updateToken(changeUserPassword, userData);
+            }
+
+            return error.response;
+        } else if (error.request) {
+            console.log("Server did not respond.");
+        } else {
+            console.log("Error while creating request");
+        }
+    }
 };
 
 const sendNewPassword = async (email) => {
