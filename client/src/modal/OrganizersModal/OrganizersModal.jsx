@@ -15,7 +15,6 @@ const OrganizersModal = ({
     addStudentHandler,
     removeStudentHandler,
 }) => {
-    // TODO Sort in alphabetic order for user convenience.
     const [loadedEmployees, setLoadedEmployees] = useState([]);
     const [availableEmployees, setAvailableEmployees] = useState([]);
 
@@ -33,7 +32,13 @@ const OrganizersModal = ({
 
         if (response) {
             if (response.status < 300) {
-                setLoadedEmployees(response.data);
+                setLoadedEmployees(
+                    response.data.sort((a, b) =>
+                        [a.lastName, a.firstName, a.patronymic]
+                            .join("")
+                            .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    )
+                );
             } else {
                 console.log("Error while loading employees");
             }
@@ -47,7 +52,13 @@ const OrganizersModal = ({
 
         if (response) {
             if (response.status < 300) {
-                setLoadedStudents(response.data);
+                setLoadedStudents(
+                    response.data.sort((a, b) =>
+                        [a.lastName, a.firstName, a.patronymic]
+                            .join("")
+                            .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    )
+                );
             } else {
                 console.log("Error while loading students");
             }

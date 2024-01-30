@@ -11,7 +11,6 @@ const ParticipantsModal = ({
     addParticipantHandler,
     removeParticipantHandler,
 }) => {
-    // TODO Sort in alphabetic order for user convenience.
     const [loadedParticipants, setLoadedParticipants] = useState([]);
     const [availableParticipants, setAvailableParticipants] = useState([]);
 
@@ -24,7 +23,13 @@ const ParticipantsModal = ({
 
         if (response) {
             if (response.status < 300) {
-                setLoadedParticipants(response.data);
+                setLoadedParticipants(
+                    response.data.sort((a, b) =>
+                        [a.lastName, a.firstName, a.patronymic]
+                            .join("")
+                            .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    )
+                );
             } else {
                 console.log("Error while loading participants");
             }
