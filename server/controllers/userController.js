@@ -165,7 +165,7 @@ class UserController {
             const email = req.body.email;
 
             if ((await User.findOne({ where: { email: email } })) == null) {
-                return res.sendStatus(404);
+                return res.status(404).json({ error: "Неверный адрес эл. почты" });
             }
 
             const randomPassword = crypto.randomBytes(5).toString("hex");
