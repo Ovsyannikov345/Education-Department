@@ -67,7 +67,6 @@ class UserController {
     }
 
     async block(req, res) {
-        // TODO unable to block self.
         try {
             const { id } = req.params;
 
@@ -79,6 +78,10 @@ class UserController {
 
             if (user == null) {
                 return res.sendStatus(404);
+            }
+
+            if (user.id === id) {
+                return res.status(400).json({ error: "Невозможно заблокировать себя" });
             }
 
             if (user.blockedAt != null) {
@@ -108,6 +111,10 @@ class UserController {
 
             if (user == null) {
                 return res.sendStatus(404);
+            }
+
+            if (user.id === id) {
+                return res.status(400).json({ error: "Невозможно разблокировать себя" });
             }
 
             if (user.blockedAt == null) {
