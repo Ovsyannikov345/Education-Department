@@ -56,6 +56,8 @@ class AuthController {
                 return res.sendStatus(403);
             }
 
+            // TODO blocked user should not be able to refresh.
+
             try {
                 const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
