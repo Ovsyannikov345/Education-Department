@@ -1,4 +1,4 @@
-import { host } from ".";
+import { host, authHost } from ".";
 import updateToken from "./../utils/updateToken";
 
 const getUsers = async () => {
@@ -59,9 +59,9 @@ const blockUser = async (id) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -81,9 +81,9 @@ const unblockUser = async (id) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -103,15 +103,29 @@ const changeUserPassword = async (userData) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
 
 const sendNewPassword = async (email) => {
-    // TODO implement.
+    try {
+        const response = await authHost.post("/forgot-password", { email: email });
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            console.log("Error while sending new password. Code: " + error.response.status);
+
+            return error.response;
+        } else if (error.request) {
+            return { data: { error: "Сервис временно недоступен" } };
+        } else {
+            return { data: { error: "Ошибка при создании запроса" } };
+        }
+    }
 };
 
 export { getUsers, postUser, blockUser, unblockUser, changeUserPassword, sendNewPassword };
