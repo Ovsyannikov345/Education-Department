@@ -7,7 +7,7 @@ class StudentController {
 
             return res.json(students);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки студентов" });
         }
     }
 
@@ -21,7 +21,7 @@ class StudentController {
 
             return res.status(201).json(result);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания студента" });
         }
     }
 
@@ -29,11 +29,11 @@ class StudentController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.sendStatus(400);
+            return res.status(400).json({ error: "Неверный id студента" });
         }
 
         if ((await Student.findOne({ where: { id: id } })) == null) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Студента не существует" });
         }
 
         try {
@@ -41,7 +41,7 @@ class StudentController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время удаления студента" });
         }
     }
 }

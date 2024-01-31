@@ -11,17 +11,17 @@ class AuthController {
             const user = await User.findOne({ where: { email: email } });
 
             if (!user) {
-                return res.status(401).json({ error: "Authentication failed" });
+                return res.status(401).json({ error: "Неверные данные" });
             }
 
             const passwordMatch = await bcrypt.compare(password, user.password);
 
             if (!passwordMatch) {
-                return res.status(401).json({ error: "Authentication failed" });
+                return res.status(401).json({ error: "Неверные данные" });
             }
 
             if (user.blockedAt != null) {
-                return res.status(403).json({ error: "Account is blocked" });
+                return res.status(403).json({ error: "Учетная запись заблокирована" });
             }
 
             const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.ACCESS_TOKEN_SECRET, {
@@ -40,7 +40,7 @@ class AuthController {
             res.json({ accessToken: accessToken, refreshToken: refreshToken, role: user.role, userId: user.id });
         } catch (err) {
             console.log(err);
-            res.status(500).json({ error: "Login failed" });
+            res.status(500).json({ error: "Неизвестная ошибка во время входа" });
         }
     }
 
@@ -49,11 +49,11 @@ class AuthController {
             const refreshToken = req.body.token;
 
             if (refreshToken == null) {
-                return res.sendStatus(401);
+                return res.status(401).json({ error: "Отсутствует токен для обновления" });
             }
 
             if ((await RefreshToken.findOne({ where: { token: refreshToken } })) == null) {
-                return res.sendStatus(403);
+                return res.status(403).json({ error: "Токен для обновления не существует" });
             }
 
             // TODO blocked user should not be able to refresh.
@@ -72,11 +72,11 @@ class AuthController {
                 return res.json({ accessToken: accessToken });
             } catch (error) {
                 RefreshToken.destroy({ where: { token: refreshToken } });
-                return res.status(403).json({ error: "Invalid token" });
+                return res.status(403).json({ error: "Неверный токен" });
             }
         } catch (err) {
             console.log(err);
-            res.status(500).json({ error: "Refresh failed" });
+            res.status(500).json({ error: "Неизвестная ошибка во время обновления" });
         }
     }
 
@@ -89,7 +89,7 @@ class AuthController {
             return res.sendStatus(204);
         } catch (err) {
             console.log(err);
-            res.status(500).json({ error: "Logout failed" });
+            res.status(500).json({ error: "Неизвестная ошибка во время выхода из аккаунта" });
         }
     }
 }

@@ -7,21 +7,19 @@ class EmployeeController {
 
             return res.json(employees);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки сотрудников" });
         }
     }
 
     async create(req, res) {
-        const employee = {
-            ...req.body,
-        };
+        const employee = { ...req.body };
 
         try {
             const result = await Employee.create(employee);
 
             return res.status(201).json(result);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания сотрудника" });
         }
     }
 
@@ -29,11 +27,11 @@ class EmployeeController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.sendStatus(400);
+            return res.status(400).json({ error: "Неверный id сотрудника" });
         }
 
         if ((await Employee.findOne({ where: { id: id } })) == null) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Сотрудника не существует" });
         }
 
         try {
@@ -41,7 +39,7 @@ class EmployeeController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время удаления сотрудника" });
         }
     }
 }

@@ -26,7 +26,7 @@ class EventController {
 
             return res.json(events);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки мероприятий" });
         }
     }
 
@@ -34,7 +34,7 @@ class EventController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.sendStatus(400);
+            return res.status(400).json({ error: "Неверный id мероприятия" });
         }
 
         try {
@@ -52,12 +52,12 @@ class EventController {
             });
 
             if (event == null) {
-                return res.sendStatus(404);
+                return res.status(404).json({ error: "Мероприятия не существует" });
             }
 
             return res.json(event);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки мероприятия" });
         }
     }
 
@@ -73,7 +73,7 @@ class EventController {
 
             return res.status(201).json();
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания мероприятия" });
         }
     }
 
@@ -87,11 +87,11 @@ class EventController {
         }
 
         if (Event.findOne({ where: { id: id } }) == null) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Мероприятия не существует" });
         }
 
         try {
-            const a = await Event.update(event, { where: { id: id } });
+            await Event.update(event, { where: { id: id } });
 
             const eventRecord = await Event.findOne({ where: { id: id } });
 
@@ -109,7 +109,7 @@ class EventController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время изменения мероприятия" });
         }
     }
 
@@ -117,11 +117,11 @@ class EventController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.sendStatus(400);
+            return res.status(400).json({ error: "Неверный id мероприятия" });
         }
 
         if ((await Event.findOne({ where: { id: id } })) == null) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Мероприятия не существует" });
         }
 
         try {
@@ -129,7 +129,7 @@ class EventController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время удаления мероприятия" });
         }
     }
 }

@@ -9,7 +9,7 @@ class DepartmentController {
 
             return res.json(departments);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загузки подразделений" });
         }
     }
 }

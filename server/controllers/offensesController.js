@@ -9,7 +9,7 @@ class OffensesController {
 
             return res.json(offenses);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки правонарушений" });
         }
     }
 
@@ -17,19 +17,19 @@ class OffensesController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.sendStatus(400);
+            return res.status(400).json({ error: "Неверный id правонарушения" });
         }
 
         try {
             const offense = await Offense.findOne({ where: { id: id }, include: [{ model: Student }] });
 
             if (offense == null) {
-                return res.sendStatus(404);
+                return res.status(404).json({ error: "Правонарушения не существует" });
             }
 
             return res.json(offense);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки правонарушения" });
         }
     }
 
@@ -41,7 +41,7 @@ class OffensesController {
 
             return res.status(201).json(createdOffense);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания правонарушения" });
         }
     }
 
@@ -55,7 +55,7 @@ class OffensesController {
         }
 
         if (Offense.findOne({ where: { id: id } }) == null) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Правонарушения не существует" });
         }
 
         try {
@@ -63,7 +63,7 @@ class OffensesController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время изменения правонарушения" });
         }
     }
 
@@ -71,11 +71,11 @@ class OffensesController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.sendStatus(400);
+            return res.status(400).json({ error: "Неверный id правонарушения" });
         }
 
         if ((await Offense.findOne({ where: { id: id } })) == null) {
-            return res.sendStatus(404);
+            return res.status(404).json({ error: "Правонарушения не существует" });
         }
 
         try {
@@ -83,7 +83,7 @@ class OffensesController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.sendStatus(500);
+            return res.status(500).json({ error: "Неизвестная ошибка во время удаления правонарушения" });
         }
     }
 }

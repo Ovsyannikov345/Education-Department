@@ -8,7 +8,7 @@ const validateToken = (req, res, next) => {
     }
 
     if (!token) {
-        return res.status(401).json({ error: "Access denied" });
+        return res.status(401).json({ error: "Доступ запрещен" });
     }
 
     try {
@@ -17,7 +17,7 @@ const validateToken = (req, res, next) => {
         req.role = decoded.role;
         next();
     } catch (error) {
-        return res.status(401).json({ error: "Invalid token" });
+        return res.status(401).json({ error: "Неверный токен доступа" });
     }
 };
 

@@ -11,7 +11,7 @@ class UserController {
             return res.json(users);
         } catch (err) {
             console.log(err);
-            return res.status(500).json({ error: "Error while getting users" });
+            return res.status(500).json({ error: "Ошибка во время загрузки пользователей" });
         }
     }
 
@@ -20,7 +20,7 @@ class UserController {
             const user = { ...req.body };
 
             if (await User.findOne({ where: { email: user.email } })) {
-                return res.status(400).json({ error: "Email is taken" });
+                return res.status(400).json({ error: "Эл.почта уже используется" });
             }
 
             user.password = crypto.randomBytes(5).toString("hex");
@@ -62,7 +62,7 @@ class UserController {
             return res.status(200).json(createdUser);
         } catch (err) {
             console.log(err);
-            return res.status(500).json({ error: "Error while creating a user" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания пользователя" });
         }
     }
 
@@ -71,13 +71,13 @@ class UserController {
             const { id } = req.params;
 
             if (isNaN(id)) {
-                return res.sendStatus(400);
+                return res.status(400).json({ error: "Неверный id пользователя" });
             }
 
             const user = await User.findOne({ where: { id: id } });
 
             if (user == null) {
-                return res.sendStatus(404);
+                return res.status(404).json({ error: "Пользователя не существует" });
             }
 
             if (user.id === id) {
@@ -85,7 +85,7 @@ class UserController {
             }
 
             if (user.blockedAt != null) {
-                return res.status(400).json({ error: "User is already blocked" });
+                return res.status(400).json({ error: "Пользователь уже заблокирован" });
             }
 
             await User.update({ blockedAt: Date.now() }, { where: { id: id } });
@@ -95,7 +95,7 @@ class UserController {
             return res.status(200).json({ blockedAt: blockDate });
         } catch (err) {
             console.log(err);
-            return res.status(500).json({ error: "Error while blocking the user" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время блокировки пользователя" });
         }
     }
 
@@ -104,13 +104,13 @@ class UserController {
             const { id } = req.params;
 
             if (isNaN(id)) {
-                return res.sendStatus(400);
+                return res.status(400).json({ error: "Неверный id пользователя" });
             }
 
             const user = await User.findOne({ where: { id: id } });
 
             if (user == null) {
-                return res.sendStatus(404);
+                return res.status(404).json({ error: "Пользователя не существует" });
             }
 
             if (user.id === id) {
@@ -118,7 +118,7 @@ class UserController {
             }
 
             if (user.blockedAt == null) {
-                return res.status(400).json({ error: "User is not blocked" });
+                return res.status(400).json({ error: "Пользователь не заблокирован" });
             }
 
             await User.update({ blockedAt: null }, { where: { id: id } });
@@ -126,7 +126,7 @@ class UserController {
             return res.sendStatus(204);
         } catch (err) {
             console.log(err);
-            return res.status(500).json({ error: "Error while unblocking the user" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время разблокировки пользователя" });
         }
     }
 
@@ -135,17 +135,17 @@ class UserController {
             const { id } = req.params;
 
             if (isNaN(id)) {
-                return res.sendStatus(400);
+                return res.status(400).json({ error: "Неверный id пользователя" });
             }
 
             const user = await User.findOne({ where: { id: id } });
 
             if (user == null) {
-                return res.sendStatus(404);
+                return res.status(404).json({ error: "Пользователя не существует" });
             }
 
             if (req.userId !== user.id) {
-                return res.sendStatus(403);
+                return res.status(403).json({ error: "Невозможно сменить чужой пароль" });
             }
 
             const oldPassword = req.body.oldPassword;
@@ -153,7 +153,7 @@ class UserController {
             const passwordMatch = await bcrypt.compare(oldPassword, user.password);
 
             if (!passwordMatch) {
-                return res.status(400).json({ error: "Invalid old password" });
+                return res.status(400).json({ error: "Неверный старый пароль" });
             }
 
             const newPassword = await bcrypt.hash(req.body.newPassword, 10);
@@ -163,7 +163,7 @@ class UserController {
             return res.sendStatus(204);
         } catch (err) {
             console.log(err);
-            return res.status(500).json({ error: "Error while changing password" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время смены пароля" });
         }
     }
 
@@ -209,7 +209,7 @@ class UserController {
             return res.sendStatus(204);
         } catch (err) {
             console.log(err);
-            return res.status(500).json({ error: "Error while reseting password" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время сброса пароля" });
         }
     }
 }
