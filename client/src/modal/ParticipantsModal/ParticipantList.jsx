@@ -65,27 +65,32 @@ const ParticipantList = ({
             {!readonly && (
                 <>
                     <FormControl fullWidth>
-                        <InputLabel id="participant-label">Добавить участника</InputLabel>
+                        <InputLabel id="participant-label">
+                            {availableParticipants.length > 0 ? "Добавить участника" : "Нет доступных участников"}
+                        </InputLabel>
                         <Select
                             fullWidth
                             labelId="participant-label"
                             id="participant-select"
-                            label="Добавить участника"
+                            label={
+                                availableParticipants.length > 0
+                                    ? "Добавить участника"
+                                    : "Нет доступных участников"
+                            }
+                            readOnly={availableParticipants.length === 0}
                             value={""}
+                            onChange={(e) => addParticipantHandler(e.target.value)}
                         >
-                            {availableParticipants.length > 0 ? (
+                            {availableParticipants.length > 0 &&
                                 availableParticipants.map((prt) => (
-                                    <MenuItem
-                                        key={prt.id}
-                                        value={`${prt.lastName} ${prt.firstName} ${prt.patronymic} ${prt.organization} ${prt.position}`}
-                                        onClick={(e) => addParticipantHandler(e.target.innerText)}
-                                    >
-                                        {`${prt.lastName} ${prt.firstName} ${prt.patronymic} ${prt.organization} ${prt.position}`}
+                                    <MenuItem key={prt.id} value={prt.id}>
+                                        {`${prt.lastName}
+                                        ${prt.firstName}
+                                        ${prt.patronymic}
+                                        ${prt.organization}
+                                        ${prt.position ? `(${prt.position})` : ""}`}
                                     </MenuItem>
-                                ))
-                            ) : (
-                                <MenuItem key={1}>Нет доступных участников</MenuItem>
-                            )}
+                                ))}
                         </Select>
                     </FormControl>
                     <Container style={{ padding: 0, justifyContent: "flex-start" }}>

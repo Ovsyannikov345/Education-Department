@@ -51,8 +51,8 @@ const ParticipantsModal = ({
 
         if (response) {
             if (response.status < 300) {
-                addParticipantHandler(response.data);
                 setLoadedParticipants([...loadedParticipants, response.data]);
+                addParticipantHandler(response.data);
             } else {
                 console.log("Error while creating the participant");
             }
@@ -61,18 +61,8 @@ const ParticipantsModal = ({
         }
     };
 
-    const addParticipant = (participantString) => {
-        const data = participantString.split(" ");
-        const participantToAdd = availableParticipants.find(
-            (prt) =>
-                prt.lastName === data[0] &&
-                prt.firstName === data[1] &&
-                prt.patronymic === data[2] &&
-                prt.organization === data[3] &&
-                prt.position === data[4]
-        );
-
-        addParticipantHandler(participantToAdd);
+    const addParticipant = (id) => {
+        addParticipantHandler(availableParticipants.find((prt) => prt.id === id));
     };
 
     const removeParticipant = (id) => {

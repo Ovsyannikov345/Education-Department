@@ -27,7 +27,10 @@ const ParticipantItem = ({ participant, removeHandler, deleteHandler, readonly =
                     style={{ paddingLeft: 10 }}
                 >
                     <Grid item xs>
-                        <Typography>{`${participant.lastName} ${participant.firstName} ${participant.patronymic} ${participant.organization} ${participant.position}`}</Typography>
+                        <Typography>{`${participant.lastName} ${participant.firstName} ${participant.patronymic}`}</Typography>
+                        <Typography>{`${participant.organization} ${
+                            participant.position ? `(${participant.position})` : ""
+                        }`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (
