@@ -16,9 +16,9 @@ const getOffenses = async () => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -38,9 +38,9 @@ const getOffense = async (id) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -60,9 +60,9 @@ const postOffense = async (offense) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -82,9 +82,9 @@ const putOffense = async (offense) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -104,9 +104,9 @@ const deleteOffense = async (id) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };

@@ -20,7 +20,6 @@ const getUsers = async () => {
         } else {
             return { data: { error: "Ошибка при создании запроса" } };
         }
-        // TODO all api calls like this.
     }
 };
 

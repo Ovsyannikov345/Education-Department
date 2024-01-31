@@ -16,9 +16,9 @@ const getEmployees = async () => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -38,9 +38,9 @@ const postEmployee = async (employee) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
@@ -60,9 +60,9 @@ const deleteEmployee = async (id) => {
 
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };

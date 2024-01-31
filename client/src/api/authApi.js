@@ -9,9 +9,9 @@ const login = async ({ email, password }) => {
         if (error.response) {
             return error.response;
         } else if (error.request) {
-            console.log("Server did not respond.");
+            return { data: { error: "Сервис временно недоступен" } };
         } else {
-            console.log("Error while creating request");
+            return { data: { error: "Ошибка при создании запроса" } };
         }
     }
 };
