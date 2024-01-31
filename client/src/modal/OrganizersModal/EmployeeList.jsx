@@ -57,27 +57,30 @@ const EmployeeList = ({
             {!readonly && (
                 <>
                     <FormControl fullWidth>
-                        <InputLabel id="employee-label">Добавить организавтора</InputLabel>
+                        <InputLabel id="employee-label">
+                            {availableEmployees.length > 0
+                                ? "Добавить организавтора"
+                                : "Нет доступных организаторов"}
+                        </InputLabel>
                         <Select
                             fullWidth
                             labelId="employee-label"
                             id="employee-select"
-                            label="Добавить организавтора"
+                            label={
+                                availableEmployees.length > 0
+                                    ? "Добавить организатора"
+                                    : "Нет доступных организаторов"
+                            }
+                            readOnly={availableEmployees.length === 0}
                             value={""}
+                            onChange={(e) => addEmployeeHandler(e.target.value)}
                         >
-                            {availableEmployees.length > 0 ? (
+                            {availableEmployees.length > 0 &&
                                 availableEmployees.map((emp) => (
-                                    <MenuItem
-                                        key={emp.id}
-                                        value={`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
-                                        onClick={(e) => addEmployeeHandler(e.target.innerText)}
-                                    >
+                                    <MenuItem key={emp.id} value={emp.id}>
                                         {`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
                                     </MenuItem>
-                                ))
-                            ) : (
-                                <MenuItem key={1}>Нет доступных организаторов</MenuItem>
-                            )}
+                                ))}
                         </Select>
                     </FormControl>
                     <Container style={{ padding: 0, justifyContent: "flex-start" }}>

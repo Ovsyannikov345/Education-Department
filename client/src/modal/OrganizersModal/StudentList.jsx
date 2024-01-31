@@ -59,27 +59,24 @@ const StudentList = ({
             {!readonly && (
                 <>
                     <FormControl fullWidth>
-                        <InputLabel id="student-label">Добавить студента</InputLabel>
+                        <InputLabel id="student-label">
+                            {availableStudents.length > 0 ? "Добавить студента" : "Нет доступных студентов"}
+                        </InputLabel>
                         <Select
                             fullWidth
                             labelId="student-label"
                             id="student-select"
-                            label="Добавить студента"
+                            label={availableStudents.length > 0 ? "Добавить студента" : "Нет доступных студентов"}
+                            readOnly={availableStudents.length === 0}
                             value={""}
+                            onChange={(e) => addStudentHandler(e.target.value)}
                         >
-                            {availableStudents.length > 0 ? (
+                            {availableStudents.length > 0 &&
                                 availableStudents.map((std) => (
-                                    <MenuItem
-                                        key={std.id}
-                                        value={`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
-                                        onClick={(e) => addStudentHandler(e.target.innerText)}
-                                    >
+                                    <MenuItem key={std.id} value={std.id}>
                                         {`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
                                     </MenuItem>
-                                ))
-                            ) : (
-                                <MenuItem key={1}>Нет доступных студентов</MenuItem>
-                            )}
+                                ))}
                         </Select>
                     </FormControl>
                     <Container style={{ padding: 0, justifyContent: "flex-start" }}>

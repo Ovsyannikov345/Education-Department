@@ -105,8 +105,8 @@ const OrganizersModal = ({
 
         if (response) {
             if (response.status < 300) {
-                addStudentHandler(response.data);
                 setLoadedStudents([...loadedStudents, response.data]);
+                addStudentHandler(response.data);
             } else {
                 console.log("Error while creating the student");
             }
@@ -115,26 +115,12 @@ const OrganizersModal = ({
         }
     };
 
-    const addEmployee = (employeeString) => {
-        const data = employeeString.split(" ");
-        const employeeToAdd = availableEmployees.find(
-            (emp) => emp.lastName === data[0] && emp.firstName === data[1] && emp.patronymic === data[2]
-        );
-
-        addEmployeeHandler(employeeToAdd);
+    const addEmployee = (id) => {
+        addEmployeeHandler(availableEmployees.find((emp) => emp.id === id));
     };
 
-    const addStudent = (studentString) => {
-        const data = studentString.split(" ");
-        const studentToAdd = availableStudents.find(
-            (std) =>
-                std.groupName === data[0] &&
-                std.lastName === data[1] &&
-                std.firstName === data[2] &&
-                std.patronymic === data[3]
-        );
-
-        addStudentHandler(studentToAdd);
+    const addStudent = (id) => {
+        addStudentHandler(availableStudents.find((std) => std.id === id));
     };
 
     const removeEmployee = (id) => {
