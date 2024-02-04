@@ -37,6 +37,10 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
     const subdepartments = useMemo(() => {
         const subdepartments = [];
 
+        if (!searchQuery.selectedDepartments) {
+            return subdepartments;
+        }
+
         searchQuery.selectedDepartments
             .filter((dep) => dep.Subdepartments.length > 0)
             .map((dep) => dep.Subdepartments)
@@ -46,6 +50,10 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
 
     const subdirections = useMemo(() => {
         const subdirections = [];
+
+        if (!searchQuery.selectedDirections) {
+            return subdirections;
+        }
 
         searchQuery.selectedDirections
             .filter((dir) => dir.Subdirections.length > 0)
