@@ -56,10 +56,14 @@ class AuthController {
                 return res.status(403).json({ error: "Токен для обновления не существует" });
             }
 
-            // TODO blocked user should not be able to refresh.
-
             try {
                 const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+                const user = await User.findOne({ where: { id: decoded.userId } });
+
+                if (user.blockedAt) {
+                    return res.status(403).json({ error: "Аккаунт заблокирован" });
+                }
 
                 const accessToken = jwt.sign(
                     { userId: decoded.userId, role: decoded.role },
