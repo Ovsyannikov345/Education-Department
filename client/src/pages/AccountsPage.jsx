@@ -89,7 +89,7 @@ const AccountsPage = () => {
     const blockUserById = async (id) => {
         const response = await blockUser(id);
 
-        if (response.status >= 300) {
+        if (!response.status || response.status >= 300) {
             displayError(response.data.error);
             return;
         }
@@ -106,7 +106,7 @@ const AccountsPage = () => {
     const unblockUserById = async (id) => {
         const response = await unblockUser(id);
 
-        if (response.status >= 300) {
+        if (!response.status || response.status >= 300) {
             displayError(response.data.error);
             return;
         }
