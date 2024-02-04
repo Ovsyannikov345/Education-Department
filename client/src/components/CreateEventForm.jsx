@@ -12,6 +12,8 @@ import {
     TextField,
     Button,
     IconButton,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
@@ -50,37 +52,46 @@ const CreateEventForm = ({ creationHandler }) => {
     const [organizersModalOpen, setOrganizersModalOpen] = useState(false);
     const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
 
-    const loadDepartments = async () => {
-        const response = await getDepartments();
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-        if (response) {
-            if (response.status < 300) {
-                setDepartments(response.data);
-            } else {
-                console.log("Error while loading departments");
-            }
-        } else {
-            console.log("Server did not respond.");
-        }
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
     };
 
-    const loadDirections = async () => {
-        const response = await getDirections();
-
-        if (response) {
-            if (response.status < 300) {
-                setDirections(response.data);
-            } else {
-                console.log("Error while loading directions");
-            }
-        } else {
-            console.log("Server did not respond.");
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
         }
+
+        setError(false);
     };
 
     useEffect(() => {
-        loadDepartments();
-        loadDirections();
+        const loadDepartments = async () => {
+            const response = await getDepartments();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            setDepartments(response.data);
+        };
+
+        const loadDirections = async () => {
+            const response = await getDirections();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            setDirections(response.data);
+        };
+
+        loadDepartments().then(() => {
+            loadDirections();
+        });
     }, []);
 
     useEffect(() => {
@@ -127,12 +138,12 @@ const CreateEventForm = ({ creationHandler }) => {
         }
     }, [currentSubdirection, subdirections, event]);
 
-    const router = useNavigate();
+    const navigate = useNavigate();
 
     const submit = async (e) => {
         e.preventDefault();
 
-        const success = await creationHandler({
+        const errorMessage = await creationHandler({
             name: event.name,
             description: event.description,
             plannedResult: event.plannedResult,
@@ -146,10 +157,10 @@ const CreateEventForm = ({ creationHandler }) => {
             participants: [...event.participants],
         });
 
-        if (success) {
-            router(MAINPAGE_ROUTE);
+        if (errorMessage === "") {
+            navigate(MAINPAGE_ROUTE);
         } else {
-            // TODO view error.
+            displayError(errorMessage);
         }
     };
 
@@ -223,7 +234,7 @@ const CreateEventForm = ({ creationHandler }) => {
             <IconButton
                 color="primary"
                 style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => router(MAINPAGE_ROUTE)}
+                onClick={() => navigate(MAINPAGE_ROUTE)}
             >
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
@@ -414,6 +425,11 @@ const CreateEventForm = ({ creationHandler }) => {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

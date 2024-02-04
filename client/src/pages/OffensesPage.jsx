@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Typography, Grid } from "@mui/material";
+import { Typography, Grid, Snackbar, Alert } from "@mui/material";
 import { getOffenses, deleteOffense } from "../api/offensesApi";
 import OffenseList from "../components/OffenseList";
 import SortSelector from "../components/SortSelector";
@@ -15,6 +15,30 @@ function OffensesPage() {
         startDate: null,
         endDate: null,
     });
+
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
 
     const sortedOffenses = useMemo(() => {
         switch (sortOption) {
@@ -62,15 +86,12 @@ function OffensesPage() {
         const loadOffenses = async () => {
             const response = await getOffenses();
 
-            if (response) {
-                if (response.status < 300) {
-                    setOffenses(response.data);
-                } else {
-                    console.log("Error while loading offenses");
-                }
-            } else {
-                console.log("Server did not respond.");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setOffenses(response.data);
         };
 
         loadOffenses();
@@ -79,47 +100,57 @@ function OffensesPage() {
     const removeOffense = async (id) => {
         const response = await deleteOffense(id);
 
-        if (response) {
-            if (response.status < 300) {
-                setOffenses(offenses.filter((off) => off.id !== id));
-            } else {
-                console.log("Error while deleting offense");
-            }
-        } else {
-            console.log("Server did not respond.");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        setOffenses(offenses.filter((off) => off.id !== id));
+        displaySuccess("Правонарушение удалено");
     };
 
     return (
-        <Grid container alignItems={"flex-start"} mb={5}>
-            <Grid container item xs={3}>
-                <OffenseFilter queryHandler={setSearchQuery} />
-            </Grid>
-            <Grid container item xs={9} pl={2} pr={2}>
-                <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
-                    <Grid item>
-                        <Typography variant="h4">
-                            Список правонарушений {`(${filteredOffenses.length})`}
-                        </Typography>
+        <>
+            <Grid container alignItems={"flex-start"} mb={5}>
+                <Grid container item xs={3}>
+                    <OffenseFilter queryHandler={setSearchQuery} />
+                </Grid>
+                <Grid container item xs={9} pl={2} pr={2}>
+                    <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
+                        <Grid item>
+                            <Typography variant="h4">
+                                Список правонарушений {`(${filteredOffenses.length})`}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <SortSelector
+                                options={[
+                                    { value: "name", name: "По имени" },
+                                    { value: "group", name: "По группе" },
+                                    { value: "date desc", name: "Сначала новые" },
+                                    { value: "date asc", name: "Сначала старые" },
+                                ]}
+                                value={sortOption}
+                                changeHandler={setSortOption}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <SortSelector
-                            options={[
-                                { value: "name", name: "По имени" },
-                                { value: "group", name: "По группе" },
-                                { value: "date desc", name: "Сначала новые" },
-                                { value: "date asc", name: "Сначала старые" },
-                            ]}
-                            value={sortOption}
-                            changeHandler={setSortOption}
-                        />
+                    <Grid item xs={12}>
+                        <OffenseList offenses={filteredOffenses} deleteHandler={removeOffense} />
                     </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <OffenseList offenses={filteredOffenses} deleteHandler={removeOffense} />
-                </Grid>
             </Grid>
-        </Grid>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+        </>
     );
 }
 

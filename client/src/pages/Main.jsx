@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Snackbar, Alert } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { getEvents, deleteEvent } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
@@ -18,6 +18,30 @@ function MainPage() {
         startDate: null,
         endDate: null,
     });
+
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
 
     const sortedEvents = useMemo(() => {
         switch (sortOption) {
@@ -64,65 +88,78 @@ function MainPage() {
         return filteredEvents;
     }, [sortedEvents, searchQuery]);
 
-    const loadEvents = async () => {
-        const response = await getEvents();
+    useEffect(() => {
+        const loadEvents = async () => {
+            const response = await getEvents();
 
-        if (response) {
-            if (response.status < 300) {
-                setEvents(response.data);
-            } else {
-                console.log("Error while loading events");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
-        } else {
-            console.log("Server did not respond.");
-        }
-    };
+
+            setEvents(response.data);
+        };
+
+        loadEvents();
+    }, []);
 
     const removeEvent = async (id) => {
         const response = await deleteEvent(id);
 
-        if (response) {
-            if (response.status < 300) {
-                setEvents(events.filter((event) => event.id !== id));
-            } else {
-                console.log("Error while deleting the event");
-            }
-        } else {
-            console.log("Server did not respond.");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        setEvents(events.filter((event) => event.id !== id));
+        displaySuccess("Мероприятие удалено");
     };
 
-    useEffect(() => {
-        loadEvents();
-    }, []);
-
     return (
-        <Grid container alignItems={"flex-start"} mb={5}>
-            <Grid container item xs={3}>
-                <EventFilter queryHandler={setSearchQuery} />
-            </Grid>
-            <Grid container item xs={9} pl={2} pr={2}>
-                <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
-                    <Grid item>
-                        <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
+        <>
+            <Grid container alignItems={"flex-start"} mb={5}>
+                <Grid container item xs={3}>
+                    <EventFilter
+                        queryHandler={setSearchQuery}
+                        displaySuccess={displaySuccess}
+                        displayError={displayError}
+                    />
+                </Grid>
+                <Grid container item xs={9} pl={2} pr={2}>
+                    <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
+                        <Grid item>
+                            <Typography variant="h4">
+                                Список мероприятий {`(${filteredEvents.length})`}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <SortSelector
+                                options={[
+                                    { value: "alphabetic", name: "По алфавиту" },
+                                    { value: "date desc", name: "Сначала новые" },
+                                    { value: "date asc", name: "Сначала старые" },
+                                ]}
+                                value={sortOption}
+                                changeHandler={setSortOption}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <SortSelector
-                            options={[
-                                { value: "alphabetic", name: "По алфавиту" },
-                                { value: "date desc", name: "Сначала новые" },
-                                { value: "date asc", name: "Сначала старые" },
-                            ]}
-                            value={sortOption}
-                            changeHandler={setSortOption}
-                        />
+                    <Grid item xs={12}>
+                        <EventList events={filteredEvents} deleteHandler={removeEvent} />
                     </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <EventList events={filteredEvents} deleteHandler={removeEvent} />
-                </Grid>
             </Grid>
-        </Grid>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+        </>
     );
 }
 

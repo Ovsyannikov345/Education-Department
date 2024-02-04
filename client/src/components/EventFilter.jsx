@@ -18,7 +18,7 @@ import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
 import moment from "moment";
 
-const EventFilter = ({ queryHandler }) => {
+const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
     const [name, setName] = useState("");
     const [selectedDepartments, setSelectedDepartments] = useState([]);
     const [selectedSubdepartments, setSelectedSubdepartments] = useState([]);
@@ -54,34 +54,29 @@ const EventFilter = ({ queryHandler }) => {
         const loadDepartments = async () => {
             const response = await getDepartments();
 
-            if (response) {
-                if (response.status < 300) {
-                    setDepartments(response.data);
-                } else {
-                    console.log("Error while loading departments");
-                }
-            } else {
-                console.log("Server did not respond.");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setDepartments(response.data);
         };
 
         const loadDirections = async () => {
             const response = await getDirections();
 
-            if (response) {
-                if (response.status < 300) {
-                    setDirections(response.data);
-                } else {
-                    console.log("Error while loading directions");
-                }
-            } else {
-                console.log("Server did not respond.");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setDirections(response.data);
         };
 
-        loadDepartments();
-        loadDirections();
-    }, []);
+        loadDepartments().then(() => {
+            loadDirections();
+        });
+    }, [displayError]);
 
     useEffect(
         () =>
@@ -114,6 +109,7 @@ const EventFilter = ({ queryHandler }) => {
         setSelectedSubdirections([]);
         setStartDate(null);
         setEndDate(null);
+        displaySuccess("Фильтр сброшен");
     };
 
     const changeDepartments = (departments) => {

@@ -12,6 +12,8 @@ import {
     TextField,
     Button,
     IconButton,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -38,25 +40,45 @@ const CreateOffenseForm = ({ creationHandler }) => {
         groupName: "",
     });
 
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
+
     useEffect(() => {
         const loadStudents = async () => {
             const response = await getStudents();
 
-            if (response) {
-                if (response.status < 300) {
-                    setStudents(response.data);
-                } else {
-                    console.log("Error while loading students");
-                }
-            } else {
-                console.log("Server did not respond.");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
             }
+
+            setStudents(response.data);
         };
 
         loadStudents();
     }, []);
 
-    const router = useNavigate();
+    const navigate = useNavigate();
 
     const changeSudent = (id) => {
         setOffense({
@@ -69,37 +91,35 @@ const CreateOffenseForm = ({ creationHandler }) => {
     const createStudent = async () => {
         const response = await postStudent(newStudent);
 
-        if (response) {
-            if (response.status < 300) {
-                const createdStudent = response.data;
-
-                setStudents([...students, createdStudent]);
-                changeSudent(createdStudent.id);
-
-                setStudentCreationToggle(false);
-                setNewStudent({
-                    lastName: "",
-                    firstName: "",
-                    patronymic: "",
-                    groupName: "",
-                });
-            } else {
-                console.log("Error while creating the student");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
         }
+
+        const createdStudent = response.data;
+
+        setStudents([...students, createdStudent]);
+        changeSudent(createdStudent.id);
+
+        setStudentCreationToggle(false);
+        setNewStudent({
+            lastName: "",
+            firstName: "",
+            patronymic: "",
+            groupName: "",
+        });
+
+        displaySuccess("Студент создан");
     };
 
     const submit = async (e) => {
         e.preventDefault();
 
-        const success = await creationHandler(offense);
+        const errorMessage = await creationHandler(offense);
 
-        if (success) {
-            router(OFFENSIVES_ROUTE);
+        if (errorMessage === "") {
+            navigate(OFFENSIVES_ROUTE);
         } else {
-            // TODO view error.
+            displayError(errorMessage);
         }
     };
 
@@ -108,7 +128,7 @@ const CreateOffenseForm = ({ creationHandler }) => {
             <IconButton
                 color="primary"
                 style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => router(OFFENSIVES_ROUTE)}
+                onClick={() => navigate(OFFENSIVES_ROUTE)}
             >
                 <BackIcon></BackIcon>Список правонарушений
             </IconButton>
@@ -278,6 +298,16 @@ const CreateOffenseForm = ({ creationHandler }) => {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

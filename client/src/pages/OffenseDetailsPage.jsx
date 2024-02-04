@@ -12,6 +12,8 @@ import {
     TextField,
     Button,
     IconButton,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -51,7 +53,31 @@ const OffenseDetailsPage = () => {
         groupName: "",
     });
 
-    const router = useNavigate();
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
+
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -59,33 +85,28 @@ const OffenseDetailsPage = () => {
         const loadOffense = async () => {
             const response = await getOffense(id);
 
-            if (response) {
-                if (response.status < 300) {
-                    setOffense(response.data);
-                } else {
-                    console.log("Error while loading offense.");
-                }
-            } else {
-                console.log("Server did not respond.");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setOffense(response.data);
         };
 
         const loadStudents = async () => {
             const response = await getStudents();
 
-            if (response) {
-                if (response.status < 300) {
-                    setStudents(response.data);
-                } else {
-                    console.log("Error while loading students");
-                }
-            } else {
-                console.log("Server did not respond.");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setStudents(response.data);
         };
 
-        loadOffense();
-        loadStudents();
+        loadOffense().then(() => {
+            loadStudents();
+        });
     }, [id]);
 
     useEffect(() => {
@@ -103,39 +124,36 @@ const OffenseDetailsPage = () => {
     const createStudent = async () => {
         const response = await postStudent(newStudent);
 
-        if (response) {
-            if (response.status < 300) {
-                const createdStudent = response.data;
-
-                setStudents([...students, createdStudent]);
-                setEditedOffense({
-                    ...editedOffense,
-                    studentId: createdStudent.id,
-                    Student: createdStudent,
-                });
-
-                setStudentCreationToggle(false);
-                setNewStudent({ lastName: "", firstName: "", patronymic: "", groupName: "" });
-            } else {
-                console.log("Error while creating the student");
-            }
-        } else {
-            console.log("Server did not respond.");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        const createdStudent = response.data;
+
+        setStudents([...students, createdStudent]);
+        setEditedOffense({
+            ...editedOffense,
+            studentId: createdStudent.id,
+            Student: createdStudent,
+        });
+
+        setStudentCreationToggle(false);
+        setNewStudent({ lastName: "", firstName: "", patronymic: "", groupName: "" });
+        displaySuccess("Студент создан");
     };
 
     const applyChanges = async () => {
         const response = await putOffense(editedOffense);
-        if (response) {
-            if (response.status < 300) {
-                setOffense(editedOffense);
-                setEditModeToggle(false);
-            } else {
-                console.log("Error while updating offense.");
-            }
-        } else {
-            console.log("Server did not respond.");
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        setOffense(editedOffense);
+        setEditModeToggle(false);
+        displaySuccess("Правонарушение изменено");
     };
 
     const declineChanges = () => {
@@ -149,7 +167,7 @@ const OffenseDetailsPage = () => {
             <IconButton
                 color="primary"
                 style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => router(OFFENSIVES_ROUTE)}
+                onClick={() => navigate(OFFENSIVES_ROUTE)}
             >
                 <BackIcon></BackIcon>Список правонарушений
             </IconButton>
@@ -356,6 +374,16 @@ const OffenseDetailsPage = () => {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

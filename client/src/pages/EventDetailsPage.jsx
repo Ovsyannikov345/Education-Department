@@ -13,6 +13,8 @@ import {
     MenuItem,
     Tabs,
     Tab,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
@@ -59,6 +61,30 @@ const EventDetailsPage = (props) => {
 
     const [editModeToggle, setEditModeToggle] = useState(false);
 
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
+
     const availableSubdepartments = useMemo(() => {
         const department = loadedDepartments.find((dep) => dep.id === event.Department.id);
 
@@ -83,7 +109,7 @@ const EventDetailsPage = (props) => {
         return loadedParticipants.filter((prt) => !event.Participants.some((p) => p.id === prt.id));
     }, [loadedParticipants, event.Participants]);
 
-    const router = useNavigate();
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -91,108 +117,94 @@ const EventDetailsPage = (props) => {
         const loadEvent = async () => {
             const response = await getEvent(id);
 
-            if (response) {
-                if (response.status < 300) {
-                    const loadedEvent = response.data;
-
-                    const formattedDate = moment.utc(loadedEvent.date).format("YYYY-MM-DD");
-                    const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
-
-                    setEvent({
-                        ...loadedEvent,
-                        date: formattedDate,
-                        time: formattedTime,
-                    });
-
-                    setLoadedEvent({
-                        ...loadedEvent,
-                        date: formattedDate,
-                        time: formattedTime,
-                    });
-                } else {
-                    console.log("Error while loading the event");
-                }
-            } else {
-                console.log("Server did not respond");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            const loadedEvent = response.data;
+
+            const formattedDate = moment.utc(loadedEvent.date).format("YYYY-MM-DD");
+            const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
+
+            setEvent({
+                ...loadedEvent,
+                date: formattedDate,
+                time: formattedTime,
+            });
+
+            setLoadedEvent({
+                ...loadedEvent,
+                date: formattedDate,
+                time: formattedTime,
+            });
         };
 
         const loadDepartments = async () => {
             const response = await getDepartments();
 
-            if (response) {
-                if (response.status < 300) {
-                    setLoadedDepartments(response.data);
-                } else {
-                    console.log("Error while loading departments");
-                }
-            } else {
-                console.log("Server did not respond");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setLoadedDepartments(response.data);
         };
 
         const loadDirections = async () => {
             const response = await getDirections();
 
-            if (response) {
-                if (response.status < 300) {
-                    setLoadedDirections(response.data);
-                } else {
-                    console.log("Error while loading directions");
-                }
-            } else {
-                console.log("Server did not respond");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setLoadedDirections(response.data);
         };
 
         const loadStudents = async () => {
             const response = await getStudents();
 
-            if (response) {
-                if (response.status < 300) {
-                    setLoadedStudents(response.data);
-                } else {
-                    console.log("Error while loading students");
-                }
-            } else {
-                console.log("Server did not respond");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setLoadedStudents(response.data);
         };
 
         const loadEmployees = async () => {
             const response = await getEmployees();
 
-            if (response) {
-                if (response.status < 300) {
-                    setLoadedEmployees(response.data);
-                } else {
-                    console.log("Error while loading employees");
-                }
-            } else {
-                console.log("Server did not respond");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setLoadedEmployees(response.data);
         };
 
         const loadParticipants = async () => {
             const response = await getParticipants();
 
-            if (response) {
-                if (response.status < 300) {
-                    setLoadedParticipants(response.data);
-                } else {
-                    console.log("Error while loading participants");
-                }
-            } else {
-                console.log("Server did not respond");
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
             }
+
+            setLoadedParticipants(response.data);
         };
 
-        loadEvent();
-        loadDepartments();
-        loadDirections();
-        loadStudents();
-        loadEmployees();
-        loadParticipants();
+        const loadData = async () => {
+            await loadEvent();
+            await loadDepartments();
+            await loadDirections();
+            await loadStudents();
+            await loadEmployees();
+            await loadParticipants();
+        };
+
+        loadData();
     }, [id]);
 
     const changeTab = (e, tabIndex) => {
@@ -202,22 +214,19 @@ const EventDetailsPage = (props) => {
     const createStudent = async (createdStudent) => {
         const response = await postStudent(createdStudent);
 
-        if (response) {
-            if (response.status < 300) {
-                const student = response.data;
-
-                setEvent({
-                    ...event,
-                    Students: [...event.Students, student],
-                });
-
-                setLoadedStudents([...loadedStudents, student]);
-            } else {
-                console.log("Error while creating the student");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        const student = response.data;
+
+        setEvent({
+            ...event,
+            Students: [...event.Students, student],
+        });
+        setLoadedStudents([...loadedStudents, student]);
+        displaySuccess("Студент создан");
     };
 
     const addStudent = (studentString) => {
@@ -246,34 +255,30 @@ const EventDetailsPage = (props) => {
     const removeStudentPermanent = async (id) => {
         const response = await deleteStudent(id);
 
-        if (response) {
-            if (response.status < 300) {
-                removeStudent(id);
-                setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
-            } else {
-                console.log("Error while deleting the student");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        removeStudent(id);
+        setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
+        displaySuccess("Студент удален");
     };
 
     const createEmployee = async (createdEmployee) => {
         const response = await postEmployee(createdEmployee);
 
-        if (response) {
-            if (response.status < 300) {
-                setEvent({
-                    ...event,
-                    Employees: [...event.Employees, response.data],
-                });
-                setLoadedEmployees([...loadedEmployees, response.data]);
-            } else {
-                console.log("Error while creating the employee");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        setEvent({
+            ...event,
+            Employees: [...event.Employees, response.data],
+        });
+        setLoadedEmployees([...loadedEmployees, response.data]);
+        displaySuccess("Сотрудник создан");
     };
 
     const addEmployee = (employeeString) => {
@@ -298,35 +303,31 @@ const EventDetailsPage = (props) => {
     const removeEmployeePermanent = async (id) => {
         const response = await deleteEmployee(id);
 
-        if (response) {
-            if (response.status < 300) {
-                removeEmployee(id);
-                setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
-            } else {
-                console.log("Error while deleting the employee");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        removeEmployee(id);
+        setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
+        displaySuccess("Сотрудник удален");
     };
 
     const createParticipant = async (createdParticipant) => {
         const response = await postParticipant(createdParticipant);
 
-        if (response) {
-            if (response.status < 300) {
-                setEvent({
-                    ...event,
-                    Participants: [...event.Participants, response.data],
-                });
-
-                setLoadedParticipants([...loadedParticipants, response.data]);
-            } else {
-                console.log("Error while creating the participant");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        setEvent({
+            ...event,
+            Participants: [...event.Participants, response.data],
+        });
+
+        setLoadedParticipants([...loadedParticipants, response.data]);
+        displaySuccess("Участник создан");
     };
 
     const addParticipant = (participantString) => {
@@ -356,16 +357,14 @@ const EventDetailsPage = (props) => {
     const removeParticipantPermanent = async (id) => {
         const response = await deleteParticipant(id);
 
-        if (response) {
-            if (response.status < 300) {
-                removeParticipant(id);
-                setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
-            } else {
-                console.log("Error while deleting the participant");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        removeParticipant(id);
+        setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
+        displaySuccess("Участник удален");
     };
 
     const changeDepartment = (departmentName) => {
@@ -422,15 +421,13 @@ const EventDetailsPage = (props) => {
 
     const applyChanges = async () => {
         if (event.Subdepartment === null && availableSubdepartments.length > 0) {
-            console.log("invalid subdepartment.");
+            displayError("Выберите факультет");
             return;
-            // TODO Exception message.
         }
 
         if (event.Subdirection === null && availableSubdirections.length > 0) {
-            console.log("invalid subdirection.");
+            displayError("Выберите тему");
             return;
-            // TODO Exception message.
         }
 
         const response = await putEvent({
@@ -448,16 +445,14 @@ const EventDetailsPage = (props) => {
             participants: [...event.Participants],
         });
 
-        if (response) {
-            if (response.status < 300) {
-                setLoadedEvent(event);
-                setEditModeToggle(false);
-            } else {
-                console.log("Error while updating the event");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
         }
+
+        setLoadedEvent(event);
+        setEditModeToggle(false);
+        displaySuccess("Мероприятие изменено");
     };
 
     const declineChanges = () => {
@@ -470,7 +465,7 @@ const EventDetailsPage = (props) => {
             <IconButton
                 color="primary"
                 style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => router("/events")}
+                onClick={() => navigate("/events")}
             >
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
@@ -713,6 +708,16 @@ const EventDetailsPage = (props) => {
                     </Grid>
                 </Grid>
             </Container>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

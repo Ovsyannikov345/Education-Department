@@ -1,4 +1,4 @@
-import { Dialog, Typography, Container, Tabs, Tab } from "@mui/material";
+import { Dialog, Typography, Container, Tabs, Tab, Alert, Snackbar } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { getEmployees, postEmployee, deleteEmployee } from "../../api/employeeApi";
 import { getStudents, postStudent, deleteStudent } from "../../api/studentsApi";
@@ -23,53 +23,70 @@ const OrganizersModal = ({
 
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const displayError = (message) => {
+        setErrorMessage(message);
+        setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
+
     const closeModal = () => {
         closeHandler();
     };
 
-    const loadEmployees = async () => {
-        const response = await getEmployees();
-
-        if (response) {
-            if (response.status < 300) {
-                setLoadedEmployees(
-                    response.data.sort((a, b) =>
-                        [a.lastName, a.firstName, a.patronymic]
-                            .join("")
-                            .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
-                    )
-                );
-            } else {
-                console.log("Error while loading employees");
-            }
-        } else {
-            console.log("Server did not respond");
-        }
-    };
-
-    const loadStudents = async () => {
-        const response = await getStudents();
-
-        if (response) {
-            if (response.status < 300) {
-                setLoadedStudents(
-                    response.data.sort((a, b) =>
-                        [a.lastName, a.firstName, a.patronymic]
-                            .join("")
-                            .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
-                    )
-                );
-            } else {
-                console.log("Error while loading students");
-            }
-        } else {
-            console.log("Server did not respond");
-        }
-    };
-
     useEffect(() => {
-        loadEmployees();
-        loadStudents();
+        const loadEmployees = async () => {
+            const response = await getEmployees();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            setLoadedEmployees(
+                response.data.sort((a, b) =>
+                    [a.lastName, a.firstName, a.patronymic]
+                        .join("")
+                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                )
+            );
+        };
+
+        const loadStudents = async () => {
+            const response = await getStudents();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            setLoadedStudents(
+                response.data.sort((a, b) =>
+                    [a.lastName, a.firstName, a.patronymic]
+                        .join("")
+                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                )
+            );
+        };
+
+        loadEmployees().then(() => {
+            loadStudents();
+        });
     }, []);
 
     useEffect(() => {
@@ -87,32 +104,25 @@ const OrganizersModal = ({
     const createEmployee = async (createdEmployee) => {
         const response = await postEmployee(createdEmployee);
 
-        if (response) {
-            if (response.status < 300) {
-                console.log(response.data);
-                addEmployeeHandler(response.data);
-                setLoadedEmployees([...loadedEmployees, response.data]);
-            } else {
-                console.log("Error while creating the employee");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
         }
+
+        addEmployeeHandler(response.data);
+        setLoadedEmployees([...loadedEmployees, response.data]);
+        displaySuccess("Сотрудник создан");
     };
 
     const createStudent = async (createdStudent) => {
         const response = await postStudent(createdStudent);
 
-        if (response) {
-            if (response.status < 300) {
-                setLoadedStudents([...loadedStudents, response.data]);
-                addStudentHandler(response.data);
-            } else {
-                console.log("Error while creating the student");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
         }
+
+        setLoadedStudents([...loadedStudents, response.data]);
+        addStudentHandler(response.data);
+        displaySuccess("Студент создан");
     };
 
     const addEmployee = (id) => {
@@ -134,65 +144,71 @@ const OrganizersModal = ({
     const removeEmployeePermanent = async (id) => {
         const response = await deleteEmployee(id);
 
-        if (response) {
-            if (response.status < 300) {
-                removeEmployeeHandler(id);
-                setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
-            } else {
-                console.log("Error while deleting the employee");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
         }
+
+        removeEmployeeHandler(id);
+        setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
+        displaySuccess("Сотрудник удален");
     };
 
     const removeStudentPermanent = async (id) => {
         const response = await deleteStudent(id);
 
-        if (response) {
-            if (response.status < 300) {
-                removeStudentHandler(id);
-                setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
-            } else {
-                console.log("Error while deleting the student");
-            }
-        } else {
-            console.log("Server did not respond");
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
         }
+
+        removeStudentHandler(id);
+        setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
+        displaySuccess("Студент удален");
     };
 
     return (
-        <Dialog fullWidth open={isOpen} onClose={closeModal}>
-            <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
-                Организаторы мероприятия
-            </Typography>
-            <Container>
-                <Tabs centered value={currentTabIndex} onChange={changeTab}>
-                    <Tab label="Сотрудники" />
-                    <Tab label="Студенты" />
-                </Tabs>
-                {currentTabIndex === 0 && (
-                    <EmployeeList
-                        employees={currentEmployees}
-                        availableEmployees={availableEmployees}
-                        addEmployeeHandler={addEmployee}
-                        createEmployeeHandler={createEmployee}
-                        removeEmployeeHandler={removeEmployee}
-                        deleteEmployeeHandler={removeEmployeePermanent}
-                    />
-                )}
-                {currentTabIndex === 1 && (
-                    <StudentList
-                        students={currentStudents}
-                        availableStudents={availableStudents}
-                        addStudentHandler={addStudent}
-                        createStudentHandler={createStudent}
-                        removeStudentHandler={removeStudent}
-                        deleteStudentHandler={removeStudentPermanent}
-                    />
-                )}
-            </Container>
-        </Dialog>
+        <>
+            <Dialog fullWidth open={isOpen} onClose={closeModal}>
+                <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
+                    Организаторы мероприятия
+                </Typography>
+                <Container>
+                    <Tabs centered value={currentTabIndex} onChange={changeTab}>
+                        <Tab label="Сотрудники" />
+                        <Tab label="Студенты" />
+                    </Tabs>
+                    {currentTabIndex === 0 && (
+                        <EmployeeList
+                            employees={currentEmployees}
+                            availableEmployees={availableEmployees}
+                            addEmployeeHandler={addEmployee}
+                            createEmployeeHandler={createEmployee}
+                            removeEmployeeHandler={removeEmployee}
+                            deleteEmployeeHandler={removeEmployeePermanent}
+                        />
+                    )}
+                    {currentTabIndex === 1 && (
+                        <StudentList
+                            students={currentStudents}
+                            availableStudents={availableStudents}
+                            addStudentHandler={addStudent}
+                            createStudentHandler={createStudent}
+                            removeStudentHandler={removeStudent}
+                            deleteStudentHandler={removeStudentPermanent}
+                        />
+                    )}
+                </Container>
+            </Dialog>
+            <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
+        </>
     );
 };
 
