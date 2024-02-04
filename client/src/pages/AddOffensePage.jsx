@@ -5,23 +5,15 @@ import { postOffense } from "../api/offensesApi";
 const AddOffensePage = () => {
     const createOffense = async (offense) => {
         const response = await postOffense(offense);
-        
-        if (response) {
-            if (response.status < 300) {
-                return true;
-            } else {
-                console.log("Error while creating the offense. Code: " + response.status);
-            }
-        } else {
-            console.log("Server did not respond.");
+
+        if (!response.status || response.status >= 300) {
+            return response.data.error;
         }
 
-        return false;
+        return "";
     };
 
-    return (
-        <CreateOffenseForm creationHandler={createOffense} />
-    );
+    return <CreateOffenseForm creationHandler={createOffense} />;
 };
 
 export default AddOffensePage;
