@@ -19,13 +19,17 @@ import { getDirections } from "../api/directionsApi";
 import moment from "moment";
 
 const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
-    const [name, setName] = useState("");
-    const [selectedDepartments, setSelectedDepartments] = useState([]);
-    const [selectedSubdepartments, setSelectedSubdepartments] = useState([]);
-    const [selectedDirections, setSelectedDirections] = useState([]);
-    const [selectedSubdirections, setSelectedSubdirections] = useState([]);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [searchQuery, setSearchQuery] = useState(
+        JSON.parse(localStorage.getItem("eventSearchQuery")) ?? {
+            name: "",
+            selectedDepartments: [],
+            selectedSubdepartments: [],
+            selectedDirections: [],
+            selectedSubdirections: [],
+            startDate: null,
+            endDate: null,
+        }
+    );
 
     const [departments, setDepartments] = useState([]);
     const [directions, setDirections] = useState([]);
@@ -33,22 +37,22 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
     const subdepartments = useMemo(() => {
         const subdepartments = [];
 
-        selectedDepartments
+        searchQuery.selectedDepartments
             .filter((dep) => dep.Subdepartments.length > 0)
             .map((dep) => dep.Subdepartments)
             .forEach((subdepList) => subdepartments.push(...subdepList));
         return subdepartments;
-    }, [selectedDepartments]);
+    }, [searchQuery.selectedDepartments]);
 
     const subdirections = useMemo(() => {
         const subdirections = [];
 
-        selectedDirections
+        searchQuery.selectedDirections
             .filter((dir) => dir.Subdirections.length > 0)
             .map((dir) => dir.Subdirections)
             .forEach((subdirList) => subdirections.push(...subdirList));
         return subdirections;
-    }, [selectedDirections]);
+    }, [searchQuery.selectedDirections]);
 
     useEffect(() => {
         const loadDepartments = async () => {
@@ -78,70 +82,75 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
         });
     }, [displayError]);
 
-    useEffect(
-        () =>
-            queryHandler({
-                name: name,
-                departments: selectedDepartments,
-                subdepartments: selectedSubdepartments,
-                directions: selectedDirections,
-                subdirections: selectedSubdirections,
-                startDate: startDate,
-                endDate: endDate,
-            }),
-        [
-            name,
-            selectedDepartments,
-            selectedSubdepartments,
-            selectedDirections,
-            selectedSubdirections,
-            startDate,
-            endDate,
-            queryHandler,
-        ]
-    );
+    useEffect(() => {
+        const query = {
+            ...searchQuery,
+            startDate: searchQuery.startDate !== "Invalid date" ? searchQuery.startDate : null,
+            endDate: searchQuery.endDate !== "Invalid date" ? searchQuery.endDate : null,
+        };
+
+        localStorage.setItem("eventSearchQuery", JSON.stringify(query));
+
+        queryHandler({
+            name: searchQuery.name,
+            departments: searchQuery.selectedDepartments,
+            subdepartments: searchQuery.selectedSubdepartments,
+            directions: searchQuery.selectedDirections,
+            subdirections: searchQuery.selectedSubdirections,
+            startDate: searchQuery.startDate,
+            endDate: searchQuery.endDate,
+        });
+    }, [searchQuery, queryHandler]);
 
     const resetFilter = () => {
-        setName("");
-        setSelectedDepartments([]);
-        setSelectedSubdepartments([]);
-        setSelectedDirections([]);
-        setSelectedSubdirections([]);
-        setStartDate(null);
-        setEndDate(null);
+        setSearchQuery({
+            name: "",
+            selectedDepartments: [],
+            selectedSubdepartments: [],
+            selectedDirections: [],
+            selectedSubdirections: [],
+            startDate: null,
+            endDate: null,
+        });
         displaySuccess("Фильтр сброшен");
     };
 
-    const changeDepartments = (departments) => {
-        setSelectedDepartments(departments);
-
-        setSelectedSubdepartments(
-            selectedSubdepartments.filter((subdep) =>
-                selectedDepartments.includes((dep) =>
+    const changeDepartments = (departmentIds) => {
+        setSearchQuery({
+            ...searchQuery,
+            selectedDepartments: departmentIds.map((id) => departments.find((dep) => dep.id === id)),
+            selectedSubdepartments: searchQuery.selectedSubdepartments.filter((subdep) =>
+                searchQuery.selectedDepartments.includes((dep) =>
                     dep.Subdepartments.map((s) => s.id).includes((id) => id === subdep.id)
                 )
-            )
-        );
+            ),
+        });
     };
 
     const changeSubdepartments = (subdepartments) => {
-        setSelectedSubdepartments(subdepartments);
+        setSearchQuery({
+            ...searchQuery,
+            selectedSubdepartments: subdepartments,
+        });
     };
 
-    const changeDirections = (directions) => {
-        setSelectedDirections(directions);
-
-        setSelectedSubdirections(
-            selectedSubdirections.filter((subdir) =>
-                selectedDirections.includes((dir) =>
+    const changeDirections = (directionIds) => {
+        setSearchQuery({
+            ...searchQuery,
+            selectedDirections: directionIds.map((id) => directions.find((dir) => dir.id === id)),
+            selectedSubdirections: searchQuery.selectedSubdirections.filter((subdir) =>
+                searchQuery.selectedDirections.includes((dir) =>
                     dir.Subdirections.map((d) => d.id).includes((id) => id === subdir.id)
                 )
-            )
-        );
+            ),
+        });
     };
 
     const changeSubdirections = (subdirections) => {
-        setSelectedSubdirections(subdirections);
+        setSearchQuery({
+            ...searchQuery,
+            selectedSubdirections: subdirections,
+        });
     };
 
     return (
@@ -165,8 +174,8 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             label="Название"
                             fullWidth
                             autoComplete="off"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={searchQuery.name}
+                            onChange={(e) => setSearchQuery({ ...searchQuery, name: e.target.value })}
                         />
                         <FormControl fullWidth>
                             <InputLabel id="department-label">Отделы</InputLabel>
@@ -175,13 +184,23 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 labelId="department-label"
                                 label="Отделы"
                                 multiple
-                                value={selectedDepartments}
+                                value={searchQuery.selectedDepartments.map((dep) => dep.id)}
                                 onChange={(e) => changeDepartments(e.target.value)}
-                                renderValue={(selected) => selected.map((dep) => dep.name).join(", ")}
+                                renderValue={(selected) =>
+                                    departments.length > 0
+                                        ? selected
+                                              .map((id) => departments.find((dep) => dep.id === id).name)
+                                              .join(", ")
+                                        : ""
+                                }
                             >
                                 {departments.map((dep) => (
-                                    <MenuItem key={dep.id} value={dep}>
-                                        <Checkbox checked={selectedDepartments.indexOf(dep) > -1} />
+                                    <MenuItem key={dep.id} value={dep.id}>
+                                        <Checkbox
+                                            checked={searchQuery.selectedDepartments.some(
+                                                (selectedDep) => selectedDep.id === dep.id
+                                            )}
+                                        />
                                         <ListItemText primary={dep.name} />
                                     </MenuItem>
                                 ))}
@@ -195,7 +214,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                     labelId="subdepartment-label"
                                     label="Факультеты"
                                     multiple
-                                    value={selectedSubdepartments}
+                                    value={searchQuery.selectedSubdepartments}
                                     onChange={(e) => changeSubdepartments(e.target.value)}
                                     renderValue={(selected) =>
                                         selected.length > 2
@@ -205,7 +224,9 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 >
                                     {subdepartments.map((subdep) => (
                                         <MenuItem key={subdep.id} value={subdep}>
-                                            <Checkbox checked={selectedSubdepartments.indexOf(subdep) > -1} />
+                                            <Checkbox
+                                                checked={searchQuery.selectedSubdepartments.indexOf(subdep) > -1}
+                                            />
                                             <ListItemText primary={subdep.name} />
                                         </MenuItem>
                                     ))}
@@ -219,15 +240,23 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 labelId="direction-label"
                                 label="Направления"
                                 multiple
-                                value={selectedDirections}
+                                value={searchQuery.selectedDirections.map((dir) => dir.id)}
                                 onChange={(e) => changeDirections(e.target.value)}
                                 renderValue={(selected) =>
-                                    selected.length > 1 ? `Направления (${selected.length})` : selected[0].name
+                                    selected.length > 1
+                                        ? `Направления (${selected.length})`
+                                        : directions.length > 0
+                                        ? directions.find((dir) => dir.id === selected[0]).name
+                                        : ""
                                 }
                             >
                                 {directions.map((dir) => (
-                                    <MenuItem key={dir.id} value={dir}>
-                                        <Checkbox checked={selectedDirections.indexOf(dir) > -1} />
+                                    <MenuItem key={dir.id} value={dir.id}>
+                                        <Checkbox
+                                            checked={searchQuery.selectedDirections.some(
+                                                (selectedDir) => selectedDir.id === dir.id
+                                            )}
+                                        />
                                         <ListItemText primary={dir.name} />
                                     </MenuItem>
                                 ))}
@@ -241,7 +270,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                     labelId="subdirection-label"
                                     label="Темы"
                                     multiple
-                                    value={selectedSubdirections}
+                                    value={searchQuery.selectedSubdirections}
                                     onChange={(e) => changeSubdirections(e.target.value)}
                                     renderValue={(selected) =>
                                         selected.length > 1
@@ -251,7 +280,9 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 >
                                     {subdirections.map((subdir) => (
                                         <MenuItem key={subdir.id} value={subdir}>
-                                            <Checkbox checked={selectedSubdirections.indexOf(subdir) > -1} />
+                                            <Checkbox
+                                                checked={searchQuery.selectedSubdirections.indexOf(subdir) > -1}
+                                            />
                                             <ListItemText primary={subdir.name} />
                                         </MenuItem>
                                     ))}
@@ -262,9 +293,14 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             <Grid item xs={5}>
                                 <DatePicker
                                     label="От"
-                                    value={startDate != null ? moment(startDate) : null}
-                                    maxDate={endDate != null ? moment(endDate) : null}
-                                    onChange={(newDate) => setStartDate(moment(newDate).format("YYYY-MM-DD"))}
+                                    value={searchQuery.startDate != null ? moment(searchQuery.startDate) : null}
+                                    maxDate={searchQuery.endDate != null ? moment(searchQuery.endDate) : null}
+                                    onChange={(newDate) =>
+                                        setSearchQuery({
+                                            ...searchQuery,
+                                            startDate: moment(newDate).format("YYYY-MM-DD"),
+                                        })
+                                    }
                                 />
                             </Grid>
                             <Grid container item justifyContent={"center"} alignItems={"center"} xs={2}>
@@ -273,22 +309,33 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             <Grid item xs={5}>
                                 <DatePicker
                                     label="До"
-                                    value={endDate != null ? moment(endDate) : null}
-                                    minDate={startDate != null ? moment(startDate) : null}
-                                    onChange={(newDate) => setEndDate(moment(newDate).format("YYYY-MM-DD"))}
+                                    value={searchQuery.endDate != null ? moment(searchQuery.endDate) : null}
+                                    minDate={searchQuery.startDate != null ? moment(searchQuery.startDate) : null}
+                                    onChange={(newDate) =>
+                                        setSearchQuery({
+                                            ...searchQuery,
+                                            endDate: moment(newDate).format("YYYY-MM-DD"),
+                                        })
+                                    }
                                 />
                             </Grid>
-                            {startDate != null && (
+                            {searchQuery.startDate != null && (
                                 <Grid item xs={5}>
-                                    <Button variant="text" onClick={() => setStartDate(null)}>
+                                    <Button
+                                        variant="text"
+                                        onClick={() => setSearchQuery({ ...searchQuery, startDate: null })}
+                                    >
                                         Сброс
                                     </Button>
                                 </Grid>
                             )}
-                            {endDate != null && <Grid item xs={2} />}
-                            {endDate != null && (
+                            {searchQuery.endDate != null && <Grid item xs={2} />}
+                            {searchQuery.endDate != null && (
                                 <Grid item xs={5}>
-                                    <Button variant="text" onClick={() => setEndDate(null)}>
+                                    <Button
+                                        variant="text"
+                                        onClick={() => setSearchQuery({ ...searchQuery, endDate: null })}
+                                    >
                                         Сброс
                                     </Button>
                                 </Grid>
