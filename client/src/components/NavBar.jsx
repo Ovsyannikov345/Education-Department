@@ -87,10 +87,7 @@ function NavBar() {
     };
 
     const logout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("role");
-        localStorage.removeItem("userId");
+        localStorage.clear()
         window.location.reload();
     };
 
