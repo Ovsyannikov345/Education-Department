@@ -9,7 +9,7 @@ import DeleteConfirmationModal from "../modal/DeleteConfirmationModal/DeleteConf
 const EventItem = ({ event, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-    const router = useNavigate();
+    const navigate = useNavigate();
 
     const deleteEvent = () => {
         deleteHandler(event.id);
@@ -48,7 +48,7 @@ const EventItem = ({ event, deleteHandler }) => {
                     </Grid>
                     <Grid container item xs={12} gap={2}>
                         <Grid item>
-                            <Button variant="outlined" onClick={() => router("/events/" + event.id)}>
+                            <Button variant="outlined" onClick={() => navigate("/events/" + event.id)}>
                                 Подробнее
                             </Button>
                         </Grid>

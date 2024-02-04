@@ -8,7 +8,7 @@ import EvenIcon from "@mui/icons-material/Event";
 const OffenseItem = ({ offense, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-    const router = useNavigate();
+    const navigate = useNavigate();
 
     const deleteOffense = () => {
         deleteHandler(offense.id);
@@ -86,7 +86,11 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                 </Grid>
                 <Grid container item xs={12} gap={2}>
                     <Grid item>
-                        <Button variant="outlined" color="primary" onClick={() => router(`/offenses/${offense.id}`)}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => navigate(`/offenses/${offense.id}`)}
+                        >
                             Подробнее
                         </Button>
                     </Grid>
