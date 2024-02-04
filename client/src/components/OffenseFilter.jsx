@@ -3,25 +3,34 @@ import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import moment from "moment";
 
-const OffenseFilter = ({ queryHandler }) => {
-    const [text, setText] = useState("");
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-
-    useEffect(
-        () =>
-            queryHandler({
-                text: text,
-                startDate: startDate,
-                endDate: endDate,
-            }),
-        [text, startDate, endDate, queryHandler]
+const OffenseFilter = ({ queryHandler, displaySuccess }) => {
+    const [searchQuery, setSearchQuery] = useState(
+        JSON.parse(localStorage.getItem("offenseSearchQuery")) ?? {
+            text: "",
+            startDate: null,
+            endDate: null,
+        }
     );
 
+    useEffect(() => {
+        const query = {
+            ...searchQuery,
+            startDate: searchQuery.startDate !== "Invalid date" ? searchQuery.startDate : null,
+            endDate: searchQuery.endDate !== "Invalid date" ? searchQuery.endDate : null,
+        };
+
+        localStorage.setItem("offenseSearchQuery", JSON.stringify(query));
+
+        queryHandler(searchQuery);
+    }, [searchQuery, queryHandler]);
+
     const resetFilter = () => {
-        setText("");
-        setStartDate(null);
-        setEndDate(null);
+        setSearchQuery({
+            text: "",
+            startDate: null,
+            endDate: null,
+        });
+        displaySuccess("Фильтр сброшен");
     };
 
     return (
@@ -45,16 +54,21 @@ const OffenseFilter = ({ queryHandler }) => {
                             label="Имя или группа"
                             fullWidth
                             autoComplete="off"
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
+                            value={searchQuery.text}
+                            onChange={(e) => setSearchQuery({ ...searchQuery, text: e.target.value })}
                         />
                         <Grid container item xs={12} justifyContent={"space-between"}>
                             <Grid item xs={5}>
                                 <DatePicker
                                     label="От"
-                                    value={startDate != null ? moment(startDate) : null}
-                                    maxDate={endDate != null ? moment(endDate) : null}
-                                    onChange={(newDate) => setStartDate(moment(newDate).format("YYYY-MM-DD"))}
+                                    value={searchQuery.startDate != null ? moment(searchQuery.startDate) : null}
+                                    maxDate={searchQuery.endDate != null ? moment(searchQuery.endDate) : null}
+                                    onChange={(newDate) =>
+                                        setSearchQuery({
+                                            ...searchQuery,
+                                            startDate: moment(newDate).format("YYYY-MM-DD"),
+                                        })
+                                    }
                                 />
                             </Grid>
                             <Grid container item justifyContent={"center"} alignItems={"center"} xs={2}>
@@ -63,22 +77,43 @@ const OffenseFilter = ({ queryHandler }) => {
                             <Grid item xs={5}>
                                 <DatePicker
                                     label="До"
-                                    value={endDate != null ? moment(endDate) : null}
-                                    minDate={startDate != null ? moment(startDate) : null}
-                                    onChange={(newDate) => setEndDate(moment(newDate).format("YYYY-MM-DD"))}
+                                    value={searchQuery.endDate != null ? moment(searchQuery.endDate) : null}
+                                    minDate={searchQuery.startDate != null ? moment(searchQuery.startDate) : null}
+                                    onChange={(newDate) =>
+                                        setSearchQuery({
+                                            ...searchQuery,
+                                            endDate: moment(newDate).format("YYYY-MM-DD"),
+                                        })
+                                    }
                                 />
                             </Grid>
-                            {startDate != null && (
+                            {searchQuery.startDate != null && (
                                 <Grid item xs={5}>
-                                    <Button variant="text" onClick={() => setStartDate(null)}>
+                                    <Button
+                                        variant="text"
+                                        onClick={() =>
+                                            setSearchQuery({
+                                                ...searchQuery,
+                                                startDate: null,
+                                            })
+                                        }
+                                    >
                                         Сброс
                                     </Button>
                                 </Grid>
                             )}
-                            {endDate != null && <Grid item xs={2} />}
-                            {endDate != null && (
+                            {searchQuery.endDate != null && <Grid item xs={2} />}
+                            {searchQuery.endDate != null && (
                                 <Grid item xs={5}>
-                                    <Button variant="text" onClick={() => setEndDate(null)}>
+                                    <Button
+                                        variant="text"
+                                        onClick={() =>
+                                            setSearchQuery({
+                                                ...searchQuery,
+                                                endDate: null,
+                                            })
+                                        }
+                                    >
                                         Сброс
                                     </Button>
                                 </Grid>
