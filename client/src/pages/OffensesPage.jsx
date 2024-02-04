@@ -113,7 +113,7 @@ function OffensesPage() {
         <>
             <Grid container alignItems={"flex-start"} mb={5}>
                 <Grid container item xs={3}>
-                    <OffenseFilter queryHandler={setSearchQuery} />
+                    <OffenseFilter queryHandler={setSearchQuery} displaySuccess={displaySuccess}/>
                 </Grid>
                 <Grid container item xs={9} pl={2} pr={2}>
                     <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
