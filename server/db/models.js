@@ -10,7 +10,7 @@ const Event = sequelize.define(
             autoIncrement: true,
         },
         name: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
             allowNull: false,
         },
         departmentId: {
@@ -50,7 +50,7 @@ const Department = sequelize.define(
             autoIncrement: true,
         },
         name: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
     },
@@ -66,7 +66,7 @@ const Subdepartment = sequelize.define(
             autoIncrement: true,
         },
         name: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
             allowNull: false,
         },
         departmentId: {
@@ -86,7 +86,7 @@ const Direction = sequelize.define(
             autoIncrement: true,
         },
         name: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
             allowNull: false,
         },
     },
@@ -102,7 +102,7 @@ const Subdirection = sequelize.define(
             autoIncrement: true,
         },
         name: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
             allowNull: false,
         },
         directionId: {
@@ -122,18 +122,18 @@ const Participant = sequelize.define(
             autoIncrement: true,
         },
         firstName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         patronymic: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
         },
         position: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
         },
         organization: {
             type: DataTypes.STRING,
@@ -154,15 +154,15 @@ const Employee = sequelize.define(
             autoIncrement: true,
         },
         firstName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         patronymic: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
         },
     },
     { timestamps: false }
@@ -177,18 +177,18 @@ const Student = sequelize.define(
             autoIncrement: true,
         },
         firstName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         patronymic: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
         },
         groupName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(15),
             allowNull: false,
         },
     },
@@ -220,7 +220,7 @@ const Offense = sequelize.define(
             allowNull: false,
         },
         article: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
             allowNull: false,
         },
         offenseDate: {
@@ -246,15 +246,15 @@ const User = sequelize.define(
             autoIncrement: true,
         },
         firstName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         lastName: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         patronymic: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(50),
         },
         email: {
             type: DataTypes.STRING,
@@ -265,7 +265,7 @@ const User = sequelize.define(
             allowNull: false,
         },
         role: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(15),
             allowNull: false,
         },
         blockedAt: {
