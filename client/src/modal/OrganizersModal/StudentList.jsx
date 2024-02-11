@@ -12,6 +12,8 @@ import {
     Typography,
 } from "@mui/material";
 import StudentItem from "./StudentItem";
+import { useFormik } from "formik";
+import validateStudent from "./../../utils/validateFunctions/validateStudent";
 
 const StudentList = ({
     students,
@@ -22,28 +24,22 @@ const StudentList = ({
     deleteStudentHandler,
     readonly = false,
 }) => {
-    const [creationToggle, setCreationToggle] = useState(false);
-    const [createdStudent, setCreatedStudent] = useState({
-        lastName: "",
-        firstName: "",
-        patronymic: "",
-        groupName: "",
-    });
-
-    const createStudent = () => {
-        createStudentHandler(createdStudent);
-        setCreationToggle(false);
-        setCreatedStudent({
+    const formik = useFormik({
+        initialValues: {
             lastName: "",
             firstName: "",
             patronymic: "",
             groupName: "",
-        });
-    };
+        },
+        validate: validateStudent,
+        onSubmit: async (values) => {
+            createStudentHandler(values);
+            setCreationToggle(false);
+            formik.resetForm();
+        },
+    });
 
-    const cancelCreation = () => {
-        setCreationToggle(false);
-    };
+    const [creationToggle, setCreationToggle] = useState(false);
 
     return (
         <Stack gap={1} marginTop={1}>
@@ -74,7 +70,7 @@ const StudentList = ({
                             {availableStudents.length > 0 &&
                                 availableStudents.map((std) => (
                                     <MenuItem key={std.id} value={std.id}>
-                                        {`${std.groupName} ${std.lastName} ${std.firstName} ${std.patronymic}`}
+                                        {`${std.lastName} ${std.firstName} ${std.patronymic} (${std.groupName})`}
                                     </MenuItem>
                                 ))}
                         </Select>
@@ -89,12 +85,18 @@ const StudentList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Группа"
-                                            value={createdStudent.groupName}
-                                            onChange={(e) =>
-                                                setCreatedStudent({
-                                                    ...createdStudent,
-                                                    groupName: e.target.value,
-                                                })
+                                            id="groupName"
+                                            name="groupName"
+                                            value={formik.values.groupName}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.groupName && formik.errors.groupName !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.groupName && formik.errors.groupName !== undefined
+                                                    ? formik.errors.groupName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -103,12 +105,18 @@ const StudentList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Фамилия"
-                                            value={createdStudent.lastName}
-                                            onChange={(e) =>
-                                                setCreatedStudent({
-                                                    ...createdStudent,
-                                                    lastName: e.target.value,
-                                                })
+                                            id="lastName"
+                                            name="lastName"
+                                            value={formik.values.lastName}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.lastName && formik.errors.lastName !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.lastName && formik.errors.lastName !== undefined
+                                                    ? formik.errors.lastName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -117,12 +125,18 @@ const StudentList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Имя"
-                                            value={createdStudent.firstName}
-                                            onChange={(e) =>
-                                                setCreatedStudent({
-                                                    ...createdStudent,
-                                                    firstName: e.target.value,
-                                                })
+                                            id="firstName"
+                                            name="firstName"
+                                            value={formik.values.firstName}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.firstName && formik.errors.firstName !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.firstName && formik.errors.firstName !== undefined
+                                                    ? formik.errors.firstName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -131,12 +145,20 @@ const StudentList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Отчество"
-                                            value={createdStudent.patronymic}
-                                            onChange={(e) =>
-                                                setCreatedStudent({
-                                                    ...createdStudent,
-                                                    patronymic: e.target.value,
-                                                })
+                                            id="patronymic"
+                                            name="patronymic"
+                                            value={formik.values.patronymic}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.patronymic &&
+                                                formik.errors.patronymic !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.patronymic &&
+                                                formik.errors.patronymic !== undefined
+                                                    ? formik.errors.patronymic
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -147,17 +169,21 @@ const StudentList = ({
                                             fullWidth
                                             variant="outlined"
                                             color="primary"
-                                            onClick={createStudent}
+                                            onClick={(e) => formik.handleSubmit(e)}
                                         >
                                             Создать
                                         </Button>
                                     </Grid>
                                     <Grid item xs={2}>
                                         <Button
+                                            type="reset"
                                             fullWidth
                                             variant="outlined"
                                             color="error"
-                                            onClick={cancelCreation}
+                                            onClick={(e) => {
+                                                formik.handleReset(e);
+                                                setCreationToggle(false);
+                                            }}
                                         >
                                             Отмена
                                         </Button>

@@ -4,6 +4,7 @@ import { OFFENSIVES_ROUTE } from "../utils/consts";
 import {
     Container,
     FormControl,
+    FormHelperText,
     Grid,
     Typography,
     InputLabel,
@@ -19,39 +20,48 @@ import BackIcon from "@mui/icons-material/ArrowBackIos";
 import { DatePicker } from "@mui/x-date-pickers";
 import moment from "moment";
 import { getOffense, putOffense } from "../api/offensesApi";
-import { getStudents, postStudent } from "../api/studentsApi";
+import { getStudents } from "../api/studentsApi";
+import { useFormik } from "formik";
+import validateOffense from "../utils/validateFunctions/validateOffense";
+import CreateStudentForm from "../components/CreateStudentForm";
 
 const OffenseDetailsPage = () => {
-    const [offense, setOffense] = useState({
-        id: null,
-        studentId: null,
-        Student: null,
-        offenseDate: null,
-        article: "",
-        courtDecision: "",
-        penalty: "",
+    const { id } = useParams();
+
+    const navigate = useNavigate();
+
+    const formik = useFormik({
+        initialValues: {
+            id: "",
+            studentId: "",
+            offenseDate: "",
+            article: "",
+            courtDecision: "",
+            penalty: "",
+        },
+        validate: (values) => validateOffense(values),
+        onSubmit: async (values) => {
+            const response = await putOffense(values);
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
+            }
+
+            setInitialOffense(values);
+            setEditModeToggle(false);
+            setStudentCreationToggle(false);
+            displaySuccess("Правонарушение изменено");
+        },
     });
+
+    const [initialOffense, setInitialOffense] = useState({});
 
     const [students, setStudents] = useState([]);
 
     const [editModeToggle, setEditModeToggle] = useState(false);
-    const [editedOffense, setEditedOffense] = useState({
-        id: null,
-        studentId: null,
-        Student: null,
-        offenseDate: null,
-        article: "",
-        courtDecision: "",
-        penalty: "",
-    });
 
     const [studentCreationToggle, setStudentCreationToggle] = useState(false);
-    const [newStudent, setNewStudent] = useState({
-        lastName: "",
-        firstName: "",
-        patronymic: "",
-        groupName: "",
-    });
 
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -77,10 +87,6 @@ const OffenseDetailsPage = () => {
         setError(false);
     };
 
-    const navigate = useNavigate();
-
-    const { id } = useParams();
-
     useEffect(() => {
         const loadOffense = async () => {
             const response = await getOffense(id);
@@ -90,7 +96,10 @@ const OffenseDetailsPage = () => {
                 return;
             }
 
-            setOffense(response.data);
+            const { Student, ...offense } = response.data;
+
+            formik.setValues(offense);
+            setInitialOffense(offense);
         };
 
         const loadStudents = async () => {
@@ -104,60 +113,13 @@ const OffenseDetailsPage = () => {
             setStudents(response.data);
         };
 
-        loadOffense().then(() => {
-            loadStudents();
+        loadStudents().then(() => {
+            loadOffense();
         });
     }, [id]);
 
-    useEffect(() => {
-        setEditedOffense({ ...offense });
-    }, [offense]);
-
-    const changeSudent = (id) => {
-        setEditedOffense({
-            ...editedOffense,
-            studentId: id,
-            Student: students.find((std) => std.id === id),
-        });
-    };
-
-    const createStudent = async () => {
-        const response = await postStudent(newStudent);
-
-        if (!response.status || response.status >= 300) {
-            displayError(response.data.error);
-            return;
-        }
-
-        const createdStudent = response.data;
-
-        setStudents([...students, createdStudent]);
-        setEditedOffense({
-            ...editedOffense,
-            studentId: createdStudent.id,
-            Student: createdStudent,
-        });
-
-        setStudentCreationToggle(false);
-        setNewStudent({ lastName: "", firstName: "", patronymic: "", groupName: "" });
-        displaySuccess("Студент создан");
-    };
-
-    const applyChanges = async () => {
-        const response = await putOffense(editedOffense);
-
-        if (!response.status || response.status >= 300) {
-            displayError(response.data.error);
-            return;
-        }
-
-        setOffense(editedOffense);
-        setEditModeToggle(false);
-        displaySuccess("Правонарушение изменено");
-    };
-
-    const declineChanges = () => {
-        setEditedOffense(offense);
+    const resetChanges = () => {
+        formik.setValues(initialOffense);
         setEditModeToggle(false);
         setStudentCreationToggle(false);
     };
@@ -172,7 +134,7 @@ const OffenseDetailsPage = () => {
                 <BackIcon></BackIcon>Список правонарушений
             </IconButton>
             <Container>
-                <Grid container mb={3}>
+                <Grid container mb={3} justifyContent={"center"}>
                     <Grid container item xs={6} mt={2} rowGap={2} columnGap={2} alignItems={"baseline"}>
                         <Grid container item xs={12}>
                             <Grid item xs>
@@ -192,17 +154,13 @@ const OffenseDetailsPage = () => {
                                             <Button
                                                 variant="outlined"
                                                 color="primary"
-                                                onClick={() => applyChanges()}
+                                                onClick={formik.handleSubmit}
                                             >
                                                 Сохранить
                                             </Button>
                                         </Grid>
                                         <Grid item xs>
-                                            <Button
-                                                variant="outlined"
-                                                color="error"
-                                                onClick={() => declineChanges()}
-                                            >
+                                            <Button variant="outlined" color="error" onClick={resetChanges}>
                                                 Отмена
                                             </Button>
                                         </Grid>
@@ -212,22 +170,40 @@ const OffenseDetailsPage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth>
-                                <InputLabel id="student-label">Студент</InputLabel>
+                                <InputLabel
+                                    id="student-label"
+                                    error={formik.touched.studentId && formik.errors.studentId !== undefined}
+                                >
+                                    Студент
+                                </InputLabel>
                                 <Select
                                     fullWidth
                                     labelId="student-label"
-                                    id="student-select"
-                                    value={students.length > 0 ? editedOffense.studentId ?? "" : ""}
-                                    readOnly={!editModeToggle}
+                                    id="studentId"
+                                    name="studentId"
+                                    value={formik.values.studentId}
+                                    renderValue={(value) => {
+                                        const student = students.find((s) => s.id === value);
+
+                                        return `${student.lastName} ${student.firstName} ${student.patronymic} (${student.groupName})`;
+                                    }}
                                     label="Студент"
-                                    onChange={(e) => changeSudent(e.target.value)}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.studentId && formik.errors.studentId !== undefined}
+                                    readOnly={!editModeToggle}
                                 >
-                                    {students.map((std) => (
-                                        <MenuItem key={std.id} value={std.id}>
-                                            {`${std.lastName} ${std.firstName} ${std.patronymic} ${std.groupName}`}
+                                    {students.map((s) => (
+                                        <MenuItem key={s.id} value={s.id}>
+                                            {`${s.lastName} ${s.firstName} ${s.patronymic} (${s.groupName})`}
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error>
+                                    {formik.touched.studentId && formik.errors.studentId !== undefined
+                                        ? formik.errors.studentId
+                                        : ""}
+                                </FormHelperText>
                             </FormControl>
                         </Grid>
                         {!studentCreationToggle && editModeToggle && (
@@ -238,99 +214,41 @@ const OffenseDetailsPage = () => {
                             </Grid>
                         )}
                         {studentCreationToggle && editModeToggle && (
-                            <FormControl fullWidth>
-                                <Grid container item xs={12} gap={1}>
-                                    <Grid item xs={5.9}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Фамилия"
-                                            value={newStudent.lastName}
-                                            onChange={(e) =>
-                                                setNewStudent({
-                                                    ...newStudent,
-                                                    lastName: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Grid>
-                                    <Grid item xs={5.9}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Имя"
-                                            value={newStudent.firstName}
-                                            onChange={(e) =>
-                                                setNewStudent({
-                                                    ...newStudent,
-                                                    firstName: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Grid>
-                                    <Grid item xs={5.9}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Отчество"
-                                            value={newStudent.patronymic}
-                                            onChange={(e) =>
-                                                setNewStudent({
-                                                    ...newStudent,
-                                                    patronymic: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Grid>
-                                    <Grid item xs={5.9}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Группа"
-                                            placeholder="Название-Номер"
-                                            value={newStudent.groupName}
-                                            onChange={(e) =>
-                                                setNewStudent({
-                                                    ...newStudent,
-                                                    groupName: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Grid>
-                                    <Grid container item xs={12} gap={2}>
-                                        <Grid item>
-                                            <Button variant="outlined" onClick={() => createStudent()}>
-                                                Создать
-                                            </Button>
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                variant="outlined"
-                                                color="error"
-                                                onClick={() => setStudentCreationToggle(false)}
-                                            >
-                                                Отмена
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </FormControl>
+                            <CreateStudentForm
+                                declineHandler={() => setStudentCreationToggle(false)}
+                                successCallback={(createdStudent) => {
+                                    setStudents([...students, createdStudent]);
+                                    formik.setFieldValue("studentId", createdStudent.id);
+                                    setStudentCreationToggle(false);
+                                    displaySuccess("Студент создан");
+                                }}
+                                errorCallback={(errorMessage) => displayError(errorMessage)}
+                            />
                         )}
                         <Grid item xs={12}>
                             <DatePicker
                                 label="Дата совершения"
-                                readOnly={!editModeToggle}
-                                value={
-                                    editedOffense.offenseDate != null
-                                        ? moment(editedOffense.offenseDate, "YYYY-MM-DD")
-                                        : null
-                                }
+                                value={formik.values.offenseDate ? moment(formik.values.offenseDate) : null}
+                                disableFuture
                                 onChange={(newDate) =>
-                                    setEditedOffense({
-                                        ...editedOffense,
-                                        offenseDate: moment(newDate).format("YYYY-MM-DD"),
-                                    })
+                                    formik.setFieldValue(
+                                        "offenseDate",
+                                        moment(newDate).format("YYYY-MM-DD"),
+                                        true
+                                    )
                                 }
+                                onBlur={formik.handleBlur}
+                                slotProps={{
+                                    textField: {
+                                        error:
+                                            formik.touched.offenseDate && formik.errors.offenseDate !== undefined,
+                                        helperText:
+                                            formik.touched.offenseDate && formik.errors.offenseDate !== undefined
+                                                ? formik.errors.offenseDate
+                                                : "",
+                                    },
+                                }}
+                                readOnly={!editModeToggle}
                             ></DatePicker>
                         </Grid>
                         <Grid item xs={12}>
@@ -338,11 +256,20 @@ const OffenseDetailsPage = () => {
                                 fullWidth
                                 variant="outlined"
                                 label="Статья"
+                                id="article"
+                                name="article"
                                 multiline
                                 maxRows={2}
+                                value={formik.values.article}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.article && formik.errors.article !== undefined}
+                                helperText={
+                                    formik.touched.article && formik.errors.article !== undefined
+                                        ? formik.errors.article
+                                        : ""
+                                }
                                 InputProps={{ readOnly: !editModeToggle }}
-                                value={editedOffense.article}
-                                onChange={(e) => setEditedOffense({ ...editedOffense, article: e.target.value })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -350,13 +277,20 @@ const OffenseDetailsPage = () => {
                                 fullWidth
                                 variant="outlined"
                                 label="Решение суда"
+                                id="courtDecision"
+                                name="courtDecision"
                                 multiline
                                 maxRows={7}
-                                InputProps={{ readOnly: !editModeToggle }}
-                                value={editedOffense.courtDecision}
-                                onChange={(e) =>
-                                    setEditedOffense({ ...editedOffense, courtDecision: e.target.value })
+                                value={formik.values.courtDecision}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.courtDecision && formik.errors.courtDecision !== undefined}
+                                helperText={
+                                    formik.touched.courtDecision && formik.errors.courtDecision !== undefined
+                                        ? formik.errors.courtDecision
+                                        : ""
                                 }
+                                InputProps={{ readOnly: !editModeToggle }}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -364,11 +298,20 @@ const OffenseDetailsPage = () => {
                                 fullWidth
                                 variant="outlined"
                                 label="Взыскание"
+                                id="penalty"
+                                name="penalty"
                                 multiline
                                 maxRows={2}
+                                value={formik.values.penalty}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.penalty && formik.errors.penalty !== undefined}
+                                helperText={
+                                    formik.touched.penalty && formik.errors.penalty !== undefined
+                                        ? formik.errors.penalty
+                                        : ""
+                                }
                                 InputProps={{ readOnly: !editModeToggle }}
-                                value={editedOffense.penalty}
-                                onChange={(e) => setEditedOffense({ ...editedOffense, penalty: e.target.value })}
                             />
                         </Grid>
                     </Grid>

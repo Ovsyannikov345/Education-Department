@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     Typography,
@@ -8,6 +8,7 @@ import {
     TextField,
     Grid,
     FormControl,
+    FormHelperText,
     InputLabel,
     Select,
     MenuItem,
@@ -28,34 +29,67 @@ import moment from "moment";
 import StudentList from "../modal/OrganizersModal/StudentList";
 import EmployeeList from "../modal/OrganizersModal/EmployeeList";
 import ParticipantList from "../modal/ParticipantsModal/ParticipantList";
+import { useFormik } from "formik";
+import validateEvent from "../utils/validateFunctions/validateEvent";
 
 const EventDetailsPage = (props) => {
-    const [event, setEvent] = useState({
-        id: null,
-        name: "",
-        description: "",
-        plannedResult: "",
-        date: "",
-        time: "",
-        Department: {
+    const { id } = useParams();
+
+    const navigate = useNavigate();
+
+    const formik = useFormik({
+        initialValues: {
+            id: "",
             name: "",
+            description: "",
+            plannedResult: "",
+            date: "",
+            time: "",
+            departmentId: "",
+            subdepartmentId: "",
+            directionId: "",
+            subdirectionId: "",
+            employees: [],
+            students: [],
+            participants: [],
         },
-        Subdepartment: null,
-        Direction: {
-            name: "",
+        validate: (values) =>
+            validateEvent(
+                values,
+                departments.find((dep) => dep.id === values.departmentId),
+                directions.find((dir) => dir.id === values.directionId)
+            ),
+        onSubmit: async (values) => {
+            const { time, ...event } = values;
+
+            event.date = `${values.date}T${values.time}:00.000Z`;
+            event.subdepartmentId = event.subdepartmentId || null;
+            event.subdirectionId = event.subdirectionId || null;
+
+            const response = await putEvent(event);
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
+            }
+
+            setInitialEvent(event);
+            setEditModeToggle(false);
+            displaySuccess("Мероприятие изменено");
         },
-        Subdirection: null,
-        Employees: [],
-        Students: [],
-        Participants: [],
     });
 
-    const [loadedEvent, setLoadedEvent] = useState({});
-    const [loadedDepartments, setLoadedDepartments] = useState([]);
-    const [loadedDirections, setLoadedDirections] = useState([]);
-    const [loadedStudents, setLoadedStudents] = useState([]);
-    const [loadedEmployees, setLoadedEmployees] = useState([]);
-    const [loadedParticipants, setLoadedParticipants] = useState([]);
+    const [initialEvent, setInitialEvent] = useState(null);
+
+    const [departments, setDepartments] = useState([]);
+    const [availableSubdepartments, setAvailableSubdepartments] = useState([]);
+
+    const [directions, setDirections] = useState([]);
+    const [availableSubdirections, setAvailableSubdirections] = useState([]);
+
+    const [students, setStudents] = useState([]);
+    const [employees, setEmployees] = useState([]);
+    const [participants, setParticipants] = useState([]);
 
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
@@ -85,34 +119,6 @@ const EventDetailsPage = (props) => {
         setError(false);
     };
 
-    const availableSubdepartments = useMemo(() => {
-        const department = loadedDepartments.find((dep) => dep.id === event.Department.id);
-
-        return department !== undefined ? department.Subdepartments : [];
-    }, [loadedDepartments, event.Department.id]);
-
-    const availableSubdirections = useMemo(() => {
-        const direction = loadedDirections.find((dir) => dir.id === event.Direction.id);
-
-        return direction !== undefined ? direction.Subdirections : [];
-    }, [loadedDirections, event.Direction.id]);
-
-    const availableStudents = useMemo(() => {
-        return loadedStudents.filter((std) => !event.Students.some((s) => s.id === std.id));
-    }, [loadedStudents, event.Students]);
-
-    const availableEmployees = useMemo(() => {
-        return loadedEmployees.filter((emp) => !event.Employees.some((e) => e.id === emp.id));
-    }, [loadedEmployees, event.Employees]);
-
-    const availableParticipants = useMemo(() => {
-        return loadedParticipants.filter((prt) => !event.Participants.some((p) => p.id === prt.id));
-    }, [loadedParticipants, event.Participants]);
-
-    const navigate = useNavigate();
-
-    const { id } = useParams();
-
     useEffect(() => {
         const loadEvent = async () => {
             const response = await getEvent(id);
@@ -127,17 +133,27 @@ const EventDetailsPage = (props) => {
             const formattedDate = moment.utc(loadedEvent.date).format("YYYY-MM-DD");
             const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
 
-            setEvent({
-                ...loadedEvent,
+            const event = {
+                id: loadedEvent.id,
+                name: loadedEvent.name,
+                description: loadedEvent.description,
+                plannedResult: loadedEvent.plannedResult,
                 date: formattedDate,
                 time: formattedTime,
-            });
+                departmentId: loadedEvent.departmentId,
+                subdepartmentId: loadedEvent.subdepartmentId || "",
+                directionId: loadedEvent.directionId,
+                subdirectionId: loadedEvent.subdirectionId || "",
+                employees: loadedEvent.Employees,
+                students: loadedEvent.Students,
+                participants: loadedEvent.Participants,
+            };
 
-            setLoadedEvent({
-                ...loadedEvent,
-                date: formattedDate,
-                time: formattedTime,
-            });
+            setInitialEvent(event);
+            formik.setValues(event);
+
+            setAvailableSubdepartments(loadedEvent.Department.Subdepartments);
+            setAvailableSubdirections(loadedEvent.Direction.Subdirections);
         };
 
         const loadDepartments = async () => {
@@ -148,7 +164,7 @@ const EventDetailsPage = (props) => {
                 return;
             }
 
-            setLoadedDepartments(response.data);
+            setDepartments(response.data);
         };
 
         const loadDirections = async () => {
@@ -159,7 +175,7 @@ const EventDetailsPage = (props) => {
                 return;
             }
 
-            setLoadedDirections(response.data);
+            setDirections(response.data);
         };
 
         const loadStudents = async () => {
@@ -170,7 +186,7 @@ const EventDetailsPage = (props) => {
                 return;
             }
 
-            setLoadedStudents(response.data);
+            setStudents(response.data);
         };
 
         const loadEmployees = async () => {
@@ -181,7 +197,7 @@ const EventDetailsPage = (props) => {
                 return;
             }
 
-            setLoadedEmployees(response.data);
+            setEmployees(response.data);
         };
 
         const loadParticipants = async () => {
@@ -192,16 +208,16 @@ const EventDetailsPage = (props) => {
                 return;
             }
 
-            setLoadedParticipants(response.data);
+            setParticipants(response.data);
         };
 
         const loadData = async () => {
-            await loadEvent();
             await loadDepartments();
             await loadDirections();
             await loadStudents();
             await loadEmployees();
             await loadParticipants();
+            await loadEvent();
         };
 
         loadData();
@@ -221,35 +237,20 @@ const EventDetailsPage = (props) => {
 
         const student = response.data;
 
-        setEvent({
-            ...event,
-            Students: [...event.Students, student],
-        });
-        setLoadedStudents([...loadedStudents, student]);
+        formik.setFieldValue("students", [...formik.values.students, student]);
+        setStudents([...students, student]);
         displaySuccess("Студент создан");
     };
 
-    const addStudent = (studentString) => {
-        const data = studentString.split(" ");
-        const studentToAdd = availableStudents.find(
-            (std) =>
-                std.groupName === data[0] &&
-                std.lastName === data[1] &&
-                std.firstName === data[2] &&
-                std.patronymic === data[3]
-        );
-
-        setEvent({
-            ...event,
-            Students: [...event.Students, studentToAdd],
-        });
+    const addStudent = (id) => {
+        formik.setFieldValue("students", [...formik.values.students, students.find((s) => s.id === id)]);
     };
 
     const removeStudent = (id) => {
-        setEvent({
-            ...event,
-            Students: event.Students.filter((std) => std.id !== id),
-        });
+        formik.setFieldValue(
+            "students",
+            formik.values.students.filter((std) => std.id !== id)
+        );
     };
 
     const removeStudentPermanent = async (id) => {
@@ -261,7 +262,7 @@ const EventDetailsPage = (props) => {
         }
 
         removeStudent(id);
-        setLoadedStudents(loadedStudents.filter((std) => std.id !== id));
+        setStudents(students.filter((std) => std.id !== id));
         displaySuccess("Студент удален");
     };
 
@@ -273,31 +274,22 @@ const EventDetailsPage = (props) => {
             return;
         }
 
-        setEvent({
-            ...event,
-            Employees: [...event.Employees, response.data],
-        });
-        setLoadedEmployees([...loadedEmployees, response.data]);
+        const employee = response.data;
+
+        formik.setFieldValue("employees", [...formik.values.employees, employee]);
+        setEmployees([...employees, employee]);
         displaySuccess("Сотрудник создан");
     };
 
-    const addEmployee = (employeeString) => {
-        const data = employeeString.split(" ");
-        const employeeToAdd = availableEmployees.find(
-            (emp) => emp.lastName === data[0] && emp.firstName === data[1] && emp.patronymic === data[2]
-        );
-
-        setEvent({
-            ...event,
-            Employees: [...event.Employees, employeeToAdd],
-        });
+    const addEmployee = (id) => {
+        formik.setFieldValue("employees", [...formik.values.employees, employees.find((e) => e.id === id)]);
     };
 
     const removeEmployee = (id) => {
-        setEvent({
-            ...event,
-            Employees: event.Employees.filter((emp) => emp.id !== id),
-        });
+        formik.setFieldValue(
+            "employees",
+            formik.values.employees.filter((e) => e.id !== id)
+        );
     };
 
     const removeEmployeePermanent = async (id) => {
@@ -309,7 +301,7 @@ const EventDetailsPage = (props) => {
         }
 
         removeEmployee(id);
-        setLoadedEmployees(loadedEmployees.filter((emp) => emp.id !== id));
+        setEmployees(employees.filter((e) => e.id !== id));
         displaySuccess("Сотрудник удален");
     };
 
@@ -321,37 +313,25 @@ const EventDetailsPage = (props) => {
             return;
         }
 
-        setEvent({
-            ...event,
-            Participants: [...event.Participants, response.data],
-        });
+        const participant = response.data;
 
-        setLoadedParticipants([...loadedParticipants, response.data]);
+        formik.setFieldValue("participants", [...formik.values.participants, participant]);
+        setParticipants([...participants, participant]);
         displaySuccess("Участник создан");
     };
 
-    const addParticipant = (participantString) => {
-        const data = participantString.split(" ");
-        const participantToAdd = availableParticipants.find(
-            (prt) =>
-                prt.lastName === data[0] &&
-                prt.firstName === data[1] &&
-                prt.patronymic === data[2] &&
-                prt.organization === data[3] &&
-                prt.position === data[4]
-        );
-
-        setEvent({
-            ...event,
-            Participants: [...event.Participants, participantToAdd],
-        });
+    const addParticipant = (id) => {
+        formik.setFieldValue("participants", [
+            ...formik.values.participants,
+            participants.find((p) => p.id === id),
+        ]);
     };
 
     const removeParticipant = (id) => {
-        setEvent({
-            ...event,
-            Participants: event.Participants.filter((prt) => prt.id !== id),
-        });
+        formik.setFieldValue(
+            "participants",
+            formik.values.participants.filter((p) => p.id !== id)
+        );
     };
 
     const removeParticipantPermanent = async (id) => {
@@ -363,100 +343,14 @@ const EventDetailsPage = (props) => {
         }
 
         removeParticipant(id);
-        setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
+        setParticipants(participants.filter((p) => p.id !== id));
         displaySuccess("Участник удален");
     };
 
-    const changeDepartment = (departmentName) => {
-        const department = loadedDepartments.find((dep) => dep.name === departmentName);
-
-        if (department.id !== event.Department.id) {
-            setEvent({
-                ...event,
-                departmentId: department.id,
-                Department: department,
-                subdepartmentId: null,
-                Subdepartment: null,
-            });
-        }
-    };
-
-    const changeSubdepartment = (subdepartmentName) => {
-        const subdepartment = loadedDepartments
-            .find((dep) => dep.id === event.Department.id)
-            .Subdepartments.find((subdep) => subdep.name === subdepartmentName);
-
-        setEvent({
-            ...event,
-            subdepartmentId: subdepartment.id,
-            Subdepartment: subdepartment,
-        });
-    };
-
-    const changeDirection = (directionName) => {
-        const direction = loadedDirections.find((dir) => dir.name === directionName);
-
-        if (direction.id !== event.Direction.id) {
-            setEvent({
-                ...event,
-                directionId: direction.id,
-                Direction: direction,
-                subdirectionId: null,
-                Subdirection: null,
-            });
-        }
-    };
-
-    const changeSubdirection = (subdirectionName) => {
-        const subdirection = loadedDirections
-            .find((dir) => dir.id === event.Direction.id)
-            .Subdirections.find((subdir) => subdir.name === subdirectionName);
-
-        setEvent({
-            ...event,
-            subdirectionId: subdirection.id,
-            Subdirection: subdirection,
-        });
-    };
-
-    const applyChanges = async () => {
-        if (event.Subdepartment === null && availableSubdepartments.length > 0) {
-            displayError("Выберите факультет");
-            return;
-        }
-
-        if (event.Subdirection === null && availableSubdirections.length > 0) {
-            displayError("Выберите тему");
-            return;
-        }
-
-        const response = await putEvent({
-            id: event.id,
-            name: event.name,
-            description: event.description,
-            plannedResult: event.plannedResult,
-            date: `${event.date}T${event.time}:00.000Z`,
-            departmentId: event.Department.id,
-            subdepartmentId: event.Subdepartment != null ? event.Subdepartment.id : null,
-            directionId: event.Direction.id,
-            subdirectionId: event.Subdirection != null ? event.Subdirection.id : null,
-            employees: [...event.Employees],
-            students: [...event.Students],
-            participants: [...event.Participants],
-        });
-
-        if (!response.status || response.status >= 300) {
-            displayError(response.data.error);
-            return;
-        }
-
-        setLoadedEvent(event);
-        setEditModeToggle(false);
-        displaySuccess("Мероприятие изменено");
-    };
-
-    const declineChanges = () => {
-        setEvent(loadedEvent);
+    const resetChanges = () => {
+        formik.setValues(initialEvent);
+        setAvailableSubdepartments(departments.find((d) => d.id === initialEvent.departmentId).Subdepartments);
+        setAvailableSubdirections(directions.find((d) => d.id === initialEvent.directionId).Subdirections);
         setEditModeToggle(false);
     };
 
@@ -470,243 +364,365 @@ const EventDetailsPage = (props) => {
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
             <Container>
-                <Grid container alignItems={"center"}>
-                    <Grid item xs={5}>
-                        <Typography variant="h4">Детали мероприятия</Typography>
-                    </Grid>
-                    {!editModeToggle && (
-                        <Grid item xs={2}>
-                            <Button variant="outlined" onClick={() => setEditModeToggle(true)}>
-                                Редактировать
-                            </Button>
+                <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
+                    <Grid container alignItems={"center"}>
+                        <Grid item xs={5}>
+                            <Typography variant="h4">Детали мероприятия</Typography>
                         </Grid>
-                    )}
-                    {editModeToggle && (
-                        <>
+                        {!editModeToggle && (
                             <Grid item xs={2}>
-                                <Button variant="outlined" color="primary" onClick={() => applyChanges()}>
-                                    Сохранить
+                                <Button variant="outlined" onClick={() => setEditModeToggle(true)}>
+                                    Редактировать
                                 </Button>
                             </Grid>
-                            <Grid item xs={2}>
-                                <Button variant="outlined" color="error" onClick={() => declineChanges()}>
-                                    Отмена
-                                </Button>
-                            </Grid>
-                        </>
-                    )}
-                </Grid>
-                <Grid container gap={1} mt={3}>
-                    <Grid item xs={6}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            label="Название мероприятия"
-                            value={event.name}
-                            InputProps={{ readOnly: !editModeToggle }}
-                            onChange={(e) =>
-                                setEvent({
-                                    ...event,
-                                    name: e.target.value,
-                                })
-                            }
-                        />
+                        )}
+                        {editModeToggle && (
+                            <>
+                                <Grid item xs={2}>
+                                    <Button type="submit" variant="outlined" color="primary">
+                                        Сохранить
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <Button variant="outlined" color="error" onClick={() => resetChanges()}>
+                                        Отмена
+                                    </Button>
+                                </Grid>
+                            </>
+                        )}
                     </Grid>
-                    <Grid item xs={2.5}>
-                        <DatePicker
-                            label="Дата"
-                            readOnly={!editModeToggle}
-                            value={event.date === "" ? null : moment.utc(event.date, "YYYY-MM-DD")}
-                            onChange={(newDate) =>
-                                newDate === null
-                                    ? setEvent({ ...event, date: "" })
-                                    : setEvent({
-                                          ...event,
-                                          date: moment(newDate).format("YYYY-MM-DD"),
-                                      })
-                            }
-                        ></DatePicker>
-                    </Grid>
-                    <Grid item xs={2.4}>
-                        <TimePicker
-                            label="Время"
-                            readOnly={!editModeToggle}
-                            value={event.time === "" ? null : moment(event.time, "HH:mm")}
-                            onChange={(newTime) =>
-                                newTime === null
-                                    ? setEvent({ ...event, time: "" })
-                                    : setEvent({
-                                          ...event,
-                                          time: newTime.format("HH:mm"),
-                                      })
-                            }
-                        ></TimePicker>
-                    </Grid>
-                    <Grid item xs={5.5}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            multiline
-                            minRows={3}
-                            label="Описание мероприятия"
-                            value={event.description}
-                            InputProps={{ readOnly: !editModeToggle }}
-                            onChange={(e) =>
-                                setEvent({
-                                    ...event,
-                                    description: e.target.value,
-                                })
-                            }
-                        />
-                    </Grid>
-                    <Grid item xs={5.5}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            multiline
-                            minRows={3}
-                            label="Планируемый результат"
-                            value={event.plannedResult}
-                            InputProps={{ readOnly: !editModeToggle }}
-                            onChange={(e) =>
-                                setEvent({
-                                    ...event,
-                                    plannedResult: e.target.value,
-                                })
-                            }
-                        />
-                    </Grid>
-                    <Grid item xs={5.5}>
-                        <FormControl fullWidth>
-                            <InputLabel id="department-label">Подразделение</InputLabel>
-                            <Select
+                    <Grid container gap={1} mt={3}>
+                        <Grid item xs={6}>
+                            <TextField
                                 fullWidth
-                                labelId="department-label"
-                                id="department-select"
-                                value={loadedDepartments.length > 0 ? event.Department.name : ""}
-                                label="Подразделение"
+                                variant="outlined"
+                                label="Название мероприятия"
+                                id="name"
+                                name="name"
+                                value={formik.values.name}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.name && formik.errors.name !== undefined}
+                                helperText={
+                                    formik.touched.name && formik.errors.name !== undefined
+                                        ? formik.errors.name
+                                        : ""
+                                }
+                                InputProps={{ readOnly: !editModeToggle }}
+                            />
+                        </Grid>
+                        <Grid item xs={2.5}>
+                            <DatePicker
+                                label="Дата"
+                                value={formik.values.date ? moment(formik.values.date) : null}
+                                onChange={(newDate) =>
+                                    formik.setFieldValue("date", moment(newDate).format("YYYY-MM-DD"), true)
+                                }
+                                onBlur={formik.handleBlur}
+                                slotProps={{
+                                    textField: {
+                                        error: formik.touched.date && formik.errors.date !== undefined,
+                                        helperText:
+                                            formik.touched.date && formik.errors.date !== undefined
+                                                ? formik.errors.date
+                                                : "",
+                                    },
+                                }}
                                 readOnly={!editModeToggle}
-                                onChange={(e) => changeDepartment(e.target.value)}
-                            >
-                                {loadedDepartments.map((dep) => (
-                                    <MenuItem key={dep.id} value={dep.name}>
-                                        {dep.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={5.5}>
-                        {availableSubdepartments.length > 0 ? (
+                            ></DatePicker>
+                        </Grid>
+                        <Grid item xs={2.4}>
+                            <TimePicker
+                                label="Время"
+                                value={formik.values.time ? moment(formik.values.time, "HH:mm") : null}
+                                onChange={(newTime) =>
+                                    formik.setFieldValue("time", newTime.format("HH:mm"), true)
+                                }
+                                onBlur={formik.handleBlur}
+                                slotProps={{
+                                    textField: {
+                                        error: formik.touched.time && formik.errors.time !== undefined,
+                                        helperText:
+                                            formik.touched.time && formik.errors.time !== undefined
+                                                ? formik.errors.time
+                                                : "",
+                                    },
+                                }}
+                                readOnly={!editModeToggle}
+                            ></TimePicker>
+                        </Grid>
+                        <Grid item xs={5.5}>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                multiline
+                                minRows={3}
+                                label="Описание мероприятия"
+                                id="description"
+                                name="description"
+                                value={formik.values.description}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.description && formik.errors.description !== undefined}
+                                helperText={
+                                    formik.touched.description && formik.errors.description !== undefined
+                                        ? formik.errors.description
+                                        : ""
+                                }
+                                InputProps={{ readOnly: !editModeToggle }}
+                            />
+                        </Grid>
+                        <Grid item xs={5.5}>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                multiline
+                                minRows={3}
+                                id="plannedResult"
+                                name="plannedResult"
+                                label="Планируемый результат"
+                                value={formik.values.plannedResult}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.plannedResult && formik.errors.plannedResult !== undefined}
+                                helperText={
+                                    formik.touched.plannedResult && formik.errors.plannedResult !== undefined
+                                        ? formik.errors.plannedResult
+                                        : ""
+                                }
+                                InputProps={{ readOnly: !editModeToggle }}
+                            />
+                        </Grid>
+                        <Grid item xs={5.5}>
                             <FormControl fullWidth>
-                                <InputLabel id="subdepartment-label">Факультет</InputLabel>
+                                <InputLabel
+                                    id="department-label"
+                                    error={
+                                        formik.touched.departmentId && formik.errors.departmentId !== undefined
+                                    }
+                                >
+                                    Подразделение
+                                </InputLabel>
                                 <Select
                                     fullWidth
-                                    labelId="subdepartment-label"
-                                    id="subdepartment-select"
-                                    value={event.Subdepartment === null ? "" : event.Subdepartment.name}
-                                    label="Факультет"
+                                    labelId="department-label"
+                                    id="departmentId"
+                                    name="departmentId"
+                                    value={formik.values.departmentId}
+                                    renderValue={(value) => departments.find((dep) => dep.id === value).name}
+                                    label="Подразделение"
+                                    onChange={(e) => {
+                                        formik.handleChange(e);
+                                        formik.setFieldValue("subdepartmentId", "");
+                                        formik.setFieldTouched("subdepartmentId", false);
+                                        setAvailableSubdepartments(
+                                            departments.find((dep) => dep.id === e.target.value).Subdepartments
+                                        );
+                                    }}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.departmentId && formik.errors.departmentId !== undefined
+                                    }
                                     readOnly={!editModeToggle}
-                                    onChange={(e) => changeSubdepartment(e.target.value)}
                                 >
-                                    {availableSubdepartments.map((subdep) => (
-                                        <MenuItem key={subdep.id} value={subdep.name}>
-                                            {subdep.name}
+                                    {departments.map((dep) => (
+                                        <MenuItem key={dep.id} value={dep.id}>
+                                            {dep.name}
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error>
+                                    {formik.touched.departmentId && formik.errors.departmentId !== undefined
+                                        ? formik.errors.departmentId
+                                        : ""}
+                                </FormHelperText>
                             </FormControl>
-                        ) : (
-                            <></>
-                        )}
-                    </Grid>
-                    <Grid item xs={5.5}>
-                        <FormControl fullWidth>
-                            <InputLabel id="direction-label">Направление</InputLabel>
-                            <Select
-                                fullWidth
-                                labelId="direction-label"
-                                id="direction-select"
-                                value={loadedDirections.length > 0 ? event.Direction.name : ""}
-                                label="Направление"
-                                readOnly={!editModeToggle}
-                                onChange={(e) => changeDirection(e.target.value)}
-                            >
-                                {loadedDirections.map((dir) => (
-                                    <MenuItem key={dir.id} value={dir.name}>
-                                        {dir.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={5.5}>
-                        {availableSubdirections.length > 0 ? (
+                        </Grid>
+                        <Grid item xs={5.5}>
+                            {availableSubdepartments.length > 0 ? (
+                                <FormControl fullWidth>
+                                    <InputLabel
+                                        id="subdepartment-label"
+                                        error={
+                                            formik.touched.subdepartmentId &&
+                                            formik.errors.subdepartmentId !== undefined
+                                        }
+                                    >
+                                        Факультет
+                                    </InputLabel>
+                                    <Select
+                                        fullWidth
+                                        labelId="subdepartment-label"
+                                        id="subdepartmentId"
+                                        name="subdepartmentId"
+                                        value={formik.values.subdepartmentId}
+                                        renderValue={(value) =>
+                                            availableSubdepartments.find((subdep) => subdep.id === value).name
+                                        }
+                                        label="Факультет"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.subdepartmentId &&
+                                            formik.errors.subdepartmentId !== undefined
+                                        }
+                                        readOnly={!editModeToggle}
+                                    >
+                                        {availableSubdepartments.map((subdep) => (
+                                            <MenuItem key={subdep.id} value={subdep.id}>
+                                                {subdep.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                    <FormHelperText error>
+                                        {formik.touched.subdepartmentId &&
+                                        formik.errors.subdepartmentId !== undefined
+                                            ? formik.errors.subdepartmentId
+                                            : ""}
+                                    </FormHelperText>
+                                </FormControl>
+                            ) : (
+                                <></>
+                            )}
+                        </Grid>
+                        <Grid item xs={5.5}>
                             <FormControl fullWidth>
-                                <InputLabel id="subdirection-label">Тема</InputLabel>
+                                <InputLabel
+                                    id="direction-label"
+                                    error={formik.touched.directionId && formik.errors.directionId !== undefined}
+                                >
+                                    Направление
+                                </InputLabel>
                                 <Select
                                     fullWidth
-                                    labelId="subdirection-label"
-                                    id="subdirection-select"
-                                    value={event.Subdirection === null ? "" : event.Subdirection.name}
-                                    label="Тема"
+                                    labelId="direction-label"
+                                    id="directionId"
+                                    name="directionId"
+                                    value={formik.values.directionId}
+                                    renderValue={(value) => directions.find((dir) => dir.id === value).name}
+                                    label="Направление"
+                                    onChange={(e) => {
+                                        formik.handleChange(e);
+                                        formik.setFieldValue("subdirectionId", "");
+                                        formik.setFieldTouched("subdirectionId", false);
+                                        setAvailableSubdirections(
+                                            directions.find((dir) => dir.id === e.target.value).Subdirections
+                                        );
+                                    }}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.directionId && formik.errors.directionId !== undefined}
                                     readOnly={!editModeToggle}
-                                    onChange={(e) => changeSubdirection(e.target.value)}
                                 >
-                                    {availableSubdirections.map((subdir) => (
-                                        <MenuItem key={subdir.id} value={subdir.name}>
-                                            {subdir.name}
+                                    {directions.map((dir) => (
+                                        <MenuItem key={dir.id} value={dir.id}>
+                                            {dir.name}
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error>
+                                    {formik.touched.directionId && formik.errors.directionId !== undefined
+                                        ? formik.errors.directionId
+                                        : ""}
+                                </FormHelperText>
                             </FormControl>
-                        ) : (
-                            <></>
-                        )}
+                        </Grid>
+                        <Grid item xs={5.5}>
+                            {availableSubdirections.length > 0 ? (
+                                <FormControl fullWidth>
+                                    <InputLabel
+                                        id="subdirection-label"
+                                        error={
+                                            formik.touched.subdirectionId &&
+                                            formik.errors.subdirectionId !== undefined
+                                        }
+                                    >
+                                        Тема
+                                    </InputLabel>
+                                    <Select
+                                        fullWidth
+                                        labelId="subdirection-label"
+                                        id="subdirectionId"
+                                        name="subdirectionId"
+                                        value={formik.values.subdirectionId}
+                                        renderValue={(value) =>
+                                            availableSubdirections.find((subdir) => subdir.id === value).name
+                                        }
+                                        label="Тема"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        error={
+                                            formik.touched.subdirectionId &&
+                                            formik.errors.subdirectionId !== undefined
+                                        }
+                                        readOnly={!editModeToggle}
+                                    >
+                                        {availableSubdirections.map((subdir) => (
+                                            <MenuItem key={subdir.id} value={subdir.id}>
+                                                {subdir.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                    <FormHelperText error>
+                                        {formik.touched.subdirectionId &&
+                                        formik.errors.subdirectionId !== undefined
+                                            ? formik.errors.subdirectionId
+                                            : ""}
+                                    </FormHelperText>
+                                </FormControl>
+                            ) : (
+                                <></>
+                            )}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Tabs centered value={currentTabIndex} onChange={changeTab}>
+                                <Tab label="Сотрудники" />
+                                <Tab label="Студенты" />
+                                <Tab label="Участники" />
+                            </Tabs>
+                        </Grid>
+                        <Grid item xs={10}>
+                            {currentTabIndex === 0 && (
+                                <EmployeeList
+                                    employees={formik.values.employees}
+                                    availableEmployees={employees.filter(
+                                        (e) => !formik.values.employees.some((ee) => ee.id === e.id)
+                                    )}
+                                    addEmployeeHandler={addEmployee}
+                                    createEmployeeHandler={createEmployee}
+                                    removeEmployeeHandler={removeEmployee}
+                                    deleteEmployeeHandler={removeEmployeePermanent}
+                                    readonly={!editModeToggle}
+                                />
+                            )}
+                            {currentTabIndex === 1 && (
+                                <StudentList
+                                    students={formik.values.students}
+                                    availableStudents={students.filter(
+                                        (s) => !formik.values.students.some((ss) => ss.id === s.id)
+                                    )}
+                                    addStudentHandler={addStudent}
+                                    createStudentHandler={createStudent}
+                                    removeStudentHandler={removeStudent}
+                                    deleteStudentHandler={removeStudentPermanent}
+                                    readonly={!editModeToggle}
+                                />
+                            )}
+                            {currentTabIndex === 2 && (
+                                <ParticipantList
+                                    participants={formik.values.participants}
+                                    availableParticipants={participants.filter(
+                                        (p) => !formik.values.participants.some((pp) => pp.id === p.id)
+                                    )}
+                                    addParticipantHandler={addParticipant}
+                                    createParticipantHandler={createParticipant}
+                                    removeParticipantHandler={removeParticipant}
+                                    deleteParticipantHandler={removeParticipantPermanent}
+                                    readonly={!editModeToggle}
+                                />
+                            )}
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Tabs centered value={currentTabIndex} onChange={changeTab}>
-                            <Tab label="Сотрудники" />
-                            <Tab label="Студенты" />
-                            <Tab label="Участники" />
-                        </Tabs>
-                    </Grid>
-                    <Grid item xs={10}>
-                        {currentTabIndex === 0 && (
-                            <EmployeeList
-                                employees={event.Employees}
-                                availableEmployees={availableEmployees}
-                                addEmployeeHandler={addEmployee}
-                                createEmployeeHandler={createEmployee}
-                                removeEmployeeHandler={removeEmployee}
-                                deleteEmployeeHandler={removeEmployeePermanent}
-                                readonly={!editModeToggle}
-                            />
-                        )}
-                        {currentTabIndex === 1 && (
-                            <StudentList
-                                students={event.Students}
-                                availableStudents={availableStudents}
-                                addStudentHandler={addStudent}
-                                createStudentHandler={createStudent}
-                                removeStudentHandler={removeStudent}
-                                deleteStudentHandler={removeStudentPermanent}
-                                readonly={!editModeToggle}
-                            />
-                        )}
-                        {currentTabIndex === 2 && (
-                            <ParticipantList
-                                participants={event.Participants}
-                                availableParticipants={availableParticipants}
-                                addParticipantHandler={addParticipant}
-                                createParticipantHandler={createParticipant}
-                                removeParticipantHandler={removeParticipant}
-                                deleteParticipantHandler={removeParticipantPermanent}
-                                readonly={!editModeToggle}
-                            />
-                        )}
-                    </Grid>
-                </Grid>
+                </form>
             </Container>
             <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
                 <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>

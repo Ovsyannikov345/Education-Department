@@ -12,6 +12,8 @@ import {
     Typography,
 } from "@mui/material";
 import EmployeeItem from "./EmployeeItem";
+import { useFormik } from "formik";
+import validateEmployee from "./../../utils/validateFunctions/validateEmployee";
 
 const EmployeeList = ({
     employees,
@@ -22,33 +24,28 @@ const EmployeeList = ({
     deleteEmployeeHandler,
     readonly = false,
 }) => {
-    const [creationToggle, setCreationToggle] = useState(false);
-    const [createdEmployee, setCreatedEmployee] = useState({
-        lastName: "",
-        firstName: "",
-        patronymic: "",
-    });
-
-    const createEmployee = () => {
-        createEmployeeHandler(createdEmployee);
-        setCreationToggle(false);
-        setCreatedEmployee({
+    const formik = useFormik({
+        initialValues: {
             lastName: "",
             firstName: "",
             patronymic: "",
-        });
-    };
+        },
+        validate: validateEmployee,
+        onSubmit: async (values) => {
+            createEmployeeHandler(values);
+            setCreationToggle(false);
+            formik.resetForm();
+        },
+    });
 
-    const cancelCreation = () => {
-        setCreationToggle(false);
-    };
+    const [creationToggle, setCreationToggle] = useState(false);
 
     return (
         <Stack gap={1} marginTop={1}>
-            {employees.map((emp) => (
+            {employees.map((e) => (
                 <EmployeeItem
-                    key={emp.id}
-                    organizer={emp}
+                    key={e.id}
+                    employee={e}
                     removeHandler={removeEmployeeHandler}
                     deleteHandler={deleteEmployeeHandler}
                     readonly={readonly}
@@ -76,9 +73,9 @@ const EmployeeList = ({
                             onChange={(e) => addEmployeeHandler(e.target.value)}
                         >
                             {availableEmployees.length > 0 &&
-                                availableEmployees.map((emp) => (
-                                    <MenuItem key={emp.id} value={emp.id}>
-                                        {`${emp.lastName} ${emp.firstName} ${emp.patronymic}`}
+                                availableEmployees.map((e) => (
+                                    <MenuItem key={e.id} value={e.id}>
+                                        {`${e.lastName} ${e.firstName} ${e.patronymic}`}
                                     </MenuItem>
                                 ))}
                         </Select>
@@ -93,12 +90,18 @@ const EmployeeList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Фамилия"
-                                            value={createdEmployee.lastName}
-                                            onChange={(e) =>
-                                                setCreatedEmployee({
-                                                    ...createdEmployee,
-                                                    lastName: e.target.value,
-                                                })
+                                            id="lastName"
+                                            name="lastName"
+                                            value={formik.values.lastName}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.lastName && formik.errors.lastName !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.lastName && formik.errors.lastName !== undefined
+                                                    ? formik.errors.lastName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -107,12 +110,18 @@ const EmployeeList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Имя"
-                                            value={createdEmployee.firstName}
-                                            onChange={(e) =>
-                                                setCreatedEmployee({
-                                                    ...createdEmployee,
-                                                    firstName: e.target.value,
-                                                })
+                                            id="firstName"
+                                            name="firstName"
+                                            value={formik.values.firstName}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.firstName && formik.errors.firstName !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.firstName && formik.errors.firstName !== undefined
+                                                    ? formik.errors.firstName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -121,12 +130,20 @@ const EmployeeList = ({
                                             fullWidth
                                             variant="outlined"
                                             label="Отчество"
-                                            value={createdEmployee.patronymic}
-                                            onChange={(e) =>
-                                                setCreatedEmployee({
-                                                    ...createdEmployee,
-                                                    patronymic: e.target.value,
-                                                })
+                                            id="patronymic"
+                                            name="patronymic"
+                                            value={formik.values.patronymic}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.patronymic &&
+                                                formik.errors.patronymic !== undefined
+                                            }
+                                            helperText={
+                                                formik.touched.patronymic &&
+                                                formik.errors.patronymic !== undefined
+                                                    ? formik.errors.patronymic
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -137,17 +154,21 @@ const EmployeeList = ({
                                             fullWidth
                                             variant="outlined"
                                             color="primary"
-                                            onClick={createEmployee}
+                                            onClick={(e) => formik.handleSubmit(e)}
                                         >
                                             Создать
                                         </Button>
                                     </Grid>
                                     <Grid item xs={2}>
                                         <Button
+                                            type="reset"
                                             fullWidth
                                             variant="outlined"
                                             color="error"
-                                            onClick={cancelCreation}
+                                            onClick={(e) => {
+                                                formik.handleReset(e);
+                                                setCreationToggle(false);
+                                            }}
                                         >
                                             Отмена
                                         </Button>
