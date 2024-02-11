@@ -5,11 +5,11 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import Zoom from "@mui/material/Zoom";
 import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
 
-const EmployeeItem = ({ organizer, removeHandler, deleteHandler, readonly = false }) => {
+const EmployeeItem = ({ employee, removeHandler, deleteHandler, readonly = false }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const deleteEmployee = () => {
-        deleteHandler(organizer.id);
+        deleteHandler(employee.id);
     };
 
     return (
@@ -27,13 +27,13 @@ const EmployeeItem = ({ organizer, removeHandler, deleteHandler, readonly = fals
                     style={{ paddingLeft: 10 }}
                 >
                     <Grid item xs>
-                        <Typography>{`${organizer.lastName} ${organizer.firstName} ${organizer.patronymic}`}</Typography>
+                        <Typography>{`${employee.lastName} ${employee.firstName} ${employee.patronymic}`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (
                             <>
                                 <Tooltip title="Убрать" TransitionComponent={Zoom} followCursor>
-                                    <IconButton onClick={(e) => removeHandler(organizer.id)}>
+                                    <IconButton onClick={(e) => removeHandler(employee.id)}>
                                         <RemoveIcon color="primary" />
                                     </IconButton>
                                 </Tooltip>
