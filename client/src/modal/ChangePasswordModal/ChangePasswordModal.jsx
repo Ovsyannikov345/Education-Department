@@ -2,6 +2,7 @@ import React from "react";
 import { Dialog, Typography, Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import { changeUserPassword } from "../../api/userApi";
+import { logout } from "../../api/authApi";
 
 const ChangePasswordModal = ({ open, closeHandler, errorCallback, successCallback }) => {
     const formik = useFormik({
@@ -44,6 +45,11 @@ const ChangePasswordModal = ({ open, closeHandler, errorCallback, successCallbac
 
             successCallback("Пароль изменен");
             closeForm();
+            setTimeout(async () => {
+                await logout();
+                localStorage.clear();
+                window.location.reload();
+            }, 2000);
         },
     });
 
