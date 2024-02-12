@@ -6,7 +6,7 @@ const router = new Router();
 
 router.post("/login", authController.login);
 router.post("/refresh", authController.refreshToken);
-router.delete("/logout", authController.logout);
+router.post("/logout", authController.logout);
 router.post("/forgot-password", userController.sendPasswordToEmail);
 
 module.exports = router;
