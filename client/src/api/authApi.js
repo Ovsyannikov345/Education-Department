@@ -16,4 +16,20 @@ const login = async ({ email, password }) => {
     }
 };
 
-export { login };
+const logout = async () => {
+    try {
+        const response = await authHost.post("/logout", { token: localStorage.getItem("refreshToken") });
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            return error.response;
+        } else if (error.request) {
+            return { data: { error: "Сервис временно недоступен" } };
+        } else {
+            return { data: { error: "Ошибка при создании запроса" } };
+        }
+    }
+};
+
+export { login, logout };
