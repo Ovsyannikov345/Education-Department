@@ -1,9 +1,21 @@
-import React from "react";
-import { Dialog, Typography, Button, TextField, Radio, RadioGroup, FormControlLabel } from "@mui/material";
+import React, { useState } from "react";
+import {
+    Dialog,
+    Typography,
+    Button,
+    TextField,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    CircularProgress,
+    Grid,
+} from "@mui/material";
 import { useFormik } from "formik";
 import { postUser } from "../../api/userApi";
 
 const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback }) => {
+    const [loading, setLoading] = useState(false);
+
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -40,9 +52,12 @@ const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback })
             return errors;
         },
         onSubmit: async (values) => {
+            setLoading(true);
+
             const response = await postUser(values);
 
             if (!response.status || response.status >= 300) {
+                setLoading(false);
                 errorCallback(response.data.error);
                 return;
             }
@@ -129,9 +144,20 @@ const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback })
                     <FormControlLabel value="user" control={<Radio />} label="Пользователь" />
                     <FormControlLabel value="admin" control={<Radio />} label="Администратор" />
                 </RadioGroup>
-                <Button type="submit" variant="contained" fullWidth style={{ height: "40px", marginTop: "10px" }}>
-                    Создать
-                </Button>
+                {!loading ? (
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        fullWidth
+                        style={{ height: "40px", marginTop: "10px" }}
+                    >
+                        Создать
+                    </Button>
+                ) : (
+                    <Grid container justifyContent={"center"}>
+                        <CircularProgress color="primary" style={{ marginTop: "10px" }} />
+                    </Grid>
+                )}
             </form>
         </Dialog>
     );
