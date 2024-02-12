@@ -31,6 +31,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LockIcon from "@mui/icons-material/Lock";
 import ChangePasswordModal from "../modal/ChangePasswordModal/ChangePasswordModal";
+import { logout } from "../api/authApi";
 
 function NavBar() {
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
@@ -86,11 +87,6 @@ function NavBar() {
         setError(false);
     };
 
-    const logout = () => {
-        localStorage.clear()
-        window.location.reload();
-    };
-
     return (
         <>
             <ChangePasswordModal
@@ -131,7 +127,11 @@ function NavBar() {
                             </Grid>
                             <Grid container item xs={1} justifyContent={"flex-end"}>
                                 {accessToken && (
-                                    <IconButton size="large" color="inherit" onClick={logout}>
+                                    <IconButton size="large" color="inherit" onClick={async () => {
+                                        await logout();
+                                        localStorage.clear()
+                                        window.location.reload();
+                                    }}>
                                         <LogoutIcon fontSize="large" />
                                     </IconButton>
                                 )}
