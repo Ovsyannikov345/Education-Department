@@ -1,9 +1,11 @@
-import React from "react";
-import { Dialog, Typography, Button, TextField } from "@mui/material";
+import React, { useState } from "react";
+import { Dialog, Typography, Button, TextField, CircularProgress, Grid } from "@mui/material";
 import { useFormik } from "formik";
 import { sendNewPassword } from "../../api/userApi";
 
 const PasswordResetModal = ({ open, closeHandler, errorCallback, successCallback }) => {
+    const [loading, setLoading] = useState(false);
+
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -20,9 +22,12 @@ const PasswordResetModal = ({ open, closeHandler, errorCallback, successCallback
             return errors;
         },
         onSubmit: async (values) => {
+            setLoading(true);
+
             const response = await sendNewPassword(values.email);
 
             if (!response.status || response.status >= 300) {
+                setLoading(false);
                 errorCallback(response.data.error);
                 return;
             }
@@ -57,9 +62,20 @@ const PasswordResetModal = ({ open, closeHandler, errorCallback, successCallback
                         formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""
                     }
                 />
-                <Button type="submit" variant="contained" fullWidth style={{ height: "40px", marginTop: "10px" }}>
-                    Сбросить
-                </Button>
+                {!loading ? (
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        fullWidth
+                        style={{ height: "40px", marginTop: "10px" }}
+                    >
+                        Сбросить
+                    </Button>
+                ) : (
+                    <Grid container justifyContent={"center"}>
+                        <CircularProgress color="primary" style={{ marginTop: "10px" }} />
+                    </Grid>
+                )}
             </form>
         </Dialog>
     );
