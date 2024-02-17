@@ -1,7 +1,9 @@
+const sequelize = require("../db");
 const { User } = require("../db/models");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 class UserController {
     async getAll(req, res) {
@@ -23,36 +25,44 @@ class UserController {
                 return res.status(400).json({ error: "Эл.почта уже используется" });
             }
 
-            user.password = crypto.randomBytes(5).toString("hex");
+            await sequelize.transaction(async (t) => {
+                user.password = crypto.randomBytes(5).toString("hex");
 
-            const hashedPassword = await bcrypt.hash(user.password, 10);
+                const hashedPassword = await bcrypt.hash(user.password, 10);
 
-            await User.create({ ...user, password: hashedPassword });
+                await User.create({ ...user, password: hashedPassword }, { transaction: t });
 
-            const testEmailAccount = await nodemailer.createTestAccount();
+                const transporter = nodemailer.createTransport({
+                    service: "gmail",
+                    host: "smtp.gmail.com",
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: process.env.EMAIL_ADDRESS,
+                        pass: process.env.EMAIL_PASSWORD,
+                    },
+                });
 
-            const transporter = nodemailer.createTransport({
-                host: "smtp.ethereal.email",
-                port: 587,
-                secure: false,
-                auth: {
-                    user: testEmailAccount.user,
-                    pass: testEmailAccount.pass,
-                },
+                try {
+                    await transporter.sendMail({
+                        from: {
+                            name: "Отдел по воспитательной работе",
+                            address: process.env.EMAIL_ADDRESS,
+                        },
+                        to: user.email,
+                        subject: "Регистрация в отделе по воспитательной работе",
+                        html:
+                            "<p>Ваш пароль для входа в аккаунт на сайте отдела по воспитательной работе:</p>" +
+                            `<p><strong>${user.password}</strong></p>` +
+                            "<p>В дальшейшем пароль можно будет изменить на сайте.</p>",
+                    });
+                } catch (emailError) {
+                    console.log("error while sending email");
+                    throw emailError;
+                }
+
+                console.log("Email sent to " + user.email);
             });
-
-            const result = await transporter.sendMail({
-                from: "Отдел по воспитательной работе",
-                to: user.email,
-                subject: "Регистрация в отделе по воспитательной работе",
-                html:
-                    "<p>Ваш пароль для входа в аккаунт на сайте отдела по воспитательной работе:</p>" +
-                    `<p><strong>${user.password}</strong></p>` +
-                    "<p>В дальшейшем пароль можно будет изменить на сайте.</p>",
-            });
-
-            // TODO real mail.
-            console.log("Email sent. Preview URL: " + nodemailer.getTestMessageUrl(result));
 
             const createdUser = await User.findOne({
                 where: { email: user.email },
@@ -179,32 +189,35 @@ class UserController {
 
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
-            await User.update({ password: hashedPassword }, { where: { email: email } });
+            await sequelize.transaction(async (t) => {
+                await User.update({ password: hashedPassword }, { where: { email: email } }, { transaction: t });
 
-            const testEmailAccount = await nodemailer.createTestAccount();
+                const transporter = nodemailer.createTransport({
+                    service: "gmail",
+                    host: "smtp.gmail.com",
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: process.env.EMAIL_ADDRESS,
+                        pass: process.env.EMAIL_PASSWORD,
+                    },
+                });
 
-            const transporter = nodemailer.createTransport({
-                host: "smtp.ethereal.email",
-                port: 587,
-                secure: false,
-                auth: {
-                    user: testEmailAccount.user,
-                    pass: testEmailAccount.pass,
-                },
+                await transporter.sendMail({
+                    from: {
+                        name: "Отдел по воспитательной работе",
+                        address: process.env.EMAIL_ADDRESS,
+                    },
+                    to: email,
+                    subject: "Сброс пароля от аккаунта",
+                    html:
+                        "<p>Ваш пароль для входа в аккаунт на сайте отдела по воспитательной работе:</p>" +
+                        `<p><strong>${randomPassword}</strong></p>` +
+                        "<p>В дальшейшем пароль можно будет изменить на сайте.</p>",
+                });
+
+                console.log("Email sent to " + email);
             });
-
-            const result = await transporter.sendMail({
-                from: "Отдел по воспитательной работе",
-                to: email,
-                subject: "Сброс пароля от аккаунта",
-                html:
-                    "<p>Ваш пароль для входа в аккаунт на сайте отдела по воспитательной работе:</p>" +
-                    `<p><strong>${randomPassword}</strong></p>` +
-                    "<p>В дальшейшем пароль можно будет изменить на сайте.</p>",
-            });
-
-            // TODO real mail.
-            console.log("Email sent. Preview URL: " + nodemailer.getTestMessageUrl(result));
 
             return res.sendStatus(204);
         } catch (err) {
