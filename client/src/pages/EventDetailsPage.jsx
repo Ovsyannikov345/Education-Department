@@ -501,7 +501,7 @@ const EventDetailsPage = (props) => {
                                         formik.touched.departmentId && formik.errors.departmentId !== undefined
                                     }
                                 >
-                                    Подразделение
+                                    Структура
                                 </InputLabel>
                                 <Select
                                     fullWidth
@@ -510,7 +510,7 @@ const EventDetailsPage = (props) => {
                                     name="departmentId"
                                     value={formik.values.departmentId}
                                     renderValue={(value) => departments.find((dep) => dep.id === value).name}
-                                    label="Подразделение"
+                                    label="Структура"
                                     onChange={(e) => {
                                         formik.handleChange(e);
                                         formik.setFieldValue("subdepartmentId", "");
@@ -548,7 +548,7 @@ const EventDetailsPage = (props) => {
                                             formik.errors.subdepartmentId !== undefined
                                         }
                                     >
-                                        Факультет
+                                        Подразделение
                                     </InputLabel>
                                     <Select
                                         fullWidth
@@ -559,7 +559,7 @@ const EventDetailsPage = (props) => {
                                         renderValue={(value) =>
                                             availableSubdepartments.find((subdep) => subdep.id === value).name
                                         }
-                                        label="Факультет"
+                                        label="Подразделение"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
@@ -636,7 +636,7 @@ const EventDetailsPage = (props) => {
                                             formik.errors.subdirectionId !== undefined
                                         }
                                     >
-                                        Тема
+                                        Составляющая
                                     </InputLabel>
                                     <Select
                                         fullWidth
@@ -647,7 +647,7 @@ const EventDetailsPage = (props) => {
                                         renderValue={(value) =>
                                             availableSubdirections.find((subdir) => subdir.id === value).name
                                         }
-                                        label="Тема"
+                                        label="Составляющая"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
