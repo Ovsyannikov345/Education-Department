@@ -62,7 +62,7 @@ const EventItem = ({ event, deleteHandler }) => {
                 <Grid item container xs={9}>
                     <Grid item xs={5}>
                         <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
-                            <b>Подразделение</b>
+                            <b>Структура</b>
                         </Typography>
                         <Typography variant="h6">{event.Department.name}</Typography>
                     </Grid>
@@ -76,7 +76,7 @@ const EventItem = ({ event, deleteHandler }) => {
                         {event.Subdepartment && (
                             <>
                                 <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
-                                    <b>Факультет</b>
+                                    <b>Подразделение</b>
                                 </Typography>
                                 <Typography variant="h6">
                                     {event.Subdepartment === null ? "" : event.Subdepartment.name}
@@ -88,7 +88,7 @@ const EventItem = ({ event, deleteHandler }) => {
                         {event.Subdirection && (
                             <>
                                 <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
-                                    <b>Тема</b>
+                                    <b>Составляющая</b>
                                 </Typography>
                                 <Typography variant="h6">
                                     {event.Subdirection === null ? "" : event.Subdirection.name}
