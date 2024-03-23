@@ -105,10 +105,6 @@ const Subdirection = sequelize.define(
             type: DataTypes.STRING(100),
             allowNull: false,
         },
-        directionId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
     },
     { timestamps: false }
 );
