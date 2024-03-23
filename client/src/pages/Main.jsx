@@ -70,13 +70,13 @@ function MainPage() {
                     : true) &&
                 (searchQuery.subdepartments.length > 0
                     ? event.Subdepartment == null ||
-                      searchQuery.subdepartments.map((subdep) => subdep.id).includes(event.Subdepartment.id)
+                      searchQuery.subdepartments.map((subdep) => subdep.name).includes(event.Subdepartment.name)
                     : true) &&
                 (searchQuery.directions.length > 0
                     ? searchQuery.directions.map((dir) => dir.id).includes(event.Direction.id)
                     : true) &&
                 (searchQuery.subdirections.length > 0
-                    ? event.Subdirection == null ||
+                    ? event.Subdirection != null &&
                       searchQuery.subdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
                     : true) &&
                 (isGapValid && startDate != null
