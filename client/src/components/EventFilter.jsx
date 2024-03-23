@@ -17,6 +17,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
 import moment from "moment";
+import { getSubdirections } from "../api/subdirectionsApi";
 
 const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
     const [searchQuery, setSearchQuery] = useState(
@@ -33,6 +34,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
 
     const [departments, setDepartments] = useState([]);
     const [directions, setDirections] = useState([]);
+    const [subdirections, setSubdirections] = useState([]);
 
     const subdepartments = useMemo(() => {
         const subdepartments = [];
@@ -45,22 +47,11 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             .filter((dep) => dep.Subdepartments.length > 0)
             .map((dep) => dep.Subdepartments)
             .forEach((subdepList) => subdepartments.push(...subdepList));
-        return subdepartments;
+
+        return subdepartments.filter(
+            (subdep, pos, self) => self.map((subdep) => subdep.name).indexOf(subdep.name) === pos
+        );
     }, [searchQuery.selectedDepartments]);
-
-    const subdirections = useMemo(() => {
-        const subdirections = [];
-
-        if (!searchQuery.selectedDirections) {
-            return subdirections;
-        }
-
-        searchQuery.selectedDirections
-            .filter((dir) => dir.Subdirections.length > 0)
-            .map((dir) => dir.Subdirections)
-            .forEach((subdirList) => subdirections.push(...subdirList));
-        return subdirections;
-    }, [searchQuery.selectedDirections]);
 
     useEffect(() => {
         const loadDepartments = async () => {
@@ -85,8 +76,21 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             setDirections(response.data);
         };
 
+        const loadSubdirections = async () => {
+            const response = await getSubdirections();
+
+            if (!response || response.status >= 300) {
+                displayError(response.data.error);
+                return;
+            }
+
+            setSubdirections(response.data);
+        };
+
         loadDepartments().then(() => {
-            loadDirections();
+            loadDirections().then(() => {
+                loadSubdirections();
+            });
         });
     }, [displayError]);
 
@@ -146,11 +150,6 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
         setSearchQuery({
             ...searchQuery,
             selectedDirections: directionIds.map((id) => directions.find((dir) => dir.id === id)),
-            selectedSubdirections: searchQuery.selectedSubdirections.filter((subdir) =>
-                searchQuery.selectedDirections.includes((dir) =>
-                    dir.Subdirections.map((d) => d.id).includes((id) => id === subdir.id)
-                )
-            ),
         });
     };
 
@@ -160,6 +159,8 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             selectedSubdirections: subdirections,
         });
     };
+
+    // TODO fix checked selectors.
 
     return (
         <Grid container justifyContent={"flex-end"} mt={12}>
@@ -186,11 +187,11 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             onChange={(e) => setSearchQuery({ ...searchQuery, name: e.target.value })}
                         />
                         <FormControl fullWidth>
-                            <InputLabel id="department-label">Отделы</InputLabel>
+                            <InputLabel id="department-label">Структуры</InputLabel>
                             <Select
                                 fullWidth
                                 labelId="department-label"
-                                label="Отделы"
+                                label="Структуры"
                                 multiple
                                 value={searchQuery.selectedDepartments.map((dep) => dep.id)}
                                 onChange={(e) => changeDepartments(e.target.value)}
@@ -216,17 +217,17 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                         </FormControl>
                         {subdepartments.length > 0 && (
                             <FormControl fullWidth>
-                                <InputLabel id="subdepartment-label">Факультеты</InputLabel>
+                                <InputLabel id="subdepartment-label">Подразделения</InputLabel>
                                 <Select
                                     fullWidth
                                     labelId="subdepartment-label"
-                                    label="Факультеты"
+                                    label="Подразделения"
                                     multiple
                                     value={searchQuery.selectedSubdepartments}
                                     onChange={(e) => changeSubdepartments(e.target.value)}
                                     renderValue={(selected) =>
                                         selected.length > 2
-                                            ? `Факультеты (${selected.length})`
+                                            ? `Подразделения (${selected.length})`
                                             : selected.map((subdep) => subdep.name).join(", ")
                                     }
                                 >
@@ -270,33 +271,31 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 ))}
                             </Select>
                         </FormControl>
-                        {subdirections.length > 0 && (
-                            <FormControl fullWidth>
-                                <InputLabel id="subdirection-label">Темы</InputLabel>
-                                <Select
-                                    fullWidth
-                                    labelId="subdirection-label"
-                                    label="Темы"
-                                    multiple
-                                    value={searchQuery.selectedSubdirections}
-                                    onChange={(e) => changeSubdirections(e.target.value)}
-                                    renderValue={(selected) =>
-                                        selected.length > 1
-                                            ? `Темы (${selected.length})`
-                                            : selected.map((subdir) => subdir.name).join(", ")
-                                    }
-                                >
-                                    {subdirections.map((subdir) => (
-                                        <MenuItem key={subdir.id} value={subdir}>
-                                            <Checkbox
-                                                checked={searchQuery.selectedSubdirections.indexOf(subdir) > -1}
-                                            />
-                                            <ListItemText primary={subdir.name} />
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        )}
+                        <FormControl fullWidth>
+                            <InputLabel id="subdirection-label">Составляющие</InputLabel>
+                            <Select
+                                fullWidth
+                                labelId="subdirection-label"
+                                label="Составляющие"
+                                multiple
+                                value={searchQuery.selectedSubdirections}
+                                onChange={(e) => changeSubdirections(e.target.value)}
+                                renderValue={(selected) =>
+                                    selected.length > 1
+                                        ? `Составляющие (${selected.length})`
+                                        : selected.map((subdir) => subdir.name).join(", ")
+                                }
+                            >
+                                {subdirections.map((subdir) => (
+                                    <MenuItem key={subdir.id} value={subdir}>
+                                        <Checkbox
+                                            checked={searchQuery.selectedSubdirections.indexOf(subdir) > -1}
+                                        />
+                                        <ListItemText primary={subdir.name} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <Grid container item xs={12} justifyContent={"space-between"}>
                             <Grid item xs={5}>
                                 <DatePicker
