@@ -20,6 +20,7 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
 import moment from "moment";
 import { getDepartments } from "../api/departmentsApi";
+import { getSubdirections } from "../api/subdirectionsApi";
 import { getDirections } from "../api/directionsApi";
 import OrganizersModal from "../modal/OrganizersModal/OrganizersModal";
 import ParticipantsModal from "../modal/ParticipantsModal/ParticipantsModal";
@@ -111,8 +112,20 @@ const CreateEventForm = ({ creationHandler }) => {
             setDirections(response.data);
         };
 
+        const loadSubdirections = async () => {
+            const response = await getSubdirections();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            setSubdirections(response.data);
+        }
+
         loadDepartments().then(() => {
-            loadDirections();
+            loadDirections().then(() => {
+                loadSubdirections();
+            });
         });
     }, []);
 
@@ -211,7 +224,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                         formik.touched.departmentId && formik.errors.departmentId !== undefined
                                     }
                                 >
-                                    Подразделение
+                                    Структура
                                 </InputLabel>
                                 <Select
                                     fullWidth
@@ -220,7 +233,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                     name="departmentId"
                                     value={formik.values.departmentId}
                                     renderValue={(value) => departments.find((dep) => dep.id === value).name}
-                                    label="Подразделение"
+                                    label="Структура"
                                     onChange={(e) => {
                                         formik.handleChange(e);
                                         formik.setFieldValue("subdepartmentId", "");
@@ -257,7 +270,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                             formik.errors.subdepartmentId !== undefined
                                         }
                                     >
-                                        Факультет
+                                        Подразделение
                                     </InputLabel>
                                     <Select
                                         fullWidth
@@ -268,7 +281,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                         renderValue={(value) =>
                                             subdepartments.find((subdep) => subdep.id === value).name
                                         }
-                                        label="Факультет"
+                                        label="Подразделение"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
@@ -313,9 +326,6 @@ const CreateEventForm = ({ creationHandler }) => {
                                         formik.handleChange(e);
                                         formik.setFieldValue("subdirectionId", "");
                                         formik.setFieldTouched("subdirectionId", false);
-                                        setSubdirections(
-                                            directions.find((dir) => dir.id === e.target.value).Subdirections
-                                        );
                                     }}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.directionId && formik.errors.directionId !== undefined}
@@ -343,7 +353,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                             formik.errors.subdirectionId !== undefined
                                         }
                                     >
-                                        Тема
+                                        Составляющая
                                     </InputLabel>
                                     <Select
                                         fullWidth
@@ -354,7 +364,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                         renderValue={(value) =>
                                             subdirections.find((subdir) => subdir.id === value).name
                                         }
-                                        label="Тема"
+                                        label="Составляющая"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         error={
