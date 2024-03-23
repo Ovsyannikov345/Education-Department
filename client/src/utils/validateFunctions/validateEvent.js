@@ -9,8 +9,6 @@ const validateEvent = (values, department, direction) => {
 
     if (!values.directionId) {
         errors.directionId = "Обязательное поле";
-    } else if (direction.Subdirections && direction.Subdirections.length > 0 && !values.subdirectionId) {
-        errors.subdirectionId = "Обязательное поле";
     }
 
     if (!values.name) {
