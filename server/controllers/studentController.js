@@ -1,9 +1,12 @@
-const { Student } = require("../db/models");
+const { sequelize } = require("../db/index");
+const { Student, Group } = require("../db/models");
 
 class StudentController {
     async getAll(req, res) {
         try {
-            const students = await Student.findAll();
+            const students = await Student.findAll({
+                include: [{ model: Group }],
+            });
 
             return res.json(students);
         } catch (error) {

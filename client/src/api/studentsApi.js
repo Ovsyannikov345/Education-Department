@@ -5,6 +5,10 @@ const getStudents = async () => {
     try {
         const response = await host.get("/students");
 
+        response.data.forEach((student) => {
+            student.groupName = student.Group?.name;
+        });
+
         return response;
     } catch (error) {
         if (error.response) {

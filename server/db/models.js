@@ -183,7 +183,23 @@ const Student = sequelize.define(
         patronymic: {
             type: DataTypes.STRING(50),
         },
-        groupName: {
+        groupId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+    },
+    { timestamps: false }
+);
+
+const Group = sequelize.define(
+    "Group",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        name: {
             type: DataTypes.STRING(15),
             allowNull: false,
         },
@@ -356,6 +372,15 @@ Participant.belongsToMany(Event, {
     through: "EventParticipants",
 });
 
+Student.belongsTo(Group, {
+    foreignKey: "groupId",
+    sourceKey: "id",
+});
+
+Group.hasMany(Student, {
+    foreignKey: "groupId",
+});
+
 Student.hasMany(Offense, {
     foreignKey: "studentId",
 });
@@ -373,6 +398,7 @@ module.exports = {
     Participant,
     Employee,
     Student,
+    Group,
     Offense,
     User,
     RefreshToken,
