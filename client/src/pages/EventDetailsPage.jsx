@@ -16,6 +16,9 @@ import {
     Tab,
     Snackbar,
     Alert,
+    OutlinedInput,
+    Box,
+    Chip,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
@@ -31,6 +34,9 @@ import EmployeeList from "../modal/OrganizersModal/EmployeeList";
 import ParticipantList from "../modal/ParticipantsModal/ParticipantList";
 import { useFormik } from "formik";
 import validateEvent from "../utils/validateFunctions/validateEvent";
+import { createGroup, deleteGroup, getGroups } from "../api/groupApi";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import GroupCreationForm from "../components/GroupCreationForm";
 
 const EventDetailsPage = (props) => {
     const { id } = useParams();
@@ -51,6 +57,7 @@ const EventDetailsPage = (props) => {
             subdirectionId: "",
             employees: [],
             students: [],
+            groups: [],
             participants: [],
         },
         validate: (values) =>
@@ -90,10 +97,12 @@ const EventDetailsPage = (props) => {
     const [students, setStudents] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [participants, setParticipants] = useState([]);
+    const [availableGroups, setAvailableGroups] = useState([]);
 
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
     const [editModeToggle, setEditModeToggle] = useState(false);
+    const [groupCreationToggle, setGroupCreationToggle] = useState(false);
 
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -130,6 +139,8 @@ const EventDetailsPage = (props) => {
 
             const loadedEvent = response.data;
 
+            console.log(loadedEvent);
+
             const formattedDate = moment.utc(loadedEvent.date).format("YYYY-MM-DD");
             const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
 
@@ -147,10 +158,11 @@ const EventDetailsPage = (props) => {
                 employees: loadedEvent.Employees,
                 students: loadedEvent.Students,
                 participants: loadedEvent.Participants,
+                groups: loadedEvent.Groups.map((g) => g.id),
             };
 
-            setInitialEvent(event);
             formik.setValues(event);
+            setInitialEvent(event);
 
             setAvailableSubdepartments(loadedEvent.Department.Subdepartments);
             setAvailableSubdirections(loadedEvent.Direction.Subdirections);
@@ -211,12 +223,25 @@ const EventDetailsPage = (props) => {
             setParticipants(response.data);
         };
 
+        const loadGroups = async () => {
+            const response = await getGroups();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            response.data.sort((a, b) => a.name.localeCompare(b.name));
+
+            setAvailableGroups(response.data);
+        };
+
         const loadData = async () => {
             await loadDepartments();
             await loadDirections();
             await loadStudents();
             await loadEmployees();
             await loadParticipants();
+            await loadGroups();
             await loadEvent();
         };
 
@@ -345,6 +370,39 @@ const EventDetailsPage = (props) => {
         removeParticipant(id);
         setParticipants(participants.filter((p) => p.id !== id));
         displaySuccess("Участник удален");
+    };
+
+    const removeGroup = async (id) => {
+        const response = await deleteGroup(id);
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
+        }
+
+        formik.setFieldValue(
+            "groups",
+            formik.values.groups.filter((g) => g !== id)
+        );
+        setAvailableGroups(availableGroups.filter((g) => g.id !== id));
+        displaySuccess("Группа удалена");
+    };
+
+    const createNewGroup = async (group) => {
+        const response = await createGroup(group);
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
+        }
+
+        const createdGroup = response.data;
+
+        displaySuccess("Группа создана и выбрана");
+        setGroupCreationToggle(false);
+
+        availableGroups.push(createdGroup);
+        formik.setFieldValue("groups", [...formik.values.groups, createdGroup.id]);
     };
 
     const resetChanges = () => {
@@ -673,6 +731,77 @@ const EventDetailsPage = (props) => {
                                 <></>
                             )}
                         </Grid>
+                        <Grid item xs={6}>
+                            <FormControl fullWidth>
+                                <InputLabel id="groups-label">Участвующие группы</InputLabel>
+                                <Select
+                                    labelId="groups-label"
+                                    id="groups-select"
+                                    multiple
+                                    value={formik.values.groups}
+                                    onChange={(e) => {
+                                        formik.setFieldValue("groups", e.target.value);
+                                    }}
+                                    input={<OutlinedInput id="select-multiple-chip" label="Участвующие группы" />}
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                            {selected.map((value) => (
+                                                <Chip
+                                                    key={value}
+                                                    label={availableGroups.find((g) => g.id === value).name}
+                                                />
+                                            ))}
+                                        </Box>
+                                    )}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 224,
+                                                width: 250,
+                                            },
+                                        },
+                                    }}
+                                    readOnly={!editModeToggle}
+                                >
+                                    {availableGroups.map((group) => (
+                                        <MenuItem
+                                            key={group.id}
+                                            value={group.id}
+                                            style={{ justifyContent: "space-between" }}
+                                        >
+                                            {group.name}
+                                            {!formik.values.groups.some((id) => id === group.id) && (
+                                                <IconButton
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        removeGroup(group.id);
+                                                    }}
+                                                >
+                                                    <DeleteIcon color="error" />
+                                                </IconButton>
+                                            )}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        {editModeToggle && (
+                            <Grid item xs={6}>
+                                {!groupCreationToggle ? (
+                                    <Button variant="outlined" onClick={() => setGroupCreationToggle(true)}>
+                                        Создать группу
+                                    </Button>
+                                ) : (
+                                    <Grid container item xs={6} gap={"10px"}>
+                                        <GroupCreationForm
+                                            createCallback={createNewGroup}
+                                            declineCallback={() => setGroupCreationToggle(false)}
+                                            errorCallback={displayError}
+                                        />
+                                    </Grid>
+                                )}
+                            </Grid>
+                        )}
                         <Grid item xs={12}>
                             <Tabs centered value={currentTabIndex} onChange={changeTab}>
                                 <Tab label="Сотрудники" />

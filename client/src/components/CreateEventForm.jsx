@@ -15,6 +15,9 @@ import {
     IconButton,
     Snackbar,
     Alert,
+    OutlinedInput,
+    Box,
+    Chip,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import BackIcon from "@mui/icons-material/ArrowBackIos";
@@ -26,6 +29,9 @@ import OrganizersModal from "../modal/OrganizersModal/OrganizersModal";
 import ParticipantsModal from "../modal/ParticipantsModal/ParticipantsModal";
 import { useFormik } from "formik";
 import validateEvent from "./../utils/validateFunctions/validateEvent";
+import { createGroup, deleteGroup, getGroups } from "../api/groupApi";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import GroupCreationForm from "./GroupCreationForm";
 
 const CreateEventForm = ({ creationHandler }) => {
     const navigate = useNavigate();
@@ -43,6 +49,7 @@ const CreateEventForm = ({ creationHandler }) => {
             subdirectionId: "",
             employees: [],
             students: [],
+            groups: [],
             participants: [],
         },
         validate: (values) =>
@@ -71,16 +78,26 @@ const CreateEventForm = ({ creationHandler }) => {
     const [subdepartments, setSubdepartments] = useState([]);
     const [directions, setDirections] = useState([]);
     const [subdirections, setSubdirections] = useState([]);
+    const [availableGroups, setAvailableGroups] = useState([]);
 
     const [organizersModalOpen, setOrganizersModalOpen] = useState(false);
     const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
 
+    const [groupCreationToggle, setGroupCreationToggle] = useState(false);
+
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     const displayError = (message) => {
         setErrorMessage(message);
         setError(true);
+    };
+
+    const displaySuccess = (message) => {
+        setSuccessMessage(message);
+        setSuccess(true);
     };
 
     const closeSnackbar = (event, reason) => {
@@ -88,6 +105,7 @@ const CreateEventForm = ({ creationHandler }) => {
             return;
         }
 
+        setSuccess(false);
         setError(false);
     };
 
@@ -120,11 +138,25 @@ const CreateEventForm = ({ creationHandler }) => {
             }
 
             setSubdirections(response.data);
-        }
+        };
+
+        const loadGroups = async () => {
+            const response = await getGroups();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            response.data.sort((a, b) => a.name.localeCompare(b.name));
+
+            setAvailableGroups(response.data);
+        };
 
         loadDepartments().then(() => {
             loadDirections().then(() => {
-                loadSubdirections();
+                loadSubdirections().then(() => {
+                    loadGroups();
+                });
             });
         });
     }, []);
@@ -160,6 +192,41 @@ const CreateEventForm = ({ creationHandler }) => {
             "participants",
             formik.values.participants.filter((prt) => prt.id !== id)
         );
+    };
+
+    const createNewGroup = async (group) => {
+        const response = await createGroup(group);
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
+        }
+
+        const createdGroup = response.data;
+
+        console.log(createdGroup);
+
+        displaySuccess("Группа создана и выбрана");
+        setGroupCreationToggle(false);
+
+        availableGroups.push(createdGroup);
+        formik.setFieldValue("groups", [...formik.values.groups, createdGroup]);
+    };
+
+    const removeGroup = async (id) => {
+        const response = await deleteGroup(id);
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
+        }
+
+        formik.setFieldValue(
+            "groups",
+            formik.values.groups.filter((g) => g.id !== id)
+        );
+        setAvailableGroups(availableGroups.filter((g) => g.id !== id));
+        displaySuccess("Группа удалена");
     };
 
     return (
@@ -390,6 +457,69 @@ const CreateEventForm = ({ creationHandler }) => {
                             )}
                         </Grid>
                         <Grid item xs={6}>
+                            <FormControl fullWidth>
+                                <InputLabel id="groups-label">Участвующие группы</InputLabel>
+                                <Select
+                                    labelId="groups-label"
+                                    id="groups-select"
+                                    multiple
+                                    value={formik.values.groups}
+                                    onChange={(e) => {
+                                        formik.setFieldValue("groups", e.target.value);
+                                    }}
+                                    input={<OutlinedInput id="select-multiple-chip" label="Участвующие группы" />}
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                            {selected.map((value) => (
+                                                <Chip key={value.id} label={value.name} />
+                                            ))}
+                                        </Box>
+                                    )}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 224,
+                                                width: 250,
+                                            },
+                                        },
+                                    }}
+                                >
+                                    {availableGroups.map((group) => (
+                                        <MenuItem
+                                            key={group.id}
+                                            value={group}
+                                            style={{ justifyContent: "space-between" }}
+                                        >
+                                            {group.name}
+                                            <IconButton
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    removeGroup(group.id);
+                                                }}
+                                            >
+                                                <DeleteIcon color="error" />
+                                            </IconButton>
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            {!groupCreationToggle ? (
+                                <Button variant="outlined" onClick={() => setGroupCreationToggle(true)}>
+                                    Создать группу
+                                </Button>
+                            ) : (
+                                <Grid container item xs={6} gap={"10px"}>
+                                    <GroupCreationForm
+                                        createCallback={createNewGroup}
+                                        declineCallback={() => setGroupCreationToggle(false)}
+                                        errorCallback={displayError}
+                                    />
+                                </Grid>
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
                             <TextField
                                 fullWidth
                                 variant="outlined"
@@ -499,6 +629,11 @@ const CreateEventForm = ({ creationHandler }) => {
             <Snackbar open={error} autoHideDuration={6000} onClose={closeSnackbar}>
                 <Alert onClose={closeSnackbar} severity="error" sx={{ width: "100%" }}>
                     {errorMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autoHideDuration={6000} onClose={closeSnackbar}>
+                <Alert onClose={closeSnackbar} severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
                 </Alert>
             </Snackbar>
         </>
