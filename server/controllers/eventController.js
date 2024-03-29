@@ -7,6 +7,7 @@ const {
     Employee,
     Student,
     Participant,
+    Group,
 } = require("../db/models");
 
 class EventController {
@@ -47,6 +48,7 @@ class EventController {
                     { model: Direction, include: [{ model: Subdirection }] },
                     { model: Employee },
                     { model: Student },
+                    { model: Group },
                     { model: Participant },
                 ],
             });
@@ -70,6 +72,7 @@ class EventController {
             createdEvent.addEmployees(event.employees.map((emp) => emp.id));
             createdEvent.addStudents(event.students.map((std) => std.id));
             createdEvent.addParticipants(event.participants.map((prt) => prt.id));
+            createdEvent.addGroups(event.groups.map((group) => group.id));
 
             return res.status(201).json();
         } catch (error) {
@@ -98,14 +101,17 @@ class EventController {
             const employees = await eventRecord.getEmployees();
             const students = await eventRecord.getStudents();
             const participants = await eventRecord.getParticipants();
+            const groups = await eventRecord.getGroups();
 
             eventRecord.removeEmployees(employees);
             eventRecord.removeStudents(students);
             eventRecord.removeParticipants(participants);
+            eventRecord.removeGroups(groups);
 
             eventRecord.addEmployees(event.employees.map((emp) => emp.id));
             eventRecord.addStudents(event.students.map((std) => std.id));
             eventRecord.addParticipants(event.participants.map((prt) => prt.id));
+            eventRecord.addGroups(event.groups);
 
             return res.sendStatus(204);
         } catch (error) {

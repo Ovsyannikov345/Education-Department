@@ -141,6 +141,8 @@ const Participant = sequelize.define(
 
 const EventParticipants = sequelize.define("EventParticipants", {}, { timestamps: false });
 
+const EventGroups = sequelize.define("EventGroups", {}, { timestamps: false });
+
 const Employee = sequelize.define(
     "Employee",
     {
@@ -381,6 +383,14 @@ Group.hasMany(Student, {
     foreignKey: "groupId",
 });
 
+Group.belongsToMany(Event, {
+    through: "EventGroups",
+});
+
+Event.belongsToMany(Group, {
+    through: "EventGroups",
+});
+
 Student.hasMany(Offense, {
     foreignKey: "studentId",
 });
@@ -399,6 +409,7 @@ module.exports = {
     Employee,
     Student,
     Group,
+    EventGroups,
     Offense,
     User,
     RefreshToken,
