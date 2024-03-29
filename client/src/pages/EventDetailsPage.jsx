@@ -37,6 +37,7 @@ import validateEvent from "../utils/validateFunctions/validateEvent";
 import { createGroup, deleteGroup, getGroups } from "../api/groupApi";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import GroupCreationForm from "../components/GroupCreationForm";
+import { getSubdirections } from "../api/subdirectionsApi";
 
 const EventDetailsPage = (props) => {
     const { id } = useParams();
@@ -92,7 +93,7 @@ const EventDetailsPage = (props) => {
     const [availableSubdepartments, setAvailableSubdepartments] = useState([]);
 
     const [directions, setDirections] = useState([]);
-    const [availableSubdirections, setAvailableSubdirections] = useState([]);
+    const [subdirections, setSubdirections] = useState([]);
 
     const [students, setStudents] = useState([]);
     const [employees, setEmployees] = useState([]);
@@ -165,7 +166,6 @@ const EventDetailsPage = (props) => {
             setInitialEvent(event);
 
             setAvailableSubdepartments(loadedEvent.Department.Subdepartments);
-            setAvailableSubdirections(loadedEvent.Direction.Subdirections);
         };
 
         const loadDepartments = async () => {
@@ -188,6 +188,16 @@ const EventDetailsPage = (props) => {
             }
 
             setDirections(response.data);
+        };
+
+        const loadSubdirections = async () => {
+            const response = await getSubdirections();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+            }
+
+            setSubdirections(response.data);
         };
 
         const loadStudents = async () => {
@@ -238,6 +248,7 @@ const EventDetailsPage = (props) => {
         const loadData = async () => {
             await loadDepartments();
             await loadDirections();
+            await loadSubdirections();
             await loadStudents();
             await loadEmployees();
             await loadParticipants();
@@ -408,7 +419,6 @@ const EventDetailsPage = (props) => {
     const resetChanges = () => {
         formik.setValues(initialEvent);
         setAvailableSubdepartments(departments.find((d) => d.id === initialEvent.departmentId).Subdepartments);
-        setAvailableSubdirections(directions.find((d) => d.id === initialEvent.directionId).Subdirections);
         setEditModeToggle(false);
     };
 
@@ -661,11 +671,6 @@ const EventDetailsPage = (props) => {
                                     label="Направление"
                                     onChange={(e) => {
                                         formik.handleChange(e);
-                                        formik.setFieldValue("subdirectionId", "");
-                                        formik.setFieldTouched("subdirectionId", false);
-                                        setAvailableSubdirections(
-                                            directions.find((dir) => dir.id === e.target.value).Subdirections
-                                        );
                                     }}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.directionId && formik.errors.directionId !== undefined}
@@ -685,51 +690,46 @@ const EventDetailsPage = (props) => {
                             </FormControl>
                         </Grid>
                         <Grid item xs={5.5}>
-                            {availableSubdirections.length > 0 ? (
-                                <FormControl fullWidth>
-                                    <InputLabel
-                                        id="subdirection-label"
-                                        error={
-                                            formik.touched.subdirectionId &&
-                                            formik.errors.subdirectionId !== undefined
-                                        }
-                                    >
-                                        Составляющая
-                                    </InputLabel>
-                                    <Select
-                                        fullWidth
-                                        labelId="subdirection-label"
-                                        id="subdirectionId"
-                                        name="subdirectionId"
-                                        value={formik.values.subdirectionId}
-                                        renderValue={(value) =>
-                                            availableSubdirections.find((subdir) => subdir.id === value).name
-                                        }
-                                        label="Составляющая"
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
-                                        error={
-                                            formik.touched.subdirectionId &&
-                                            formik.errors.subdirectionId !== undefined
-                                        }
-                                        readOnly={!editModeToggle}
-                                    >
-                                        {availableSubdirections.map((subdir) => (
-                                            <MenuItem key={subdir.id} value={subdir.id}>
-                                                {subdir.name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    <FormHelperText error>
-                                        {formik.touched.subdirectionId &&
+                            <FormControl fullWidth>
+                                <InputLabel
+                                    id="subdirection-label"
+                                    error={
+                                        formik.touched.subdirectionId &&
                                         formik.errors.subdirectionId !== undefined
-                                            ? formik.errors.subdirectionId
-                                            : ""}
-                                    </FormHelperText>
-                                </FormControl>
-                            ) : (
-                                <></>
-                            )}
+                                    }
+                                >
+                                    Составляющая
+                                </InputLabel>
+                                <Select
+                                    fullWidth
+                                    labelId="subdirection-label"
+                                    id="subdirectionId"
+                                    name="subdirectionId"
+                                    value={formik.values.subdirectionId}
+                                    renderValue={(value) =>
+                                        subdirections.find((subdir) => subdir.id === value).name
+                                    }
+                                    label="Составляющая"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.subdirectionId &&
+                                        formik.errors.subdirectionId !== undefined
+                                    }
+                                    readOnly={!editModeToggle}
+                                >
+                                    {subdirections.map((subdir) => (
+                                        <MenuItem key={subdir.id} value={subdir.id}>
+                                            {subdir.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <FormHelperText error>
+                                    {formik.touched.subdirectionId && formik.errors.subdirectionId !== undefined
+                                        ? formik.errors.subdirectionId
+                                        : ""}
+                                </FormHelperText>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={6}>
                             <FormControl fullWidth>

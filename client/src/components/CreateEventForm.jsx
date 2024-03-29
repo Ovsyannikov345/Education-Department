@@ -391,8 +391,6 @@ const CreateEventForm = ({ creationHandler }) => {
                                     label="Направление"
                                     onChange={(e) => {
                                         formik.handleChange(e);
-                                        formik.setFieldValue("subdirectionId", "");
-                                        formik.setFieldTouched("subdirectionId", false);
                                     }}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.directionId && formik.errors.directionId !== undefined}
