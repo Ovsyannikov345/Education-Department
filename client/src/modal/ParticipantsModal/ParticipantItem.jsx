@@ -27,7 +27,9 @@ const ParticipantItem = ({ participant, removeHandler, deleteHandler, readonly =
                     style={{ paddingLeft: 10 }}
                 >
                     <Grid item xs>
-                        <Typography>{`${participant.lastName} ${participant.firstName} ${participant.patronymic}`}</Typography>
+                        <Typography>{`${participant.lastName} ${participant.firstName} ${
+                            participant.patronymic ?? ""
+                        }`}</Typography>
                         <Typography>{`${participant.organization} ${
                             participant.position ? `(${participant.position})` : ""
                         }`}</Typography>

@@ -28,7 +28,9 @@ const StudentItem = ({ student, removeHandler, deleteHandler, readonly = false }
                 >
                     <Grid item xs>
                         <Typography>{`${student.groupName}`}</Typography>
-                        <Typography>{`${student.lastName} ${student.firstName} ${student.patronymic}`}</Typography>
+                        <Typography>{`${student.lastName} ${student.firstName} ${
+                            student.patronymic ?? ""
+                        }`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (

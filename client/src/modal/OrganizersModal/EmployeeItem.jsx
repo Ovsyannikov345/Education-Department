@@ -27,7 +27,9 @@ const EmployeeItem = ({ employee, removeHandler, deleteHandler, readonly = false
                     style={{ paddingLeft: 10 }}
                 >
                     <Grid item xs>
-                        <Typography>{`${employee.lastName} ${employee.firstName} ${employee.patronymic}`}</Typography>
+                        <Typography>{`${employee.lastName} ${employee.firstName} ${
+                            employee.patronymic ?? ""
+                        }`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (
