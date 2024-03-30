@@ -22,6 +22,7 @@ class EventController {
                     { model: Employee },
                     { model: Student },
                     { model: Participant },
+                    { model: Group },
                 ],
             });
 
