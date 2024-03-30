@@ -299,6 +299,7 @@ const EventDetailsPage = (props) => {
 
         removeStudent(id);
         setStudents(students.filter((std) => std.id !== id));
+        setInitialEvent({ ...initialEvent, students: initialEvent.students.filter((s) => s.id !== id) });
         displaySuccess("Студент удален");
     };
 
@@ -338,6 +339,7 @@ const EventDetailsPage = (props) => {
 
         removeEmployee(id);
         setEmployees(employees.filter((e) => e.id !== id));
+        setInitialEvent({ ...initialEvent, employees: initialEvent.employees.filter((e) => e.id !== id) });
         displaySuccess("Сотрудник удален");
     };
 
@@ -380,6 +382,7 @@ const EventDetailsPage = (props) => {
 
         removeParticipant(id);
         setParticipants(participants.filter((p) => p.id !== id));
+        setInitialEvent({ ...initialEvent, participants: initialEvent.participants.filter((p) => p.id !== id) });
         displaySuccess("Участник удален");
     };
 
@@ -396,6 +399,7 @@ const EventDetailsPage = (props) => {
             formik.values.groups.filter((g) => g !== id)
         );
         setAvailableGroups(availableGroups.filter((g) => g.id !== id));
+        setInitialEvent({ ...initialEvent, groups: initialEvent.groups.filter((g) => g.id !== id) });
         displaySuccess("Группа удалена");
     };
 
