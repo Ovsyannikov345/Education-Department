@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Grid,
     Container,
@@ -10,6 +10,7 @@ import {
     TextField,
     Button,
     Typography,
+    ListSubheader,
 } from "@mui/material";
 import StudentItem from "./StudentItem";
 import { useFormik } from "formik";
@@ -39,11 +40,43 @@ const StudentList = ({
         },
     });
 
+    const groupedAvailableStudents = useMemo(() => {
+        if (!availableStudents || availableStudents.length === 0) {
+            return [];
+        }
+
+        availableStudents.sort((a, b) =>
+            [a.lastName, a.firstName, a.patronymic ?? ""]
+                .join("")
+                .localeCompare([b.lastName, b.firstName, b.patronymic ?? ""].join(""))
+        );
+
+        const groupNames = availableStudents.map((g) => g.groupName);
+
+        const uniqueGroupNames = [...new Set(groupNames)];
+
+        return uniqueGroupNames.map((name) => {
+            return { groupName: name, students: availableStudents.filter((s) => s.groupName === name) };
+        });
+    }, [availableStudents]);
+
+    const sortedStudents = useMemo(() => {
+        if (!students || students.length === 0) {
+            return [];
+        }
+
+        return students.sort((a, b) =>
+            [a.Group.name, a.lastName, a.firstName, a.patronymic ?? ""]
+                .join("")
+                .localeCompare([b.Group.name, b.lastName, b.firstName, b.patronymic ?? ""].join(""))
+        );
+    }, [students]);
+
     const [creationToggle, setCreationToggle] = useState(false);
 
     return (
         <Stack gap={1} marginTop={1}>
-            {students.map((std) => (
+            {sortedStudents.map((std) => (
                 <StudentItem
                     key={std.id}
                     student={std}
@@ -67,12 +100,15 @@ const StudentList = ({
                             value={""}
                             onChange={(e) => addStudentHandler(e.target.value)}
                         >
-                            {availableStudents.length > 0 &&
-                                availableStudents.map((std) => (
-                                    <MenuItem key={std.id} value={std.id}>
-                                        {`${std.lastName} ${std.firstName} ${std.patronymic} (${std.groupName})`}
-                                    </MenuItem>
-                                ))}
+                            {groupedAvailableStudents.length > 0 &&
+                                groupedAvailableStudents.flatMap((group) => [
+                                    <ListSubheader key={group.groupName}>{group.groupName}</ListSubheader>,
+                                    ...group.students.map((std) => (
+                                        <MenuItem key={std.id} value={std.id}>
+                                            {`${std.lastName} ${std.firstName} ${std.patronymic}`}
+                                        </MenuItem>
+                                    )),
+                                ])}
                         </Select>
                     </FormControl>
                     <Container style={{ padding: 0, justifyContent: "flex-start" }}>
