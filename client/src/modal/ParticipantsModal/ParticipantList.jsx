@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Grid,
     Container,
@@ -41,6 +41,26 @@ const ParticipantList = ({
     });
 
     const [creationToggle, setCreationToggle] = useState(false);
+
+    useMemo(() => {
+        participants.sort((a, b) =>
+            [a.lastName, a.firstName, a.patronymic ?? "", a.organization, a.position ?? ""]
+                .join("")
+                .localeCompare(
+                    [b.lastName, b.firstName, b.patronymic ?? "", b.organization, b.position ?? ""].join("")
+                )
+        );
+    }, [participants]);
+
+    useMemo(() => {
+        availableParticipants.sort((a, b) =>
+            [a.lastName, a.firstName, a.patronymic ?? "", a.organization, a.position ?? ""]
+                .join("")
+                .localeCompare(
+                    [b.lastName, b.firstName, b.patronymic ?? "", b.organization, b.position ?? ""].join("")
+                )
+        );
+    }, [availableParticipants]);
 
     return (
         <Stack gap={1} marginTop={1}>

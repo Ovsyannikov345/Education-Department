@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Grid,
     Container,
@@ -39,6 +39,22 @@ const EmployeeList = ({
     });
 
     const [creationToggle, setCreationToggle] = useState(false);
+
+    useMemo(() => {
+        employees.sort((a, b) =>
+            [a.lastName, a.firstName, a.patronymic ?? ""]
+                .join("")
+                .localeCompare([b.lastName, b.firstName, b.patronymic ?? ""].join(""))
+        );
+    }, [employees]);
+
+    useMemo(() => {
+        availableEmployees.sort((a, b) =>
+            [a.lastName, a.firstName, a.patronymic ?? ""]
+                .join("")
+                .localeCompare([b.lastName, b.firstName, b.patronymic ?? ""].join(""))
+        );
+    }, [availableEmployees]) 
 
     return (
         <Stack gap={1} marginTop={1}>
