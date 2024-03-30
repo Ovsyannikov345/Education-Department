@@ -119,6 +119,8 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
         loadData();
     }, [displayError]);
 
+    useMemo(() => groups.sort((a, b) => a.name.localeCompare(b.name)), [groups]);
+
     useEffect(() => {
         const query = {
             ...searchQuery,
