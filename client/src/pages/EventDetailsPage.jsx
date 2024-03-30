@@ -417,7 +417,7 @@ const EventDetailsPage = (props) => {
     };
 
     const resetChanges = () => {
-        formik.setValues(initialEvent);
+        formik.setValues({ ...initialEvent });
         setAvailableSubdepartments(departments.find((d) => d.id === initialEvent.departmentId).Subdepartments);
         setEditModeToggle(false);
     };
