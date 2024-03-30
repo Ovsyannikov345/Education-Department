@@ -27,7 +27,7 @@ const StudentItem = ({ student, removeHandler, deleteHandler, readonly = false }
                     style={{ paddingLeft: 10 }}
                 >
                     <Grid item xs>
-                        <Typography>{`${student.groupName}`}</Typography>
+                        <Typography>{`${student.Group.name}`}</Typography>
                         <Typography>{`${student.lastName} ${student.firstName} ${
                             student.patronymic ?? ""
                         }`}</Typography>
