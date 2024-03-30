@@ -1,5 +1,9 @@
-const validateStudent = ({ lastName, firstName, patronymic, groupName }) => {
+const validateStudent = ({ lastName, firstName, patronymic, groupId }) => {
     const errors = {};
+
+    if (!groupId) {
+        errors.groupId = "Обязательное поле";
+    }
 
     if (!lastName) {
         errors.lastName = "Обязательное поле";
@@ -15,14 +19,6 @@ const validateStudent = ({ lastName, firstName, patronymic, groupName }) => {
 
     if (patronymic && patronymic.length > 50) {
         errors.patronymic = "Длина не более 50 символов";
-    }
-
-    if (!groupName) {
-        errors.groupName = "Обязательное поле";
-    } else if (groupName.length > 15) {
-        errors.groupName = "Длина не более 15 символов";
-    } else if (!/^[А-ЯA-Z]+-\d+$/i.test(groupName)) {
-        errors.groupName = "Неверный формат (Группа-номер)";
     }
 
     return errors;

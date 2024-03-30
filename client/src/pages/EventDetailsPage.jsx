@@ -273,6 +273,8 @@ const EventDetailsPage = (props) => {
 
         const student = response.data;
 
+        student.Group = availableGroups.find((g) => g.id === student.groupId);
+
         formik.setFieldValue("students", [...formik.values.students, student]);
         setStudents([...students, student]);
         displaySuccess("Студент создан");
@@ -844,6 +846,7 @@ const EventDetailsPage = (props) => {
                                     removeStudentHandler={removeStudent}
                                     deleteStudentHandler={removeStudentPermanent}
                                     readonly={!editModeToggle}
+                                    errorCallback={displayError}
                                 />
                             )}
                             {currentTabIndex === 2 && (

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     Grid,
     Container,
@@ -11,10 +11,12 @@ import {
     Button,
     Typography,
     ListSubheader,
+    FormHelperText,
 } from "@mui/material";
 import StudentItem from "./StudentItem";
 import { useFormik } from "formik";
 import validateStudent from "./../../utils/validateFunctions/validateStudent";
+import { getGroups } from "../../api/groupApi";
 
 const StudentList = ({
     students,
@@ -24,13 +26,14 @@ const StudentList = ({
     removeStudentHandler,
     deleteStudentHandler,
     readonly = false,
+    errorCallback,
 }) => {
     const formik = useFormik({
         initialValues: {
             lastName: "",
             firstName: "",
             patronymic: "",
-            groupName: "",
+            groupId: "",
         },
         validate: validateStudent,
         onSubmit: async (values) => {
@@ -39,6 +42,24 @@ const StudentList = ({
             formik.resetForm();
         },
     });
+
+    const [groups, setGroups] = useState([]);
+
+    useEffect(() => {
+        const loadGroups = async () => {
+            const response = await getGroups();
+
+            if (!response.status || response.status >= 300) {
+                errorCallback(response.data.error);
+                return;
+            }
+
+            setGroups(response.data);
+            console.log(response.data);
+        };
+
+        loadGroups();
+    }, []);
 
     const groupedAvailableStudents = useMemo(() => {
         if (!availableStudents || availableStudents.length === 0) {
@@ -71,6 +92,8 @@ const StudentList = ({
                 .localeCompare([b.Group.name, b.lastName, b.firstName, b.patronymic ?? ""].join(""))
         );
     }, [students]);
+
+    useMemo(() => groups.sort((a, b) => a.name.localeCompare(b.name)), [groups]);
 
     const [creationToggle, setCreationToggle] = useState(false);
 
@@ -117,24 +140,41 @@ const StudentList = ({
                                 <Typography variant="h6">Новый студент</Typography>
                                 <Grid container gap={1}>
                                     <Grid item xs={2}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Группа"
-                                            id="groupName"
-                                            name="groupName"
-                                            value={formik.values.groupName}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.groupName && formik.errors.groupName !== undefined
-                                            }
-                                            helperText={
-                                                formik.touched.groupName && formik.errors.groupName !== undefined
-                                                    ? formik.errors.groupName
-                                                    : ""
-                                            }
-                                        ></TextField>
+                                        <FormControl fullWidth>
+                                            <InputLabel
+                                                id="group-label"
+                                                error={
+                                                    formik.touched.groupId && formik.errors.groupId !== undefined
+                                                }
+                                            >
+                                                Группа
+                                            </InputLabel>
+                                            <Select
+                                                fullWidth
+                                                labelId="group-label"
+                                                id="groupId"
+                                                name="groupId"
+                                                value={formik.values.groupId}
+                                                renderValue={(value) => groups.find((g) => g.id === value).name}
+                                                label="Группа"
+                                                onChange={formik.handleChange}
+                                                onBlur={formik.handleBlur}
+                                                error={
+                                                    formik.touched.groupId && formik.errors.groupId !== undefined
+                                                }
+                                            >
+                                                {groups.map((g) => (
+                                                    <MenuItem key={g.id} value={g.id}>
+                                                        {g.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                            <FormHelperText error>
+                                                {formik.touched.groupId && formik.errors.groupId !== undefined
+                                                    ? formik.errors.groupId
+                                                    : ""}
+                                            </FormHelperText>
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs>
                                         <TextField
