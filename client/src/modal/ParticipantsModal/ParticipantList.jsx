@@ -29,7 +29,8 @@ const ParticipantList = ({
             lastName: "",
             firstName: "",
             patronymic: "",
-            groupName: "",
+            organization: "",
+            position: "",
         },
         validate: validateParticipant,
         onSubmit: async (values) => {
