@@ -47,7 +47,7 @@ class EventController {
                     { model: Department, include: [{ model: Subdepartment }] },
                     { model: Direction, include: [{ model: Subdirection }] },
                     { model: Employee },
-                    { model: Student },
+                    { model: Student, include: { model: Group } },
                     { model: Group },
                     { model: Participant },
                 ],
