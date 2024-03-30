@@ -15,6 +15,7 @@ function MainPage() {
         subdepartments: [],
         directions: [],
         subdirections: [],
+        groups: [],
         startDate: null,
         endDate: null,
     });
@@ -62,6 +63,8 @@ function MainPage() {
 
         const isGapValid = startDate == null || endDate == null ? true : endDate.isSameOrAfter(startDate);
 
+        console.log(events);
+
         const filteredEvents = sortedEvents.filter(
             (event) =>
                 event.name.toLowerCase().includes(searchQuery.name.toLowerCase()) &&
@@ -78,6 +81,9 @@ function MainPage() {
                 (searchQuery.subdirections.length > 0
                     ? event.Subdirection != null &&
                       searchQuery.subdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
+                    : true) &&
+                (searchQuery.groups.length > 0
+                    ? event.Groups.some((g) => searchQuery.groups.includes(g.id))
                     : true) &&
                 (isGapValid && startDate != null
                     ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate)

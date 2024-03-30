@@ -11,11 +11,16 @@ import {
     Select,
     TextField,
     Typography,
+    OutlinedInput,
+    Box,
+    Chip,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
 import { getDepartments } from "../api/departmentsApi";
 import { getDirections } from "../api/directionsApi";
+import { getGroups } from "../api/groupApi";
 import moment from "moment";
 import { getSubdirections } from "../api/subdirectionsApi";
 
@@ -27,6 +32,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             selectedSubdepartments: [],
             selectedDirections: [],
             selectedSubdirections: [],
+            selectedGroups: [],
             startDate: null,
             endDate: null,
         }
@@ -35,6 +41,11 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
     const [departments, setDepartments] = useState([]);
     const [directions, setDirections] = useState([]);
     const [subdirections, setSubdirections] = useState([]);
+    const [groups, setGroups] = useState([]);
+
+    const [isExpanded, setIsExpanded] = useState(
+        JSON.parse(localStorage.getItem("eventFilterExpanded")) ?? false
+    );
 
     const subdepartments = useMemo(() => {
         const subdepartments = [];
@@ -87,11 +98,25 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             setSubdirections(response.data);
         };
 
-        loadDepartments().then(() => {
-            loadDirections().then(() => {
-                loadSubdirections();
-            });
-        });
+        const loadGroups = async () => {
+            const response = await getGroups();
+
+            if (!response.status || response.status >= 300) {
+                displayError(response.data.error);
+                return;
+            }
+
+            setGroups(response.data);
+        };
+
+        const loadData = async () => {
+            await loadDepartments();
+            await loadDirections();
+            await loadSubdirections();
+            await loadGroups();
+        };
+
+        loadData();
     }, [displayError]);
 
     useEffect(() => {
@@ -109,6 +134,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             subdepartments: searchQuery.selectedSubdepartments,
             directions: searchQuery.selectedDirections,
             subdirections: searchQuery.selectedSubdirections,
+            groups: searchQuery.selectedGroups,
             startDate: searchQuery.startDate,
             endDate: searchQuery.endDate,
         });
@@ -121,9 +147,12 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             selectedSubdepartments: [],
             selectedDirections: [],
             selectedSubdirections: [],
+            selectedGroups: [],
             startDate: null,
             endDate: null,
         });
+        setIsExpanded(false);
+        localStorage.setItem("eventFilterExpanded", false);
         displaySuccess("Фильтр сброшен");
     };
 
@@ -160,7 +189,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
         });
     };
 
-    // TODO fix checked selectors.
+    // TODO fix checked subdirection selectors.
 
     return (
         <Grid container justifyContent={"flex-end"} mt={12}>
@@ -348,6 +377,58 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 </Grid>
                             )}
                         </Grid>
+                        <Button
+                            startIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                            onClick={() => {
+                                localStorage.setItem("eventFilterExpanded", !isExpanded);
+                                setIsExpanded(!isExpanded);
+                            }}
+                        >
+                            {isExpanded ? "Скрыть" : "Показать еще"}
+                        </Button>
+                        {isExpanded && (
+                            <FormControl fullWidth>
+                                <InputLabel id="groups-label">Участвующие группы</InputLabel>
+                                <Select
+                                    labelId="groups-label"
+                                    id="groups-select"
+                                    multiple
+                                    value={searchQuery.selectedGroups}
+                                    onChange={(e) => {
+                                        setSearchQuery({ ...searchQuery, selectedGroups: e.target.value });
+                                    }}
+                                    input={<OutlinedInput id="select-multiple-chip" label="Участвующие группы" />}
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                            {selected.map((value) => (
+                                                <Chip
+                                                    key={value}
+                                                    label={groups.find((g) => g.id === value)?.name}
+                                                />
+                                            ))}
+                                        </Box>
+                                    )}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 224,
+                                                width: 250,
+                                            },
+                                        },
+                                    }}
+                                >
+                                    {groups.map((group) => (
+                                        <MenuItem
+                                            key={group.id}
+                                            value={group.id}
+                                            style={{ justifyContent: "space-between" }}
+                                        >
+                                            {group.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )}
                         <Grid item xs={12}>
                             <Button fullWidth variant="outlined" onClick={resetFilter}>
                                 Сбросить все
