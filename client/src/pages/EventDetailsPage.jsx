@@ -719,6 +719,9 @@ const EventDetailsPage = (props) => {
                                         }
                                         readOnly={!editModeToggle}
                                     >
+                                        <MenuItem key={0} value={""}>
+                                            --Без составляющей--
+                                        </MenuItem>
                                         {subdirections.map((subdir) => (
                                             <MenuItem key={subdir.id} value={subdir.id}>
                                                 {subdir.name}
