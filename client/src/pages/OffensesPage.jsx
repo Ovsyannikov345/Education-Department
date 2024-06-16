@@ -47,13 +47,9 @@ function OffensesPage() {
             case "group":
                 return [...offenses].sort((a, b) => a.Student.groupName.localeCompare(b.Student.groupName));
             case "date asc":
-                return [...offenses].sort(
-                    (a, b) => new Date(a.offenseDate.slice(0, -1)) - new Date(b.offenseDate.slice(0, -1))
-                );
+                return [...offenses].sort((a, b) => new Date(a.offenseDate.slice(0, -1)) - new Date(b.offenseDate.slice(0, -1)));
             case "date desc":
-                return [...offenses].sort(
-                    (a, b) => new Date(b.offenseDate.slice(0, -1)) - new Date(a.offenseDate.slice(0, -1))
-                );
+                return [...offenses].sort((a, b) => new Date(b.offenseDate.slice(0, -1)) - new Date(a.offenseDate.slice(0, -1)));
             default:
                 return [...offenses];
         }
@@ -71,12 +67,8 @@ function OffensesPage() {
                     .toLowerCase()
                     .includes(searchQuery.text.toLowerCase()) ||
                     offense.Student.groupName.toLowerCase().includes(searchQuery.text.toLowerCase())) &&
-                (isGapValid && startDate != null
-                    ? moment(offense.offenseDate, "YYYY-MM-DD").isSameOrAfter(startDate)
-                    : true) &&
-                (isGapValid && endDate != null
-                    ? moment(offense.offenseDate, "YYYY-MM-DD").isSameOrBefore(endDate)
-                    : true)
+                (isGapValid && startDate != null ? moment(offense.offenseDate, "YYYY-MM-DD").isSameOrAfter(startDate) : true) &&
+                (isGapValid && endDate != null ? moment(offense.offenseDate, "YYYY-MM-DD").isSameOrBefore(endDate) : true)
         );
 
         return filteredOffenses;
@@ -113,14 +105,12 @@ function OffensesPage() {
         <>
             <Grid container alignItems={"flex-start"} mb={5}>
                 <Grid container item xs={3}>
-                    <OffenseFilter queryHandler={setSearchQuery} displaySuccess={displaySuccess}/>
+                    <OffenseFilter queryHandler={setSearchQuery} displaySuccess={displaySuccess} />
                 </Grid>
                 <Grid container item xs={9} pl={2} pr={2}>
                     <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                         <Grid item>
-                            <Typography variant="h4">
-                                Список правонарушений {`(${filteredOffenses.length})`}
-                            </Typography>
+                            <Typography variant="h4">Список правонарушений {`(${filteredOffenses.length})`}</Typography>
                         </Grid>
                         <Grid item>
                             <SortSelector

@@ -20,19 +20,10 @@ const ParticipantItem = ({ participant, removeHandler, deleteHandler, readonly =
                 declineHandler={() => setDeleteModalOpen(false)}
             />
             <Paper variant="outlined" style={{ borderWidth: 2, borderColor: "#1976d29F" }}>
-                <Grid
-                    container
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    style={{ paddingLeft: 10 }}
-                >
+                <Grid container justifyContent={"space-between"} alignItems={"center"} style={{ paddingLeft: 10 }}>
                     <Grid item xs>
-                        <Typography>{`${participant.lastName} ${participant.firstName} ${
-                            participant.patronymic ?? ""
-                        }`}</Typography>
-                        <Typography>{`${participant.organization} ${
-                            participant.position ? `(${participant.position})` : ""
-                        }`}</Typography>
+                        <Typography>{`${participant.lastName} ${participant.firstName} ${participant.patronymic ?? ""}`}</Typography>
+                        <Typography>{`${participant.organization} ${participant.position ? `(${participant.position})` : ""}`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (

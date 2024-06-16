@@ -1,17 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-    Button,
-    Checkbox,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    ListItemText,
-    Paper,
-    Select,
-    TextField,
-    Typography,
-} from "@mui/material";
+import { Button, Checkbox, FormControl, Grid, InputLabel, MenuItem, ListItemText, Paper, Select, TextField, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { getDepartments } from "../api/departmentsApi";
@@ -48,9 +36,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             .map((dep) => dep.Subdepartments)
             .forEach((subdepList) => subdepartments.push(...subdepList));
 
-        return subdepartments.filter(
-            (subdep, pos, self) => self.map((subdep) => subdep.name).indexOf(subdep.name) === pos
-        );
+        return subdepartments.filter((subdep, pos, self) => self.map((subdep) => subdep.name).indexOf(subdep.name) === pos);
     }, [searchQuery.selectedDepartments]);
 
     useEffect(() => {
@@ -124,9 +110,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
             ...searchQuery,
             selectedDepartments: departmentIds.map((id) => departments.find((dep) => dep.id === id)),
             selectedSubdepartments: searchQuery.selectedSubdepartments.filter((subdep) =>
-                searchQuery.selectedDepartments.includes((dep) =>
-                    dep.Subdepartments.map((s) => s.id).includes((id) => id === subdep.id)
-                )
+                searchQuery.selectedDepartments.includes((dep) => dep.Subdepartments.map((s) => s.id).includes((id) => id === subdep.id))
             ),
         });
     };
@@ -186,20 +170,12 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 value={searchQuery.selectedDepartments.map((dep) => dep.id)}
                                 onChange={(e) => changeDepartments(e.target.value)}
                                 renderValue={(selected) =>
-                                    departments.length > 0
-                                        ? selected
-                                              .map((id) => departments.find((dep) => dep.id === id).name)
-                                              .join(", ")
-                                        : ""
+                                    departments.length > 0 ? selected.map((id) => departments.find((dep) => dep.id === id).name).join(", ") : ""
                                 }
                             >
                                 {departments.map((dep) => (
                                     <MenuItem key={dep.id} value={dep.id}>
-                                        <Checkbox
-                                            checked={searchQuery.selectedDepartments.some(
-                                                (selectedDep) => selectedDep.id === dep.id
-                                            )}
-                                        />
+                                        <Checkbox checked={searchQuery.selectedDepartments.some((selectedDep) => selectedDep.id === dep.id)} />
                                         <ListItemText primary={dep.name} />
                                     </MenuItem>
                                 ))}
@@ -223,9 +199,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 >
                                     {subdepartments.map((subdep) => (
                                         <MenuItem key={subdep.id} value={subdep}>
-                                            <Checkbox
-                                                checked={searchQuery.selectedSubdepartments.indexOf(subdep) > -1}
-                                            />
+                                            <Checkbox checked={searchQuery.selectedSubdepartments.indexOf(subdep) > -1} />
                                             <ListItemText primary={subdep.name} />
                                         </MenuItem>
                                     ))}
@@ -251,11 +225,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             >
                                 {directions.map((dir) => (
                                     <MenuItem key={dir.id} value={dir.id}>
-                                        <Checkbox
-                                            checked={searchQuery.selectedDirections.some(
-                                                (selectedDir) => selectedDir.id === dir.id
-                                            )}
-                                        />
+                                        <Checkbox checked={searchQuery.selectedDirections.some((selectedDir) => selectedDir.id === dir.id)} />
                                         <ListItemText primary={dir.name} />
                                     </MenuItem>
                                 ))}
@@ -273,15 +243,13 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 renderValue={(selected) =>
                                     selected.length > 1
                                         ? `Составляющие (${selected.length})`
-                                        : subdirections.find(s => s.id === selected[0])?.name
+                                        : subdirections.find((s) => s.id === selected[0])?.name
                                 }
                             >
                                 {subdirections.map((subdir) => (
                                     <MenuItem key={subdir.id} value={subdir.id}>
                                         <Checkbox
-                                            checked={searchQuery.selectedSubdirections.some(
-                                                (selectedSubdir) => selectedSubdir.id === subdir.id
-                                            )}
+                                            checked={searchQuery.selectedSubdirections.some((selectedSubdir) => selectedSubdir.id === subdir.id)}
                                         />
                                         <ListItemText primary={subdir.name} />
                                     </MenuItem>
@@ -320,10 +288,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             </Grid>
                             {searchQuery.startDate != null && (
                                 <Grid item xs={5}>
-                                    <Button
-                                        variant="text"
-                                        onClick={() => setSearchQuery({ ...searchQuery, startDate: null })}
-                                    >
+                                    <Button variant="text" onClick={() => setSearchQuery({ ...searchQuery, startDate: null })}>
                                         Сброс
                                     </Button>
                                 </Grid>
@@ -331,10 +296,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                             {searchQuery.endDate != null && <Grid item xs={2} />}
                             {searchQuery.endDate != null && (
                                 <Grid item xs={5}>
-                                    <Button
-                                        variant="text"
-                                        onClick={() => setSearchQuery({ ...searchQuery, endDate: null })}
-                                    >
+                                    <Button variant="text" onClick={() => setSearchQuery({ ...searchQuery, endDate: null })}>
                                         Сброс
                                     </Button>
                                 </Grid>

@@ -14,23 +14,12 @@ const StudentItem = ({ student, removeHandler, deleteHandler, readonly = false }
 
     return (
         <>
-            <DeleteConfirmationModal
-                isOpen={deleteModalOpen}
-                acceptHandler={deleteStudent}
-                declineHandler={() => setDeleteModalOpen(false)}
-            />
+            <DeleteConfirmationModal isOpen={deleteModalOpen} acceptHandler={deleteStudent} declineHandler={() => setDeleteModalOpen(false)} />
             <Paper variant="outlined" style={{ borderWidth: 2, borderColor: "#1976d29F" }}>
-                <Grid
-                    container
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    style={{ paddingLeft: 10 }}
-                >
+                <Grid container justifyContent={"space-between"} alignItems={"center"} style={{ paddingLeft: 10 }}>
                     <Grid item xs>
                         <Typography>{`${student.groupName}`}</Typography>
-                        <Typography>{`${student.lastName} ${student.firstName} ${
-                            student.patronymic ?? ""
-                        }`}</Typography>
+                        <Typography>{`${student.lastName} ${student.firstName} ${student.patronymic ?? ""}`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
                         {!readonly && (

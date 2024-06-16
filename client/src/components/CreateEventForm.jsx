@@ -204,8 +204,6 @@ const CreateEventForm = ({ creationHandler }) => {
 
         const createdGroup = response.data;
 
-        console.log(createdGroup);
-
         displaySuccess("Группа создана и выбрана");
         setGroupCreationToggle(false);
 
@@ -248,11 +246,7 @@ const CreateEventForm = ({ creationHandler }) => {
                 addParticipantHandler={addParticipant}
                 removeParticipantHandler={removeParticipant}
             />
-            <IconButton
-                color="primary"
-                style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => navigate(MAINPAGE_ROUTE)}
-            >
+            <IconButton color="primary" style={{ marginTop: 10, marginLeft: 10 }} onClick={() => navigate(MAINPAGE_ROUTE)}>
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
             <Container>
@@ -263,22 +257,12 @@ const CreateEventForm = ({ creationHandler }) => {
                         </Grid>
                         <Grid item xs={5} container columnGap={2}>
                             <Grid item xs={5}>
-                                <Button
-                                    variant="outlined"
-                                    fullWidth
-                                    style={{ padding: 10 }}
-                                    onClick={(e) => setOrganizersModalOpen(true)}
-                                >
+                                <Button variant="outlined" fullWidth style={{ padding: 10 }} onClick={(e) => setOrganizersModalOpen(true)}>
                                     Организаторы
                                 </Button>
                             </Grid>
                             <Grid item xs={5}>
-                                <Button
-                                    variant="outlined"
-                                    fullWidth
-                                    style={{ padding: 10 }}
-                                    onClick={(e) => setParticipantsModalOpen(true)}
-                                >
+                                <Button variant="outlined" fullWidth style={{ padding: 10 }} onClick={(e) => setParticipantsModalOpen(true)}>
                                     Участники
                                 </Button>
                             </Grid>
@@ -287,9 +271,7 @@ const CreateEventForm = ({ creationHandler }) => {
                             <FormControl fullWidth>
                                 <InputLabel
                                     id="department-label"
-                                    error={
-                                        formik.touched.departmentId && formik.errors.departmentId !== undefined
-                                    }
+                                    error={formik.touched.departmentId && formik.errors.departmentId !== undefined}
                                 >
                                     Структура
                                 </InputLabel>
@@ -305,14 +287,10 @@ const CreateEventForm = ({ creationHandler }) => {
                                         formik.handleChange(e);
                                         formik.setFieldValue("subdepartmentId", "");
                                         formik.setFieldTouched("subdepartmentId", false);
-                                        setSubdepartments(
-                                            departments.find((dep) => dep.id === e.target.value).Subdepartments
-                                        );
+                                        setSubdepartments(departments.find((dep) => dep.id === e.target.value).Subdepartments);
                                     }}
                                     onBlur={formik.handleBlur}
-                                    error={
-                                        formik.touched.departmentId && formik.errors.departmentId !== undefined
-                                    }
+                                    error={formik.touched.departmentId && formik.errors.departmentId !== undefined}
                                 >
                                     {departments.map((dep) => (
                                         <MenuItem key={dep.id} value={dep.id}>
@@ -321,9 +299,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                     ))}
                                 </Select>
                                 <FormHelperText error>
-                                    {formik.touched.departmentId && formik.errors.departmentId !== undefined
-                                        ? formik.errors.departmentId
-                                        : ""}
+                                    {formik.touched.departmentId && formik.errors.departmentId !== undefined ? formik.errors.departmentId : ""}
                                 </FormHelperText>
                             </FormControl>
                         </Grid>
@@ -332,10 +308,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 <FormControl fullWidth>
                                     <InputLabel
                                         id="subdepartment-label"
-                                        error={
-                                            formik.touched.subdepartmentId &&
-                                            formik.errors.subdepartmentId !== undefined
-                                        }
+                                        error={formik.touched.subdepartmentId && formik.errors.subdepartmentId !== undefined}
                                     >
                                         Подразделение
                                     </InputLabel>
@@ -345,16 +318,11 @@ const CreateEventForm = ({ creationHandler }) => {
                                         id="subdepartmentId"
                                         name="subdepartmentId"
                                         value={formik.values.subdepartmentId}
-                                        renderValue={(value) =>
-                                            subdepartments.find((subdep) => subdep.id === value).name
-                                        }
+                                        renderValue={(value) => subdepartments.find((subdep) => subdep.id === value).name}
                                         label="Подразделение"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
-                                        error={
-                                            formik.touched.subdepartmentId &&
-                                            formik.errors.subdepartmentId !== undefined
-                                        }
+                                        error={formik.touched.subdepartmentId && formik.errors.subdepartmentId !== undefined}
                                     >
                                         {subdepartments.map((subdep) => (
                                             <MenuItem key={subdep.id} value={subdep.id}>
@@ -363,8 +331,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                         ))}
                                     </Select>
                                     <FormHelperText error>
-                                        {formik.touched.subdepartmentId &&
-                                        formik.errors.subdepartmentId !== undefined
+                                        {formik.touched.subdepartmentId && formik.errors.subdepartmentId !== undefined
                                             ? formik.errors.subdepartmentId
                                             : ""}
                                     </FormHelperText>
@@ -375,10 +342,7 @@ const CreateEventForm = ({ creationHandler }) => {
                         </Grid>
                         <Grid item xs={5}>
                             <FormControl fullWidth>
-                                <InputLabel
-                                    id="direction-label"
-                                    error={formik.touched.directionId && formik.errors.directionId !== undefined}
-                                >
+                                <InputLabel id="direction-label" error={formik.touched.directionId && formik.errors.directionId !== undefined}>
                                     Направление
                                 </InputLabel>
                                 <Select
@@ -402,9 +366,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                     ))}
                                 </Select>
                                 <FormHelperText error>
-                                    {formik.touched.directionId && formik.errors.directionId !== undefined
-                                        ? formik.errors.directionId
-                                        : ""}
+                                    {formik.touched.directionId && formik.errors.directionId !== undefined ? formik.errors.directionId : ""}
                                 </FormHelperText>
                             </FormControl>
                         </Grid>
@@ -413,10 +375,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 <FormControl fullWidth>
                                     <InputLabel
                                         id="subdirection-label"
-                                        error={
-                                            formik.touched.subdirectionId &&
-                                            formik.errors.subdirectionId !== undefined
-                                        }
+                                        error={formik.touched.subdirectionId && formik.errors.subdirectionId !== undefined}
                                     >
                                         Составляющая
                                     </InputLabel>
@@ -426,16 +385,11 @@ const CreateEventForm = ({ creationHandler }) => {
                                         id="subdirectionId"
                                         name="subdirectionId"
                                         value={formik.values.subdirectionId}
-                                        renderValue={(value) =>
-                                            subdirections.find((subdir) => subdir.id === value).name
-                                        }
+                                        renderValue={(value) => subdirections.find((subdir) => subdir.id === value).name}
                                         label="Составляющая"
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
-                                        error={
-                                            formik.touched.subdirectionId &&
-                                            formik.errors.subdirectionId !== undefined
-                                        }
+                                        error={formik.touched.subdirectionId && formik.errors.subdirectionId !== undefined}
                                     >
                                         {subdirections.map((subdir) => (
                                             <MenuItem key={subdir.id} value={subdir.id}>
@@ -444,8 +398,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                         ))}
                                     </Select>
                                     <FormHelperText error>
-                                        {formik.touched.subdirectionId &&
-                                        formik.errors.subdirectionId !== undefined
+                                        {formik.touched.subdirectionId && formik.errors.subdirectionId !== undefined
                                             ? formik.errors.subdirectionId
                                             : ""}
                                     </FormHelperText>
@@ -483,11 +436,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                     }}
                                 >
                                     {availableGroups.map((group) => (
-                                        <MenuItem
-                                            key={group.id}
-                                            value={group}
-                                            style={{ justifyContent: "space-between" }}
-                                        >
+                                        <MenuItem key={group.id} value={group} style={{ justifyContent: "space-between" }}>
                                             {group.name}
                                             <IconButton
                                                 onClick={(e) => {
@@ -528,11 +477,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.name && formik.errors.name !== undefined}
-                                helperText={
-                                    formik.touched.name && formik.errors.name !== undefined
-                                        ? formik.errors.name
-                                        : ""
-                                }
+                                helperText={formik.touched.name && formik.errors.name !== undefined ? formik.errors.name : ""}
                             ></TextField>
                         </Grid>
                         <Grid item xs={6}>
@@ -549,9 +494,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.description && formik.errors.description !== undefined}
                                 helperText={
-                                    formik.touched.description && formik.errors.description !== undefined
-                                        ? formik.errors.description
-                                        : ""
+                                    formik.touched.description && formik.errors.description !== undefined ? formik.errors.description : ""
                                 }
                             ></TextField>
                         </Grid>
@@ -569,9 +512,7 @@ const CreateEventForm = ({ creationHandler }) => {
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.plannedResult && formik.errors.plannedResult !== undefined}
                                 helperText={
-                                    formik.touched.plannedResult && formik.errors.plannedResult !== undefined
-                                        ? formik.errors.plannedResult
-                                        : ""
+                                    formik.touched.plannedResult && formik.errors.plannedResult !== undefined ? formik.errors.plannedResult : ""
                                 }
                             ></TextField>
                         </Grid>
@@ -580,17 +521,12 @@ const CreateEventForm = ({ creationHandler }) => {
                                 <DatePicker
                                     label="Дата проведения"
                                     value={formik.values.date ? moment(formik.values.date) : null}
-                                    onChange={(newDate) =>
-                                        formik.setFieldValue("date", moment(newDate).format("YYYY-MM-DD"), true)
-                                    }
+                                    onChange={(newDate) => formik.setFieldValue("date", moment(newDate).format("YYYY-MM-DD"), true)}
                                     onBlur={formik.handleBlur}
                                     slotProps={{
                                         textField: {
                                             error: formik.touched.date && formik.errors.date !== undefined,
-                                            helperText:
-                                                formik.touched.date && formik.errors.date !== undefined
-                                                    ? formik.errors.date
-                                                    : "",
+                                            helperText: formik.touched.date && formik.errors.date !== undefined ? formik.errors.date : "",
                                         },
                                     }}
                                 ></DatePicker>
@@ -599,17 +535,12 @@ const CreateEventForm = ({ creationHandler }) => {
                                 <TimePicker
                                     label="Время проведения"
                                     value={formik.values.time ? moment(formik.values.time, "HH:mm") : null}
-                                    onChange={(newTime) =>
-                                        formik.setFieldValue("time", newTime.format("HH:mm"), true)
-                                    }
+                                    onChange={(newTime) => formik.setFieldValue("time", newTime.format("HH:mm"), true)}
                                     onBlur={formik.handleBlur}
                                     slotProps={{
                                         textField: {
                                             error: formik.touched.time && formik.errors.time !== undefined,
-                                            helperText:
-                                                formik.touched.time && formik.errors.time !== undefined
-                                                    ? formik.errors.time
-                                                    : "",
+                                            helperText: formik.touched.time && formik.errors.time !== undefined ? formik.errors.time : "",
                                         },
                                     }}
                                 ></TimePicker>

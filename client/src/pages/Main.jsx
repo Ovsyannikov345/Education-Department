@@ -76,12 +76,9 @@ function MainPage() {
                     ? searchQuery.selectedDirections.map((dir) => dir.id).includes(event.Direction.id)
                     : true) &&
                 (searchQuery.selectedSubdirections.length > 0
-                    ? event.Subdirection != null &&
-                      searchQuery.selectedSubdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
+                    ? event.Subdirection != null && searchQuery.selectedSubdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
                     : true) &&
-                (isGapValid && startDate != null
-                    ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate)
-                    : true) &&
+                (isGapValid && startDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate) : true) &&
                 (isGapValid && endDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrBefore(endDate) : true)
         );
 
@@ -119,18 +116,12 @@ function MainPage() {
         <>
             <Grid container alignItems={"flex-start"} mb={5}>
                 <Grid container item xs={3}>
-                    <EventFilter
-                        queryHandler={setSearchQuery}
-                        displaySuccess={displaySuccess}
-                        displayError={displayError}
-                    />
+                    <EventFilter queryHandler={setSearchQuery} displaySuccess={displaySuccess} displayError={displayError} />
                 </Grid>
                 <Grid container item xs={9} pl={2} pr={2}>
                     <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                         <Grid item>
-                            <Typography variant="h4">
-                                Список мероприятий {`(${filteredEvents.length})`}
-                            </Typography>
+                            <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
                         </Grid>
                         <Grid item>
                             <SortSelector

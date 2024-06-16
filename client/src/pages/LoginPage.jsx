@@ -94,11 +94,7 @@ const LoginPage = () => {
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.email && formik.errors.email !== undefined}
-                            helperText={
-                                formik.touched.email && formik.errors.email !== undefined
-                                    ? formik.errors.email
-                                    : ""
-                            }
+                            helperText={formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""}
                         />
                         <TextField
                             id="password"
@@ -111,11 +107,7 @@ const LoginPage = () => {
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.password && formik.errors.password !== undefined}
-                            helperText={
-                                formik.touched.password && formik.errors.password !== undefined
-                                    ? formik.errors.password
-                                    : ""
-                            }
+                            helperText={formik.touched.password && formik.errors.password !== undefined ? formik.errors.password : ""}
                         />
                         <Link
                             variant="body2"
@@ -128,13 +120,7 @@ const LoginPage = () => {
                         >
                             Забыли пароль?
                         </Link>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            style={{ marginTop: "20px" }}
-                        >
+                        <Button type="submit" fullWidth variant="contained" color="primary" style={{ marginTop: "20px" }}>
                             Войти
                         </Button>
                     </form>

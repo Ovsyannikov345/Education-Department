@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-    Grid,
-    Container,
-    MenuItem,
-    Select,
-    Stack,
-    FormControl,
-    InputLabel,
-    TextField,
-    Button,
-    Typography,
-} from "@mui/material";
+import { Grid, Container, MenuItem, Select, Stack, FormControl, InputLabel, TextField, Button, Typography } from "@mui/material";
 import ParticipantItem from "./ParticipantItem";
 import { useFormik } from "formik";
 import validateParticipant from "./../../utils/validateFunctions/validateParticipant";
@@ -66,11 +55,7 @@ const ParticipantList = ({
                             fullWidth
                             labelId="participant-label"
                             id="participant-select"
-                            label={
-                                availableParticipants.length > 0
-                                    ? "Добавить участника"
-                                    : "Нет доступных участников"
-                            }
+                            label={availableParticipants.length > 0 ? "Добавить участника" : "Нет доступных участников"}
                             readOnly={availableParticipants.length === 0}
                             value={""}
                             onChange={(e) => addParticipantHandler(e.target.value)}
@@ -81,8 +66,7 @@ const ParticipantList = ({
                                         {`${prt.lastName}
                                         ${prt.firstName}
                                         ${prt.patronymic}
-                                        ${prt.organization}
-                                        ${prt.position ? `(${prt.position})` : ""}`}
+                                        ("${prt.organization}"${prt.position ? `, ${prt.position}` : ""})`}
                                     </MenuItem>
                                 ))}
                         </Select>
@@ -102,13 +86,9 @@ const ParticipantList = ({
                                             value={formik.values.lastName}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined
-                                            }
+                                            error={formik.touched.lastName && formik.errors.lastName !== undefined}
                                             helperText={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined
-                                                    ? formik.errors.lastName
-                                                    : ""
+                                                formik.touched.lastName && formik.errors.lastName !== undefined ? formik.errors.lastName : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -122,13 +102,9 @@ const ParticipantList = ({
                                             value={formik.values.firstName}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined
-                                            }
+                                            error={formik.touched.firstName && formik.errors.firstName !== undefined}
                                             helperText={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined
-                                                    ? formik.errors.firstName
-                                                    : ""
+                                                formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -142,13 +118,9 @@ const ParticipantList = ({
                                             value={formik.values.patronymic}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.patronymic &&
-                                                formik.errors.patronymic !== undefined
-                                            }
+                                            error={formik.touched.patronymic && formik.errors.patronymic !== undefined}
                                             helperText={
-                                                formik.touched.patronymic &&
-                                                formik.errors.patronymic !== undefined
+                                                formik.touched.patronymic && formik.errors.patronymic !== undefined
                                                     ? formik.errors.patronymic
                                                     : ""
                                             }
@@ -164,13 +136,9 @@ const ParticipantList = ({
                                             value={formik.values.organization}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.organization &&
-                                                formik.errors.organization !== undefined
-                                            }
+                                            error={formik.touched.organization && formik.errors.organization !== undefined}
                                             helperText={
-                                                formik.touched.organization &&
-                                                formik.errors.organization !== undefined
+                                                formik.touched.organization && formik.errors.organization !== undefined
                                                     ? formik.errors.organization
                                                     : ""
                                             }
@@ -186,25 +154,16 @@ const ParticipantList = ({
                                             value={formik.values.position}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.position && formik.errors.position !== undefined
-                                            }
+                                            error={formik.touched.position && formik.errors.position !== undefined}
                                             helperText={
-                                                formik.touched.position && formik.errors.position !== undefined
-                                                    ? formik.errors.position
-                                                    : ""
+                                                formik.touched.position && formik.errors.position !== undefined ? formik.errors.position : ""
                                             }
                                         ></TextField>
                                     </Grid>
                                 </Grid>
                                 <Grid container marginTop={2} marginBottom={2} gap={2}>
                                     <Grid item xs={2}>
-                                        <Button
-                                            fullWidth
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={(e) => formik.handleSubmit()}
-                                        >
+                                        <Button fullWidth variant="outlined" color="primary" onClick={(e) => formik.handleSubmit()}>
                                             Создать
                                         </Button>
                                     </Grid>

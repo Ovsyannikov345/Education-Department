@@ -17,19 +17,8 @@ const EventItem = ({ event, deleteHandler }) => {
 
     return (
         <>
-            <DeleteConfirmationModal
-                isOpen={deleteModalOpen}
-                acceptHandler={deleteEvent}
-                declineHandler={() => setDeleteModalOpen(false)}
-            />
-            <Grid
-                container
-                rowGap={1}
-                marginTop={3}
-                padding={2}
-                borderRadius={2}
-                sx={{ border: 1, borderColor: "#1976d29F" }}
-            >
+            <DeleteConfirmationModal isOpen={deleteModalOpen} acceptHandler={deleteEvent} declineHandler={() => setDeleteModalOpen(false)} />
+            <Grid container rowGap={1} marginTop={3} padding={2} borderRadius={2} sx={{ border: 1, borderColor: "#1976d29F" }}>
                 <Grid item xs={12}>
                     <Typography variant="h5" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
                         {event.name}
@@ -78,9 +67,7 @@ const EventItem = ({ event, deleteHandler }) => {
                                 <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
                                     <b>Подразделение</b>
                                 </Typography>
-                                <Typography variant="h6">
-                                    {event.Subdepartment === null ? "" : event.Subdepartment.name}
-                                </Typography>
+                                <Typography variant="h6">{event.Subdepartment === null ? "" : event.Subdepartment.name}</Typography>
                             </>
                         )}
                     </Grid>
@@ -90,9 +77,7 @@ const EventItem = ({ event, deleteHandler }) => {
                                 <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
                                     <b>Составляющая</b>
                                 </Typography>
-                                <Typography variant="h6">
-                                    {event.Subdirection === null ? "" : event.Subdirection.name}
-                                </Typography>
+                                <Typography variant="h6">{event.Subdirection === null ? "" : event.Subdirection.name}</Typography>
                             </>
                         )}
                     </Grid>

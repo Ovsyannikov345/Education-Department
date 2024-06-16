@@ -16,28 +16,12 @@ const OffenseItem = ({ offense, deleteHandler }) => {
 
     return (
         <>
-            <DeleteConfirmationModal
-                isOpen={deleteModalOpen}
-                acceptHandler={deleteOffense}
-                declineHandler={() => setDeleteModalOpen(false)}
-            />
-            <Grid
-                container
-                rowGap={1}
-                marginTop={3}
-                padding={2}
-                borderRadius={2}
-                sx={{ border: 1, borderColor: "#1976d29F" }}
-            >
+            <DeleteConfirmationModal isOpen={deleteModalOpen} acceptHandler={deleteOffense} declineHandler={() => setDeleteModalOpen(false)} />
+            <Grid container rowGap={1} marginTop={3} padding={2} borderRadius={2} sx={{ border: 1, borderColor: "#1976d29F" }}>
                 <Grid container item xs={12}>
                     <Grid container item xs={12} gap={7}>
                         <Grid item>
-                            <Typography
-                                variant="h5"
-                                overflow={"hidden"}
-                                whiteSpace={"nowrap"}
-                                textOverflow={"ellipsis"}
-                            >
+                            <Typography variant="h5" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
                                 {`${offense.Student.lastName} ${offense.Student.firstName} ${offense.Student.patronymic}`}
                             </Typography>
                         </Grid>
@@ -47,20 +31,13 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                     </Grid>
                     <Grid container item xs={12} alignItems={"center"} gap={0.5}>
                         <EvenIcon />
-                        <Typography variant="h6">
-                            {moment.utc(offense.offenseDate).format("DD-MM-YYYY")}
-                        </Typography>
+                        <Typography variant="h6">{moment.utc(offense.offenseDate).format("DD-MM-YYYY")}</Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
                             <b>Статья</b>
                         </Typography>
-                        <Typography
-                            variant="h6"
-                            overflow={"hidden"}
-                            whiteSpace={"nowrap"}
-                            textOverflow={"ellipsis"}
-                        >
+                        <Typography variant="h6" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
                             {offense.article}
                         </Typography>
                     </Grid>
@@ -68,12 +45,7 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                         <Typography variant="subtitle1" style={{ textDecoration: "underline" }}>
                             <b>Решение суда</b>
                         </Typography>
-                        <Typography
-                            variant="h6"
-                            overflow={"hidden"}
-                            whiteSpace={"nowrap"}
-                            textOverflow={"ellipsis"}
-                        >
+                        <Typography variant="h6" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
                             {offense.courtDecision}
                         </Typography>
                     </Grid>
@@ -86,11 +58,7 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                 </Grid>
                 <Grid container item xs={12} gap={2}>
                     <Grid item>
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => navigate(`/offenses/${offense.id}`)}
-                        >
+                        <Button variant="outlined" color="primary" onClick={() => navigate(`/offenses/${offense.id}`)}>
                             Подробнее
                         </Button>
                     </Grid>

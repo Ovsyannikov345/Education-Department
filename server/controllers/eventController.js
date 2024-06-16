@@ -1,14 +1,4 @@
-const {
-    Event,
-    Department,
-    Subdepartment,
-    Direction,
-    Subdirection,
-    Employee,
-    Student,
-    Participant,
-    Group,
-} = require("../db/models");
+const { Event, Department, Subdepartment, Direction, Subdirection, Employee, Student, Participant, Group } = require("../db/models");
 
 class EventController {
     async getAll(req, res) {

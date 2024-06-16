@@ -27,13 +27,9 @@ class AuthController {
             const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.ACCESS_TOKEN_SECRET, {
                 expiresIn: "10m",
             });
-            const refreshToken = jwt.sign(
-                { userId: user.id, role: user.role },
-                process.env.REFRESH_TOKEN_SECRET,
-                {
-                    expiresIn: "24h",
-                }
-            );
+            const refreshToken = jwt.sign({ userId: user.id, role: user.role }, process.env.REFRESH_TOKEN_SECRET, {
+                expiresIn: "24h",
+            });
 
             await RefreshToken.create({ token: refreshToken });
 
@@ -65,13 +61,9 @@ class AuthController {
                     return res.status(403).json({ error: "Аккаунт заблокирован" });
                 }
 
-                const accessToken = jwt.sign(
-                    { userId: decoded.userId, role: decoded.role },
-                    process.env.ACCESS_TOKEN_SECRET,
-                    {
-                        expiresIn: "10m",
-                    }
-                );
+                const accessToken = jwt.sign({ userId: decoded.userId, role: decoded.role }, process.env.ACCESS_TOKEN_SECRET, {
+                    expiresIn: "10m",
+                });
 
                 return res.json({ accessToken: accessToken });
             } catch (error) {

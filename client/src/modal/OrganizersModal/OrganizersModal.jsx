@@ -1,7 +1,7 @@
 import { Dialog, Typography, Container, Tabs, Tab, Alert, Snackbar } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { getEmployees, postEmployee, deleteEmployee } from "../../api/employeeApi";
-import { getStudents, postStudent, deleteStudent } from "../../api/studentsApi";
+import { getStudents, deleteStudent } from "../../api/studentsApi";
 import EmployeeList from "./EmployeeList";
 import StudentList from "./StudentList";
 

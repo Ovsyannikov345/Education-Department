@@ -58,17 +58,10 @@ const PasswordResetModal = ({ open, closeHandler, errorCallback, successCallback
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.email && formik.errors.email !== undefined}
-                    helperText={
-                        formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""
-                    }
+                    helperText={formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""}
                 />
                 {!loading ? (
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        fullWidth
-                        style={{ height: "40px", marginTop: "10px" }}
-                    >
+                    <Button type="submit" variant="contained" fullWidth style={{ height: "40px", marginTop: "10px" }}>
                         Сбросить
                     </Button>
                 ) : (

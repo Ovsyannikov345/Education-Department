@@ -4,13 +4,7 @@ import { Dialog, Typography, Container, Snackbar, Alert } from "@mui/material";
 import { getParticipants, postParticipant, deleteParticipant } from "../../api/participantApi";
 import ParticipantList from "./ParticipantList";
 
-const ParticipantsModal = ({
-    isOpen,
-    closeHandler,
-    currentParticipants,
-    addParticipantHandler,
-    removeParticipantHandler,
-}) => {
+const ParticipantsModal = ({ isOpen, closeHandler, currentParticipants, addParticipantHandler, removeParticipantHandler }) => {
     const [loadedParticipants, setLoadedParticipants] = useState([]);
     const [availableParticipants, setAvailableParticipants] = useState([]);
 
@@ -52,9 +46,7 @@ const ParticipantsModal = ({
 
             setLoadedParticipants(
                 response.data.sort((a, b) =>
-                    [a.lastName, a.firstName, a.patronymic]
-                        .join("")
-                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    [a.lastName, a.firstName, a.patronymic].join("").localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
                 )
             );
         };

@@ -1,27 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-    AppBar,
-    Box,
-    Toolbar,
-    Typography,
-    IconButton,
-    Drawer,
-    List,
-    ListItem,
-    ListItemText,
-    Grid,
-    Snackbar,
-    Alert,
-} from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, Grid, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {
-    MAINPAGE_ROUTE,
-    ADDEVENT_ROUTE,
-    OFFENSIVES_ROUTE,
-    REPORTS_ROUTE,
-    ADDOFFENSIVE_ROUTE,
-    ACCOUNTS_ROUTE,
-} from "../utils/consts";
+import { MAINPAGE_ROUTE, ADDEVENT_ROUTE, OFFENSIVES_ROUTE, REPORTS_ROUTE, ADDOFFENSIVE_ROUTE, ACCOUNTS_ROUTE } from "../utils/consts";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import EventIcon from "@mui/icons-material/Event";
 import AddBoxIcon from "@mui/icons-material/AddBox";
@@ -127,11 +107,15 @@ function NavBar() {
                             </Grid>
                             <Grid container item xs={1} justifyContent={"flex-end"}>
                                 {accessToken && (
-                                    <IconButton size="large" color="inherit" onClick={async () => {
-                                        await logout();
-                                        localStorage.clear()
-                                        window.location.reload();
-                                    }}>
+                                    <IconButton
+                                        size="large"
+                                        color="inherit"
+                                        onClick={async () => {
+                                            await logout();
+                                            localStorage.clear();
+                                            window.location.reload();
+                                        }}
+                                    >
                                         <LogoutIcon fontSize="large" />
                                     </IconButton>
                                 )}
