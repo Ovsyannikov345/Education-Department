@@ -15,6 +15,12 @@ class GroupController {
         try {
             const group = req.body;
 
+            const groups = await Group.findAll();
+
+            if (groups.some((g) => g.name === group.name)) {
+                return res.status(400).json({ error: "Группа уже существует" });
+            }
+
             const createdGroup = await Group.create(group);
 
             return res.status(201).json(createdGroup);
