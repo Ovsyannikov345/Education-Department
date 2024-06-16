@@ -81,7 +81,12 @@ const EventDetailsPage = (props) => {
                 return;
             }
 
+            event.subdepartmentId = event.subdepartmentId || "";
+            event.subdirectionId = event.subdirectionId || "";
+            event.date = moment.utc(event.date).format("YYYY-MM-DD");
+            event.time = time;
             setInitialEvent(event);
+            
             setEditModeToggle(false);
             displaySuccess("Мероприятие изменено");
         },
@@ -690,6 +695,7 @@ const EventDetailsPage = (props) => {
                             </FormControl>
                         </Grid>
                         <Grid item xs={5.5}>
+                            {formik.values.subdirectionId || editModeToggle ?
                             <FormControl fullWidth>
                                 <InputLabel
                                     id="subdirection-label"
@@ -718,6 +724,9 @@ const EventDetailsPage = (props) => {
                                     }
                                     readOnly={!editModeToggle}
                                 >
+                                    <MenuItem key={Date.now()} value={""}>
+                                        <i>--Без составляющей--</i>
+                                    </MenuItem>
                                     {subdirections.map((subdir) => (
                                         <MenuItem key={subdir.id} value={subdir.id}>
                                             {subdir.name}
@@ -730,6 +739,7 @@ const EventDetailsPage = (props) => {
                                         : ""}
                                 </FormHelperText>
                             </FormControl>
+                            : <></>}
                         </Grid>
                         <Grid item xs={6}>
                             <FormControl fullWidth>
