@@ -1,16 +1,20 @@
-import React from "react";
-import { FormControl, Grid, TextField, Button } from "@mui/material";
+import React, { useState, useEffect, useMemo } from "react";
+import { FormControl, Grid, TextField, Button, Select, FormHelperText, MenuItem, InputLabel } from "@mui/material";
 import { postStudent } from "../api/studentsApi";
 import { useFormik } from "formik";
 import validateStudent from "../utils/validateFunctions/validateStudent";
+import { createGroup, getGroups } from "../api/groupApi";
+import GroupCreationForm from "./GroupCreationForm";
 
 const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) => {
+    const [groups, setGroups] = useState([]);
+
     const formik = useFormik({
         initialValues: {
             lastName: "",
             firstName: "",
             patronymic: "",
-            groupName: "",
+            groupId: "",
         },
         validate: validateStudent,
         onSubmit: async (values) => {
@@ -23,10 +27,51 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
             }
 
             const createdStudent = response.data;
+            createdStudent.groupName = groups.find((g) => g.id === createdStudent.groupId).name;
 
             successCallback?.(createdStudent);
         },
     });
+
+    useEffect(() => {
+        const loadGroups = async () => {
+            const response = await getGroups();
+
+            if (!response.status || response.status >= 300) {
+                errorCallback?.(response.data.error);
+            }
+
+            setGroups(response.data);
+        };
+
+        const loadData = async () => {
+            await loadGroups();
+        };
+
+        loadData();
+    }, [errorCallback]);
+
+    const sortedGroups = useMemo(() => {
+        return groups.sort((a, b) => a.name.localeCompare(b.name));
+    }, [groups]);
+
+    const [groupCreationToggle, setGroupCreationToggle] = useState(false);
+
+    const createNewGroup = async (group) => {
+        const response = await createGroup(group);
+
+        if (!response.status || response.status >= 300) {
+            errorCallback(response.data.error);
+            return;
+        }
+
+        const createdGroup = response.data;
+
+        setGroupCreationToggle(false);
+
+        groups.push(createdGroup);
+        formik.setFieldValue("groupId", createdGroup.id);
+    };
 
     const decline = () => {
         formik.resetForm();
@@ -37,22 +82,32 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
         <FormControl fullWidth>
             <Grid container item xs={12} gap={1}>
                 <Grid item xs={5.9}>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Группа"
-                        id="groupName"
-                        name="groupName"
-                        value={formik.values.groupName}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.touched.groupName && formik.errors.groupName !== undefined}
-                        helperText={
-                            formik.touched.groupName && formik.errors.groupName !== undefined
-                                ? formik.errors.groupName
-                                : ""
-                        }
-                    ></TextField>
+                    <FormControl fullWidth>
+                        <InputLabel id="group-label" error={formik.touched.groupId && formik.errors.groupId !== undefined}>
+                            Группа
+                        </InputLabel>
+                        <Select
+                            fullWidth
+                            labelId="group-label"
+                            id="groupId"
+                            name="groupId"
+                            value={formik.values.groupId}
+                            renderValue={(value) => groups.find((g) => g.id === value).name}
+                            label="Группа"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={formik.touched.groupId && formik.errors.groupId !== undefined}
+                        >
+                            {sortedGroups.map((g) => (
+                                <MenuItem key={g.id} value={g.id}>
+                                    {g.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        <FormHelperText error>
+                            {formik.touched.groupId && formik.errors.groupId !== undefined ? formik.errors.groupId : ""}
+                        </FormHelperText>
+                    </FormControl>
                 </Grid>
                 <Grid item xs={5.9}>
                     <TextField
@@ -65,12 +120,21 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         error={formik.touched.lastName && formik.errors.lastName !== undefined}
-                        helperText={
-                            formik.touched.lastName && formik.errors.lastName !== undefined
-                                ? formik.errors.lastName
-                                : ""
-                        }
+                        helperText={formik.touched.lastName && formik.errors.lastName !== undefined ? formik.errors.lastName : ""}
                     ></TextField>
+                </Grid>
+                <Grid item container xs={5.9} alignItems={"flex-start"} gap={"10px"}>
+                    {groupCreationToggle ? (
+                        <GroupCreationForm
+                            createCallback={createNewGroup}
+                            declineCallback={() => setGroupCreationToggle(false)}
+                            errorCallback={errorCallback}
+                        />
+                    ) : (
+                        <Button variant="outlined" onClick={() => setGroupCreationToggle(true)}>
+                            Создать группу
+                        </Button>
+                    )}
                 </Grid>
                 <Grid item xs={5.9}>
                     <TextField
@@ -83,13 +147,10 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         error={formik.touched.firstName && formik.errors.firstName !== undefined}
-                        helperText={
-                            formik.touched.firstName && formik.errors.firstName !== undefined
-                                ? formik.errors.firstName
-                                : ""
-                        }
+                        helperText={formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""}
                     ></TextField>
                 </Grid>
+                <Grid item xs={5.9}></Grid>
                 <Grid item xs={5.9}>
                     <TextField
                         fullWidth
@@ -101,11 +162,7 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         error={formik.touched.patronymic && formik.errors.patronymic !== undefined}
-                        helperText={
-                            formik.touched.patronymic && formik.errors.patronymic !== undefined
-                                ? formik.errors.patronymic
-                                : ""
-                        }
+                        helperText={formik.touched.patronymic && formik.errors.patronymic !== undefined ? formik.errors.patronymic : ""}
                     ></TextField>
                 </Grid>
                 <Grid container item xs={12} gap={2}>

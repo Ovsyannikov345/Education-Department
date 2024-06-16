@@ -61,9 +61,7 @@ const OrganizersModal = ({
 
             setLoadedEmployees(
                 response.data.sort((a, b) =>
-                    [a.lastName, a.firstName, a.patronymic]
-                        .join("")
-                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    [a.lastName, a.firstName, a.patronymic].join("").localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
                 )
             );
         };
@@ -77,9 +75,7 @@ const OrganizersModal = ({
 
             setLoadedStudents(
                 response.data.sort((a, b) =>
-                    [a.lastName, a.firstName, a.patronymic]
-                        .join("")
-                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    [a.lastName, a.firstName, a.patronymic].join("").localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
                 )
             );
         };
@@ -113,24 +109,13 @@ const OrganizersModal = ({
         displaySuccess("Сотрудник создан");
     };
 
-    const createStudent = async (createdStudent) => {
-        const response = await postStudent(createdStudent);
-
-        if (!response.status || response.status >= 300) {
-            displayError(response.data.error);
-        }
-
-        setLoadedStudents([...loadedStudents, response.data]);
-        addStudentHandler(response.data);
-        displaySuccess("Студент создан");
-    };
-
     const addEmployee = (id) => {
         addEmployeeHandler(availableEmployees.find((emp) => emp.id === id));
     };
 
-    const addStudent = (id) => {
-        addStudentHandler(availableStudents.find((std) => std.id === id));
+    const addStudent = (student) => {
+        setLoadedStudents([...loadedStudents, student]);
+        addStudentHandler(student);
     };
 
     const removeEmployee = (id) => {
@@ -171,7 +156,7 @@ const OrganizersModal = ({
                 <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
                     Организаторы мероприятия
                 </Typography>
-                <Container>
+                <Container style={{ paddingBottom: "10px" }}>
                     <Tabs centered value={currentTabIndex} onChange={changeTab}>
                         <Tab label="Сотрудники" />
                         <Tab label="Студенты" />
@@ -191,9 +176,9 @@ const OrganizersModal = ({
                             students={currentStudents}
                             availableStudents={availableStudents}
                             addStudentHandler={addStudent}
-                            createStudentHandler={createStudent}
                             removeStudentHandler={removeStudent}
                             deleteStudentHandler={removeStudentPermanent}
+                            displayError={displayError}
                         />
                     )}
                 </Container>
