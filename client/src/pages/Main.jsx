@@ -11,10 +11,10 @@ function MainPage() {
     const [sortOption, setSortOption] = useState("date desc");
     const [searchQuery, setSearchQuery] = useState({
         name: "",
-        departments: [],
-        subdepartments: [],
-        directions: [],
-        subdirections: [],
+        selectedDepartments: [],
+        selectedSubdepartments: [],
+        selectedDirections: [],
+        selectedSubdirections: [],
         startDate: null,
         endDate: null,
     });
@@ -65,19 +65,19 @@ function MainPage() {
         const filteredEvents = sortedEvents.filter(
             (event) =>
                 event.name.toLowerCase().includes(searchQuery.name.toLowerCase()) &&
-                (searchQuery.departments.length > 0
-                    ? searchQuery.departments.map((dep) => dep.id).includes(event.Department.id)
+                (searchQuery.selectedDepartments.length > 0
+                    ? searchQuery.selectedDepartments.map((dep) => dep.id).includes(event.Department.id)
                     : true) &&
-                (searchQuery.subdepartments.length > 0
+                (searchQuery.selectedSubdepartments.length > 0
                     ? event.Subdepartment == null ||
-                      searchQuery.subdepartments.map((subdep) => subdep.name).includes(event.Subdepartment.name)
+                      searchQuery.selectedSubdepartments.map((subdep) => subdep.name).includes(event.Subdepartment.name)
                     : true) &&
-                (searchQuery.directions.length > 0
-                    ? searchQuery.directions.map((dir) => dir.id).includes(event.Direction.id)
+                (searchQuery.selectedDirections.length > 0
+                    ? searchQuery.selectedDirections.map((dir) => dir.id).includes(event.Direction.id)
                     : true) &&
-                (searchQuery.subdirections.length > 0
+                (searchQuery.selectedSubdirections.length > 0
                     ? event.Subdirection != null &&
-                      searchQuery.subdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
+                      searchQuery.selectedSubdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
                     : true) &&
                 (isGapValid && startDate != null
                     ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate)

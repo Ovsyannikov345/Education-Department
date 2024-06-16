@@ -103,15 +103,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
 
         localStorage.setItem("eventSearchQuery", JSON.stringify(query));
 
-        queryHandler({
-            name: searchQuery.name,
-            departments: searchQuery.selectedDepartments,
-            subdepartments: searchQuery.selectedSubdepartments,
-            directions: searchQuery.selectedDirections,
-            subdirections: searchQuery.selectedSubdirections,
-            startDate: searchQuery.startDate,
-            endDate: searchQuery.endDate,
-        });
+        queryHandler(searchQuery);
     }, [searchQuery, queryHandler]);
 
     const resetFilter = () => {
@@ -153,14 +145,12 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
         });
     };
 
-    const changeSubdirections = (subdirections) => {
+    const changeSubdirections = (subdirectionIds) => {
         setSearchQuery({
             ...searchQuery,
-            selectedSubdirections: subdirections,
+            selectedSubdirections: subdirectionIds.map((id) => subdirections.find((subdir) => subdir.id === id)),
         });
     };
-
-    // TODO fix checked selectors.
 
     return (
         <Grid container justifyContent={"flex-end"} mt={12}>
@@ -278,18 +268,20 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
                                 labelId="subdirection-label"
                                 label="Составляющие"
                                 multiple
-                                value={searchQuery.selectedSubdirections}
+                                value={searchQuery.selectedSubdirections.map((subdir) => subdir.id)}
                                 onChange={(e) => changeSubdirections(e.target.value)}
                                 renderValue={(selected) =>
                                     selected.length > 1
                                         ? `Составляющие (${selected.length})`
-                                        : selected.map((subdir) => subdir.name).join(", ")
+                                        : subdirections.find(s => s.id === selected[0])?.name
                                 }
                             >
                                 {subdirections.map((subdir) => (
-                                    <MenuItem key={subdir.id} value={subdir}>
+                                    <MenuItem key={subdir.id} value={subdir.id}>
                                         <Checkbox
-                                            checked={searchQuery.selectedSubdirections.indexOf(subdir) > -1}
+                                            checked={searchQuery.selectedSubdirections.some(
+                                                (selectedSubdir) => selectedSubdir.id === subdir.id
+                                            )}
                                         />
                                         <ListItemText primary={subdir.name} />
                                     </MenuItem>
