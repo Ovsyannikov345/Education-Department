@@ -132,7 +132,9 @@ const CreateOffenseForm = () => {
                                 >
                                     {students.map((s) => (
                                         <MenuItem key={s.id} value={s.id}>
-                                            {`${s.lastName} ${s.firstName} ${s.patronymic} (${s.groupName})`}
+                                            {`${s.lastName} ${s.firstName} ${s.patronymic ?? ""} (${
+                                                s.groupName
+                                            })`}
                                         </MenuItem>
                                     ))}
                                 </Select>
