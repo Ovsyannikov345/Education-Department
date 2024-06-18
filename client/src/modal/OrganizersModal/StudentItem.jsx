@@ -18,7 +18,7 @@ const StudentItem = ({ student, removeHandler, deleteHandler, readonly = false }
             <Paper variant="outlined" style={{ borderWidth: 2, borderColor: "#1976d29F" }}>
                 <Grid container justifyContent={"space-between"} alignItems={"center"} style={{ paddingLeft: 10 }}>
                     <Grid item xs>
-                        <Typography>{`${student.groupName}`}</Typography>
+                        <Typography>{`${student.Group.name}`}</Typography>
                         <Typography>{`${student.lastName} ${student.firstName} ${student.patronymic ?? ""}`}</Typography>
                     </Grid>
                     <Grid item xs={2} container justifyContent={"flex-end"} minHeight={45}>
