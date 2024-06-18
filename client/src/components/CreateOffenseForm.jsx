@@ -116,7 +116,9 @@ const CreateOffenseForm = () => {
                                     renderValue={(value) => {
                                         const student = students.find((s) => s.id === value);
 
-                                        return `${student.lastName} ${student.firstName} ${student.patronymic} (${student.groupName})`;
+                                        return `${student.lastName} ${student.firstName}${student.patronymic ? " " + student.patronymic : ""} (${
+                                            student.groupName
+                                        })`;
                                     }}
                                     label="Студент"
                                     onChange={formik.handleChange}
