@@ -1,5 +1,5 @@
 const { sequelize } = require("../db/index");
-const { Student, Group } = require("../db/models");
+const { Student, Group, Offense } = require("../db/models");
 
 class StudentController {
     async getAll(req, res) {
@@ -37,6 +37,10 @@ class StudentController {
 
         if ((await Student.findOne({ where: { id: id } })) == null) {
             return res.status(404).json({ error: "Студента не существует" });
+        }
+
+        if ((await Offense.findOne({ where: { studentId: id } })) != null) {
+            return res.status(400).json({ error: "Студент задействован в правонарушении" });
         }
 
         try {
