@@ -39,7 +39,7 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import GroupCreationForm from "../components/GroupCreationForm";
 import { getSubdirections } from "../api/subdirectionsApi";
 
-const EventDetailsPage = (props) => {
+const EventDetailsPage = () => {
     const { id } = useParams();
 
     const navigate = useNavigate();
@@ -283,8 +283,8 @@ const EventDetailsPage = (props) => {
         displaySuccess("Студент создан");
     };
 
-    const addStudent = (id) => {
-        formik.setFieldValue("students", [...formik.values.students, students.find((s) => s.id === id)]);
+    const addStudent = (student) => {
+        formik.setFieldValue("students", [...formik.values.students, student]);
     };
 
     const removeStudent = (id) => {
@@ -304,6 +304,7 @@ const EventDetailsPage = (props) => {
 
         removeStudent(id);
         setStudents(students.filter((std) => std.id !== id));
+        setInitialEvent({ ...initialEvent, students: initialEvent.students.filter((std) => std.id !== id) });
         displaySuccess("Студент удален");
     };
 
@@ -343,6 +344,7 @@ const EventDetailsPage = (props) => {
 
         removeEmployee(id);
         setEmployees(employees.filter((e) => e.id !== id));
+        setInitialEvent({ ...initialEvent, employees: initialEvent.employees.filter((e) => e.id !== id) });
         displaySuccess("Сотрудник удален");
     };
 
@@ -382,6 +384,7 @@ const EventDetailsPage = (props) => {
 
         removeParticipant(id);
         setParticipants(participants.filter((p) => p.id !== id));
+        setInitialEvent({ ...initialEvent, participants: initialEvent.participants.filter((p) => p.id !== id) });
         displaySuccess("Приглашенное лицо удалено");
     };
 
@@ -429,7 +432,7 @@ const EventDetailsPage = (props) => {
             <IconButton color="primary" style={{ marginTop: 10, marginLeft: 10 }} onClick={() => navigate("/events")}>
                 <BackIcon></BackIcon>Список мероприятий
             </IconButton>
-            <Container>
+            <Container style={{ paddingBottom: "10px" }}>
                 <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
                     <Grid container alignItems={"center"}>
                         <Grid item xs={5}>
