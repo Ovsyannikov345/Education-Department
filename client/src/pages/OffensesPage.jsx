@@ -45,7 +45,7 @@ function OffensesPage() {
             case "name":
                 return [...offenses].sort((a, b) => compareStudents(a, b));
             case "group":
-                return [...offenses].sort((a, b) => a.Student.groupName.localeCompare(b.Student.groupName));
+                return [...offenses].sort((a, b) => a.Student.Group.name.localeCompare(b.Student.Group.name));
             case "date asc":
                 return [...offenses].sort((a, b) => new Date(a.offenseDate.slice(0, -1)) - new Date(b.offenseDate.slice(0, -1)));
             case "date desc":
@@ -66,7 +66,7 @@ function OffensesPage() {
                     .join(" ")
                     .toLowerCase()
                     .includes(searchQuery.text.toLowerCase()) ||
-                    offense.Student.groupName.toLowerCase().includes(searchQuery.text.toLowerCase())) &&
+                    offense.Student.Group.name.toLowerCase().includes(searchQuery.text.toLowerCase())) &&
                 (isGapValid && startDate != null ? moment(offense.offenseDate, "YYYY-MM-DD").isSameOrAfter(startDate) : true) &&
                 (isGapValid && endDate != null ? moment(offense.offenseDate, "YYYY-MM-DD").isSameOrBefore(endDate) : true)
         );
