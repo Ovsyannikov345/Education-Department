@@ -92,7 +92,6 @@ const LoginPage = () => {
                             fullWidth
                             value={formik.values.email}
                             onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
                             error={formik.touched.email && formik.errors.email !== undefined}
                             helperText={formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""}
                         />
@@ -105,7 +104,6 @@ const LoginPage = () => {
                             fullWidth
                             value={formik.values.password}
                             onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
                             error={formik.touched.password && formik.errors.password !== undefined}
                             helperText={formik.touched.password && formik.errors.password !== undefined ? formik.errors.password : ""}
                         />
