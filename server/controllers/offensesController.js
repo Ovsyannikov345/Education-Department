@@ -1,10 +1,10 @@
-const { Offense, Student } = require("../db/models");
+const { Offense, Student, Group } = require("../db/models");
 
 class OffensesController {
     async getAll(req, res) {
         try {
             const offenses = await Offense.findAll({
-                include: [{ model: Student }],
+                include: [{ model: Student, include: [{ model: Group }] }],
             });
 
             return res.json(offenses);
@@ -21,7 +21,7 @@ class OffensesController {
         }
 
         try {
-            const offense = await Offense.findOne({ where: { id: id }, include: [{ model: Student }] });
+            const offense = await Offense.findOne({ where: { id: id }, include: [{ model: Student, include: [{ model: Group }] }] });
 
             if (offense == null) {
                 return res.status(404).json({ error: "Правонарушения не существует" });
