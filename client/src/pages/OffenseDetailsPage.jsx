@@ -174,7 +174,9 @@ const OffenseDetailsPage = () => {
                                     renderValue={(value) => {
                                         const student = students.find((s) => s.id === value);
 
-                                        return `${student.lastName} ${student.firstName} ${student.patronymic} (${student.groupName})`;
+                                        return `${student.lastName} ${student.firstName}${student.patronymic ? " " + student.patronymic : ""} (${
+                                            student.groupName
+                                        })`;
                                     }}
                                     label="Студент"
                                     onChange={formik.handleChange}
@@ -184,7 +186,7 @@ const OffenseDetailsPage = () => {
                                 >
                                     {students.map((s) => (
                                         <MenuItem key={s.id} value={s.id}>
-                                            {`${s.lastName} ${s.firstName} ${s.patronymic} (${s.groupName})`}
+                                            {`${s.lastName} ${s.firstName} ${s.patronymic ? " " + s.patronymic : ""} (${s.groupName})`}
                                         </MenuItem>
                                     ))}
                                 </Select>

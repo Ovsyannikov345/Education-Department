@@ -7,7 +7,6 @@ import EvenIcon from "@mui/icons-material/Event";
 
 const OffenseItem = ({ offense, deleteHandler }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-
     const navigate = useNavigate();
 
     const deleteOffense = () => {
@@ -22,7 +21,9 @@ const OffenseItem = ({ offense, deleteHandler }) => {
                     <Grid container item xs={12} gap={7}>
                         <Grid item>
                             <Typography variant="h5" overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"}>
-                                {`${offense.Student.lastName} ${offense.Student.firstName} ${offense.Student.patronymic}`}
+                                {`${offense.Student.lastName} ${offense.Student.firstName}${
+                                    offense.Student.patronymic ? " " + offense.Student.patronymic : ""
+                                } (${offense.Student.Group.name})`}
                             </Typography>
                         </Grid>
                         <Grid item>

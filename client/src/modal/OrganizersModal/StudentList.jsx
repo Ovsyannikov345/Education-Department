@@ -48,7 +48,7 @@ const StudentList = ({
                             {availableStudents.length > 0 &&
                                 availableStudents.map((std) => (
                                     <MenuItem key={std.id} value={std.id}>
-                                        {`${std.lastName} ${std.firstName} ${std.patronymic} (${std.groupName})`}
+                                        {`${std.lastName} ${std.firstName}${std.patronymic ? " " + std.patronymic : ""} (${std.groupName})`}
                                     </MenuItem>
                                 ))}
                         </Select>
