@@ -7,7 +7,7 @@ class ParticipantController {
 
             return res.json(participants);
         } catch (error) {
-            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки участников" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время загрузки приглашенных лиц" });
         }
     }
 
@@ -19,7 +19,7 @@ class ParticipantController {
 
             return res.status(201).json(result);
         } catch (error) {
-            return res.status(500).json({ error: "Неизвестная ошибка во время создания участника" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания приглашенного лица" });
         }
     }
 
@@ -27,11 +27,11 @@ class ParticipantController {
         const { id } = req.params;
 
         if (isNaN(id)) {
-            return res.status(400).json({ error: "Неверный id участника" });
+            return res.status(400).json({ error: "Неверный id приглашенного лица" });
         }
 
         if ((await Participant.findOne({ where: { id: id } })) == null) {
-            return res.status(404).json({ error: "Участника не существует" });
+            return res.status(404).json({ error: "Приглашенного лица не существует" });
         }
 
         try {
@@ -39,7 +39,7 @@ class ParticipantController {
 
             return res.sendStatus(204);
         } catch (error) {
-            return res.status(500).json({ error: "Неизвестная ошибка во время удаления участника" });
+            return res.status(500).json({ error: "Неизвестная ошибка во время удаления приглашенного лица" });
         }
     }
 }

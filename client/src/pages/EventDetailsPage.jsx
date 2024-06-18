@@ -358,7 +358,7 @@ const EventDetailsPage = (props) => {
 
         formik.setFieldValue("participants", [...formik.values.participants, participant]);
         setParticipants([...participants, participant]);
-        displaySuccess("Участник создан");
+        displaySuccess("Приглашенное лицо создано");
     };
 
     const addParticipant = (id) => {
@@ -382,7 +382,7 @@ const EventDetailsPage = (props) => {
 
         removeParticipant(id);
         setParticipants(participants.filter((p) => p.id !== id));
-        displaySuccess("Участник удален");
+        displaySuccess("Приглашенное лицо удалено");
     };
 
     const removeGroup = async (id) => {
@@ -756,7 +756,7 @@ const EventDetailsPage = (props) => {
                             <Tabs centered value={currentTabIndex} onChange={changeTab}>
                                 <Tab label="Сотрудники" />
                                 <Tab label="Студенты" />
-                                <Tab label="Участники" />
+                                <Tab label="Приглашенные" />
                             </Tabs>
                         </Grid>
                         <Grid item xs={10}>

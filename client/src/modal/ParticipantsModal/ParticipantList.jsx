@@ -49,13 +49,13 @@ const ParticipantList = ({
                 <>
                     <FormControl fullWidth>
                         <InputLabel id="participant-label">
-                            {availableParticipants.length > 0 ? "Добавить участника" : "Нет доступных участников"}
+                            {availableParticipants.length > 0 ? "Добавить приглашенное дицо" : "Нет доступных лиц"}
                         </InputLabel>
                         <Select
                             fullWidth
                             labelId="participant-label"
                             id="participant-select"
-                            label={availableParticipants.length > 0 ? "Добавить участника" : "Нет доступных участников"}
+                            label={availableParticipants.length > 0 ? "Добавить приглашенное дицо" : "Нет доступных лиц"}
                             readOnly={availableParticipants.length === 0}
                             value={""}
                             onChange={(e) => addParticipantHandler(e.target.value)}
@@ -74,7 +74,7 @@ const ParticipantList = ({
                     <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                         {creationToggle ? (
                             <FormControl fullWidth>
-                                <Typography variant="h6">Новый участник</Typography>
+                                <Typography variant="h6">Новое приглашенное лицо</Typography>
                                 <Grid container gap={1}>
                                     <Grid item xs={4}>
                                         <TextField
@@ -187,7 +187,7 @@ const ParticipantList = ({
                             <Grid container marginTop={2} marginBottom={2}>
                                 <Grid item xs>
                                     <Button variant="outlined" onClick={() => setCreationToggle(true)}>
-                                        Новый участник
+                                        Новое приглашенное лицо
                                     </Button>
                                 </Grid>
                             </Grid>

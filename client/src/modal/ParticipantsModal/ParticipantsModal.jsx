@@ -67,7 +67,7 @@ const ParticipantsModal = ({ isOpen, closeHandler, currentParticipants, addParti
 
         setLoadedParticipants([...loadedParticipants, response.data]);
         addParticipantHandler(response.data);
-        displaySuccess("Участник создан");
+        displaySuccess("Приглашенное лицо создано");
     };
 
     const addParticipant = (id) => {
@@ -87,14 +87,14 @@ const ParticipantsModal = ({ isOpen, closeHandler, currentParticipants, addParti
 
         removeParticipantHandler(id);
         setLoadedParticipants(loadedParticipants.filter((prt) => prt.id !== id));
-        displaySuccess("Участник удален");
+        displaySuccess("Приглашенное лицо удалено");
     };
 
     return (
         <>
             <Dialog fullWidth open={isOpen} onClose={closeModal}>
                 <Typography variant="h5" paddingLeft={3} marginTop={1} textAlign={"center"}>
-                    Участники мероприятия
+                    Приглашенные лица
                 </Typography>
                 <Container>
                     <ParticipantList

@@ -263,7 +263,7 @@ const CreateEventForm = ({ creationHandler }) => {
                             </Grid>
                             <Grid item xs={5}>
                                 <Button variant="outlined" fullWidth style={{ padding: 10 }} onClick={(e) => setParticipantsModalOpen(true)}>
-                                    Участники
+                                    Приглашенные
                                 </Button>
                             </Grid>
                         </Grid>
