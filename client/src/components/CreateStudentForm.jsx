@@ -27,7 +27,8 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
             }
 
             const createdStudent = response.data;
-            createdStudent.groupName = groups.find((g) => g.id === createdStudent.groupId).name;
+            createdStudent.Group = groups.find((g) => g.id === createdStudent.groupId);
+            createdStudent.groupName = createdStudent.Group.name;
 
             successCallback?.(createdStudent);
         },
