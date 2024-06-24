@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-    Dialog,
-    Typography,
-    Button,
-    TextField,
-    Radio,
-    RadioGroup,
-    FormControlLabel,
-    CircularProgress,
-    Grid,
-} from "@mui/material";
+import { Dialog, Typography, Button, TextField, Radio, RadioGroup, FormControlLabel, CircularProgress, Grid } from "@mui/material";
 import { useFormik } from "formik";
 import { postUser } from "../../api/userApi";
 
@@ -88,9 +78,7 @@ const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback })
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.email && formik.errors.email !== undefined}
-                    helperText={
-                        formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""
-                    }
+                    helperText={formik.touched.email && formik.errors.email !== undefined ? formik.errors.email : ""}
                 />
                 <TextField
                     id="lastName"
@@ -102,11 +90,7 @@ const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback })
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.lastName && formik.errors.lastName !== undefined}
-                    helperText={
-                        formik.touched.lastName && formik.errors.lastName !== undefined
-                            ? formik.errors.lastName
-                            : ""
-                    }
+                    helperText={formik.touched.lastName && formik.errors.lastName !== undefined ? formik.errors.lastName : ""}
                 />
                 <TextField
                     id="firstName"
@@ -118,11 +102,7 @@ const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback })
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.firstName && formik.errors.firstName !== undefined}
-                    helperText={
-                        formik.touched.firstName && formik.errors.firstName !== undefined
-                            ? formik.errors.firstName
-                            : ""
-                    }
+                    helperText={formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""}
                 />
                 <TextField
                     id="patronymic"
@@ -134,23 +114,14 @@ const CreateUserModal = ({ open, closeHandler, errorCallback, successCallback })
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.patronymic && formik.errors.patronymic !== undefined}
-                    helperText={
-                        formik.touched.patronymic && formik.errors.patronymic !== undefined
-                            ? formik.errors.patronymic
-                            : ""
-                    }
+                    helperText={formik.touched.patronymic && formik.errors.patronymic !== undefined ? formik.errors.patronymic : ""}
                 />
                 <RadioGroup name="role" row value={formik.values.role} onChange={formik.handleChange}>
                     <FormControlLabel value="user" control={<Radio />} label="Пользователь" />
                     <FormControlLabel value="admin" control={<Radio />} label="Администратор" />
                 </RadioGroup>
                 {!loading ? (
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        fullWidth
-                        style={{ height: "40px", marginTop: "10px" }}
-                    >
+                    <Button type="submit" variant="contained" fullWidth style={{ height: "40px", marginTop: "10px" }}>
                         Создать
                     </Button>
                 ) : (

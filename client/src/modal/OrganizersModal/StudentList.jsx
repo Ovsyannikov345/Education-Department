@@ -7,42 +7,23 @@ import {
     Stack,
     FormControl,
     InputLabel,
-    TextField,
     Button,
-    Typography,
     ListSubheader,
-    FormHelperText,
 } from "@mui/material";
 import StudentItem from "./StudentItem";
-import { useFormik } from "formik";
-import validateStudent from "./../../utils/validateFunctions/validateStudent";
 import { getGroups } from "../../api/groupApi";
+import CreateStudentForm from "../../components/CreateStudentForm";
 
 const StudentList = ({
     students,
     availableStudents,
     addStudentHandler,
-    createStudentHandler,
     removeStudentHandler,
     deleteStudentHandler,
+    displayError,
     readonly = false,
     errorCallback,
 }) => {
-    const formik = useFormik({
-        initialValues: {
-            lastName: "",
-            firstName: "",
-            patronymic: "",
-            groupId: "",
-        },
-        validate: validateStudent,
-        onSubmit: async (values) => {
-            createStudentHandler(values);
-            setCreationToggle(false);
-            formik.resetForm();
-        },
-    });
-
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {
@@ -97,6 +78,11 @@ const StudentList = ({
 
     const [creationToggle, setCreationToggle] = useState(false);
 
+    const addStudent = (student) => {
+        addStudentHandler(student);
+        setCreationToggle(false);
+    };
+
     return (
         <Stack gap={1} marginTop={1}>
             {sortedStudents.map((std) => (
@@ -121,7 +107,7 @@ const StudentList = ({
                             label={availableStudents.length > 0 ? "Добавить студента" : "Нет доступных студентов"}
                             readOnly={availableStudents.length === 0}
                             value={""}
-                            onChange={(e) => addStudentHandler(e.target.value)}
+                            onChange={(e) => addStudentHandler(availableStudents.find((s) => s.id === e.target.value))}
                         >
                             {groupedAvailableStudents.length > 0 &&
                                 groupedAvailableStudents.flatMap((group) => [
@@ -136,136 +122,11 @@ const StudentList = ({
                     </FormControl>
                     <Container style={{ padding: 0, justifyContent: "flex-start" }}>
                         {creationToggle ? (
-                            <FormControl fullWidth>
-                                <Typography variant="h6">Новый студент</Typography>
-                                <Grid container gap={1}>
-                                    <Grid item xs={2}>
-                                        <FormControl fullWidth>
-                                            <InputLabel
-                                                id="group-label"
-                                                error={
-                                                    formik.touched.groupId && formik.errors.groupId !== undefined
-                                                }
-                                            >
-                                                Группа
-                                            </InputLabel>
-                                            <Select
-                                                fullWidth
-                                                labelId="group-label"
-                                                id="groupId"
-                                                name="groupId"
-                                                value={formik.values.groupId}
-                                                renderValue={(value) => groups.find((g) => g.id === value).name}
-                                                label="Группа"
-                                                onChange={formik.handleChange}
-                                                onBlur={formik.handleBlur}
-                                                error={
-                                                    formik.touched.groupId && formik.errors.groupId !== undefined
-                                                }
-                                            >
-                                                {groups.map((g) => (
-                                                    <MenuItem key={g.id} value={g.id}>
-                                                        {g.name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                            <FormHelperText error>
-                                                {formik.touched.groupId && formik.errors.groupId !== undefined
-                                                    ? formik.errors.groupId
-                                                    : ""}
-                                            </FormHelperText>
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Фамилия"
-                                            id="lastName"
-                                            name="lastName"
-                                            value={formik.values.lastName}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined
-                                            }
-                                            helperText={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined
-                                                    ? formik.errors.lastName
-                                                    : ""
-                                            }
-                                        ></TextField>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Имя"
-                                            id="firstName"
-                                            name="firstName"
-                                            value={formik.values.firstName}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined
-                                            }
-                                            helperText={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined
-                                                    ? formik.errors.firstName
-                                                    : ""
-                                            }
-                                        ></TextField>
-                                    </Grid>
-                                    <Grid item xs>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label="Отчество"
-                                            id="patronymic"
-                                            name="patronymic"
-                                            value={formik.values.patronymic}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.patronymic &&
-                                                formik.errors.patronymic !== undefined
-                                            }
-                                            helperText={
-                                                formik.touched.patronymic &&
-                                                formik.errors.patronymic !== undefined
-                                                    ? formik.errors.patronymic
-                                                    : ""
-                                            }
-                                        ></TextField>
-                                    </Grid>
-                                </Grid>
-                                <Grid container marginTop={2} marginBottom={2} gap={2}>
-                                    <Grid item xs={2}>
-                                        <Button
-                                            fullWidth
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={(e) => formik.handleSubmit(e)}
-                                        >
-                                            Создать
-                                        </Button>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <Button
-                                            type="reset"
-                                            fullWidth
-                                            variant="outlined"
-                                            color="error"
-                                            onClick={(e) => {
-                                                formik.handleReset(e);
-                                                setCreationToggle(false);
-                                            }}
-                                        >
-                                            Отмена
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                            </FormControl>
+                            <CreateStudentForm
+                                declineHandler={() => setCreationToggle(false)}
+                                successCallback={addStudent}
+                                errorCallback={displayError}
+                            />
                         ) : (
                             <Grid container marginTop={2} marginBottom={2}>
                                 <Grid item xs>

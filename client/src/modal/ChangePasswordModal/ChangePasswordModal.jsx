@@ -75,11 +75,7 @@ const ChangePasswordModal = ({ open, closeHandler, errorCallback, successCallbac
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.oldPassword && formik.errors.oldPassword !== undefined}
-                    helperText={
-                        formik.touched.oldPassword && formik.errors.oldPassword !== undefined
-                            ? formik.errors.oldPassword
-                            : ""
-                    }
+                    helperText={formik.touched.oldPassword && formik.errors.oldPassword !== undefined ? formik.errors.oldPassword : ""}
                 />
                 <TextField
                     id="newPassword"
@@ -92,11 +88,7 @@ const ChangePasswordModal = ({ open, closeHandler, errorCallback, successCallbac
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.newPassword && formik.errors.newPassword !== undefined}
-                    helperText={
-                        formik.touched.newPassword && formik.errors.newPassword !== undefined
-                            ? formik.errors.newPassword
-                            : ""
-                    }
+                    helperText={formik.touched.newPassword && formik.errors.newPassword !== undefined ? formik.errors.newPassword : ""}
                 />
                 <TextField
                     id="newPasswordRepeat"
@@ -110,9 +102,7 @@ const ChangePasswordModal = ({ open, closeHandler, errorCallback, successCallbac
                     onBlur={formik.handleBlur}
                     error={formik.touched.newPasswordRepeat && formik.errors.newPasswordRepeat !== undefined}
                     helperText={
-                        formik.touched.newPasswordRepeat && formik.errors.newPasswordRepeat !== undefined
-                            ? formik.errors.newPasswordRepeat
-                            : ""
+                        formik.touched.newPasswordRepeat && formik.errors.newPasswordRepeat !== undefined ? formik.errors.newPasswordRepeat : ""
                     }
                 />
                 <Button type="submit" variant="contained" fullWidth style={{ height: "40px", marginTop: "10px" }}>

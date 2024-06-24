@@ -25,18 +25,12 @@ const AccountsPage = () => {
     const sortedUsers = useMemo(() => {
         switch (sortOption) {
             case "date asc":
-                return [...users].sort(
-                    (a, b) => new Date(a.createdAt.slice(0, -1)) - new Date(b.createdAt.slice(0, -1))
-                );
+                return [...users].sort((a, b) => new Date(a.createdAt.slice(0, -1)) - new Date(b.createdAt.slice(0, -1)));
             case "date desc":
-                return [...users].sort(
-                    (a, b) => new Date(b.createdAt.slice(0, -1)) - new Date(a.createdAt.slice(0, -1))
-                );
+                return [...users].sort((a, b) => new Date(b.createdAt.slice(0, -1)) - new Date(a.createdAt.slice(0, -1)));
             case "alphabetic":
                 return [...users].sort((a, b) =>
-                    [a.lastName, a.firstName, a.patronymic]
-                        .join("")
-                        .localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
+                    [a.lastName, a.firstName, a.patronymic].join("").localeCompare([b.lastName, b.firstName, b.patronymic].join(""))
                 );
             default:
                 return [...users];
@@ -47,8 +41,7 @@ const AccountsPage = () => {
         return sortedUsers.filter(
             (user) =>
                 (searchQuery.showBlocked || user.blockedAt == null) &&
-                ([user.lastName, user.firstName, user.patronymic].join(" ").includes(searchQuery.text) ||
-                    user.email.includes(searchQuery.text))
+                ([user.lastName, user.firstName, user.patronymic].join(" ").includes(searchQuery.text) || user.email.includes(searchQuery.text))
         );
     }, [sortedUsers, searchQuery]);
 
@@ -159,9 +152,7 @@ const AccountsPage = () => {
                             control={
                                 <Checkbox
                                     checked={searchQuery.showBlocked}
-                                    onChange={(e) =>
-                                        setSearchQuery({ ...searchQuery, showBlocked: e.target.checked })
-                                    }
+                                    onChange={(e) => setSearchQuery({ ...searchQuery, showBlocked: e.target.checked })}
                                 />
                             }
                             label="Показывать заблокированные"

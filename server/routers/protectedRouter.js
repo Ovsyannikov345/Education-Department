@@ -8,6 +8,7 @@ const studentRouter = require("./protectedRoutes/studentRouter");
 const groupRouter = require("./protectedRoutes/groupRouter");
 const participantRouter = require("./protectedRoutes/participantRouter");
 const offensesRouter = require("./protectedRoutes/offensesRouter");
+const reportRouter = require("./protectedRoutes/reportRouter");
 const userRouter = require("./protectedRoutes/userRouter");
 const { validateAdmin } = require("../middleware/authMiddleware");
 const userController = require("../controllers/userController");
@@ -23,6 +24,7 @@ router.use("/students", studentRouter);
 router.use("/groups", groupRouter);
 router.use("/participants", participantRouter);
 router.use("/offenses", offensesRouter);
+router.use("/reports", reportRouter);
 
 router.put("/users/:id/password", userController.changePassword);
 router.use("/users", validateAdmin, userRouter);

@@ -1,21 +1,22 @@
-import { Grid, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Typography, Snackbar, Alert, Button } from "@mui/material";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import React, { useEffect, useMemo, useState } from "react";
 import { getEvents, deleteEvent } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
 import SortSelector from "../components/SortSelector.jsx";
 import EventFilter from "../components/EventFilter.jsx";
 import moment from "moment";
+import { getEventsReport } from "../api/reportsApi.js";
 
 function MainPage() {
     const [events, setEvents] = useState([]);
     const [sortOption, setSortOption] = useState("date desc");
     const [searchQuery, setSearchQuery] = useState({
-        name: "",
-        departments: [],
-        subdepartments: [],
-        directions: [],
-        subdirections: [],
-        groups: [],
+        selectedDepartments: [],
+        selectedSubdepartments: [],
+        selectedDirections: [],
+        selectedSubdirections: [],
+        selectedGroups: [],
         startDate: null,
         endDate: null,
     });
@@ -63,31 +64,27 @@ function MainPage() {
 
         const isGapValid = startDate == null || endDate == null ? true : endDate.isSameOrAfter(startDate);
 
-        console.log(events);
-
         const filteredEvents = sortedEvents.filter(
             (event) =>
                 event.name.toLowerCase().includes(searchQuery.name.toLowerCase()) &&
-                (searchQuery.departments.length > 0
-                    ? searchQuery.departments.map((dep) => dep.id).includes(event.Department.id)
+                (searchQuery.selectedDepartments.length > 0
+                    ? searchQuery.selectedDepartments.map((dep) => dep.id).includes(event.Department.id)
                     : true) &&
-                (searchQuery.subdepartments.length > 0
+                (searchQuery.selectedSubdepartments.length > 0
                     ? event.Subdepartment == null ||
-                      searchQuery.subdepartments.map((subdep) => subdep.name).includes(event.Subdepartment.name)
+                      searchQuery.selectedSubdepartments.map((subdep) => subdep.name).includes(event.Subdepartment.name)
                     : true) &&
-                (searchQuery.directions.length > 0
-                    ? searchQuery.directions.map((dir) => dir.id).includes(event.Direction.id)
+                    // TODO subdepartments can have many ids for the same name??? fix???
+                (searchQuery.selectedDirections.length > 0
+                    ? searchQuery.selectedDirections.map((dir) => dir.id).includes(event.Direction.id)
                     : true) &&
-                (searchQuery.subdirections.length > 0
-                    ? event.Subdirection != null &&
-                      searchQuery.subdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
+                (searchQuery.selectedSubdirections.length > 0
+                    ? event.Subdirection != null && searchQuery.selectedSubdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
                     : true) &&
-                (searchQuery.groups.length > 0
-                    ? event.Groups.some((g) => searchQuery.groups.includes(g.id))
+                (searchQuery.selectedGroups.length > 0
+                    ? event.Groups.some((g) => searchQuery.selectedGroups.includes(g.id))
                     : true) &&
-                (isGapValid && startDate != null
-                    ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate)
-                    : true) &&
+                (isGapValid && startDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate) : true) &&
                 (isGapValid && endDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrBefore(endDate) : true)
         );
 
@@ -121,22 +118,39 @@ function MainPage() {
         displaySuccess("Мероприятие удалено");
     };
 
+    const downloadEventsReport = async () => {
+        if (!filteredEvents || filteredEvents.length === 0) {
+            displayError("Мероприятия для экспорта отсутствуют");
+            return;
+        }
+
+        const response = await getEventsReport(searchQuery);
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
+        }
+
+        displaySuccess("Отчет создан");
+    };
+
     return (
         <>
             <Grid container alignItems={"flex-start"} mb={5}>
                 <Grid container item xs={3}>
-                    <EventFilter
-                        queryHandler={setSearchQuery}
-                        displaySuccess={displaySuccess}
-                        displayError={displayError}
-                    />
+                    <EventFilter queryHandler={setSearchQuery} displaySuccess={displaySuccess} displayError={displayError} />
                 </Grid>
                 <Grid container item xs={9} pl={2} pr={2}>
                     <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                         <Grid item>
-                            <Typography variant="h4">
-                                Список мероприятий {`(${filteredEvents.length})`}
-                            </Typography>
+                            <Grid container gap={"30px"}>
+                                <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
+                                {filteredEvents && filteredEvents.length > 0 && (
+                                    <Button variant="contained" startIcon={<FileUploadIcon />} onClick={downloadEventsReport}>
+                                        Отчет
+                                    </Button>
+                                )}
+                            </Grid>
                         </Grid>
                         <Grid item>
                             <SortSelector

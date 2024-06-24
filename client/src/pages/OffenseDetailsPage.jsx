@@ -126,11 +126,7 @@ const OffenseDetailsPage = () => {
 
     return (
         <>
-            <IconButton
-                color="primary"
-                style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => navigate(OFFENSIVES_ROUTE)}
-            >
+            <IconButton color="primary" style={{ marginTop: 10, marginLeft: 10 }} onClick={() => navigate(OFFENSIVES_ROUTE)}>
                 <BackIcon></BackIcon>Список правонарушений
             </IconButton>
             <Container>
@@ -151,11 +147,7 @@ const OffenseDetailsPage = () => {
                                 {editModeToggle && (
                                     <>
                                         <Grid item xs>
-                                            <Button
-                                                variant="outlined"
-                                                color="primary"
-                                                onClick={formik.handleSubmit}
-                                            >
+                                            <Button variant="outlined" color="primary" onClick={formik.handleSubmit}>
                                                 Сохранить
                                             </Button>
                                         </Grid>
@@ -170,10 +162,7 @@ const OffenseDetailsPage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth>
-                                <InputLabel
-                                    id="student-label"
-                                    error={formik.touched.studentId && formik.errors.studentId !== undefined}
-                                >
+                                <InputLabel id="student-label" error={formik.touched.studentId && formik.errors.studentId !== undefined}>
                                     Студент
                                 </InputLabel>
                                 <Select
@@ -185,7 +174,9 @@ const OffenseDetailsPage = () => {
                                     renderValue={(value) => {
                                         const student = students.find((s) => s.id === value);
 
-                                        return `${student.lastName} ${student.firstName} ${student.patronymic} (${student.groupName})`;
+                                        return `${student.lastName} ${student.firstName}${student.patronymic ? " " + student.patronymic : ""} (${
+                                            student.groupName
+                                        })`;
                                     }}
                                     label="Студент"
                                     onChange={formik.handleChange}
@@ -195,14 +186,12 @@ const OffenseDetailsPage = () => {
                                 >
                                     {students.map((s) => (
                                         <MenuItem key={s.id} value={s.id}>
-                                            {`${s.lastName} ${s.firstName} ${s.patronymic} (${s.groupName})`}
+                                            {`${s.lastName} ${s.firstName} ${s.patronymic ? " " + s.patronymic : ""} (${s.groupName})`}
                                         </MenuItem>
                                     ))}
                                 </Select>
                                 <FormHelperText error>
-                                    {formik.touched.studentId && formik.errors.studentId !== undefined
-                                        ? formik.errors.studentId
-                                        : ""}
+                                    {formik.touched.studentId && formik.errors.studentId !== undefined ? formik.errors.studentId : ""}
                                 </FormHelperText>
                             </FormControl>
                         </Grid>
@@ -230,18 +219,11 @@ const OffenseDetailsPage = () => {
                                 label="Дата совершения"
                                 value={formik.values.offenseDate ? moment(formik.values.offenseDate) : null}
                                 disableFuture
-                                onChange={(newDate) =>
-                                    formik.setFieldValue(
-                                        "offenseDate",
-                                        moment(newDate).format("YYYY-MM-DD"),
-                                        true
-                                    )
-                                }
+                                onChange={(newDate) => formik.setFieldValue("offenseDate", moment(newDate).format("YYYY-MM-DD"), true)}
                                 onBlur={formik.handleBlur}
                                 slotProps={{
                                     textField: {
-                                        error:
-                                            formik.touched.offenseDate && formik.errors.offenseDate !== undefined,
+                                        error: formik.touched.offenseDate && formik.errors.offenseDate !== undefined,
                                         helperText:
                                             formik.touched.offenseDate && formik.errors.offenseDate !== undefined
                                                 ? formik.errors.offenseDate
@@ -264,11 +246,7 @@ const OffenseDetailsPage = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.article && formik.errors.article !== undefined}
-                                helperText={
-                                    formik.touched.article && formik.errors.article !== undefined
-                                        ? formik.errors.article
-                                        : ""
-                                }
+                                helperText={formik.touched.article && formik.errors.article !== undefined ? formik.errors.article : ""}
                                 InputProps={{ readOnly: !editModeToggle }}
                             />
                         </Grid>
@@ -286,9 +264,7 @@ const OffenseDetailsPage = () => {
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.courtDecision && formik.errors.courtDecision !== undefined}
                                 helperText={
-                                    formik.touched.courtDecision && formik.errors.courtDecision !== undefined
-                                        ? formik.errors.courtDecision
-                                        : ""
+                                    formik.touched.courtDecision && formik.errors.courtDecision !== undefined ? formik.errors.courtDecision : ""
                                 }
                                 InputProps={{ readOnly: !editModeToggle }}
                             />
@@ -306,11 +282,7 @@ const OffenseDetailsPage = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.penalty && formik.errors.penalty !== undefined}
-                                helperText={
-                                    formik.touched.penalty && formik.errors.penalty !== undefined
-                                        ? formik.errors.penalty
-                                        : ""
-                                }
+                                helperText={formik.touched.penalty && formik.errors.penalty !== undefined ? formik.errors.penalty : ""}
                                 InputProps={{ readOnly: !editModeToggle }}
                             />
                         </Grid>

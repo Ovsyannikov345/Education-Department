@@ -21,6 +21,10 @@ const validateStudent = ({ lastName, firstName, patronymic, groupId }) => {
         errors.patronymic = "Длина не более 50 символов";
     }
 
+    if (!groupId) {
+        errors.groupId = "Обязательное поле";
+    }
+
     return errors;
 };
 

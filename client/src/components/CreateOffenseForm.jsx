@@ -93,11 +93,7 @@ const CreateOffenseForm = () => {
 
     return (
         <>
-            <IconButton
-                color="primary"
-                style={{ marginTop: 10, marginLeft: 10 }}
-                onClick={() => navigate(OFFENSIVES_ROUTE)}
-            >
+            <IconButton color="primary" style={{ marginTop: 10, marginLeft: 10 }} onClick={() => navigate(OFFENSIVES_ROUTE)}>
                 <BackIcon></BackIcon>Список правонарушений
             </IconButton>
             <Container>
@@ -108,10 +104,7 @@ const CreateOffenseForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth>
-                                <InputLabel
-                                    id="student-label"
-                                    error={formik.touched.studentId && formik.errors.studentId !== undefined}
-                                >
+                                <InputLabel id="student-label" error={formik.touched.studentId && formik.errors.studentId !== undefined}>
                                     Студент
                                 </InputLabel>
                                 <Select
@@ -123,7 +116,9 @@ const CreateOffenseForm = () => {
                                     renderValue={(value) => {
                                         const student = students.find((s) => s.id === value);
 
-                                        return `${student.lastName} ${student.firstName} ${student.patronymic} (${student.groupName})`;
+                                        return `${student.lastName} ${student.firstName}${student.patronymic ? " " + student.patronymic : ""} (${
+                                            student.groupName
+                                        })`;
                                     }}
                                     label="Студент"
                                     onChange={formik.handleChange}
@@ -132,14 +127,12 @@ const CreateOffenseForm = () => {
                                 >
                                     {students.map((s) => (
                                         <MenuItem key={s.id} value={s.id}>
-                                            {`${s.lastName} ${s.firstName} ${s.patronymic} (${s.groupName})`}
+                                            {`${s.lastName} ${s.firstName} ${s.patronymic ?? ""} (${s.groupName})`}
                                         </MenuItem>
                                     ))}
                                 </Select>
                                 <FormHelperText error>
-                                    {formik.touched.studentId && formik.errors.studentId !== undefined
-                                        ? formik.errors.studentId
-                                        : ""}
+                                    {formik.touched.studentId && formik.errors.studentId !== undefined ? formik.errors.studentId : ""}
                                 </FormHelperText>
                             </FormControl>
                         </Grid>
@@ -167,18 +160,11 @@ const CreateOffenseForm = () => {
                                 label="Дата совершения"
                                 value={formik.values.offenseDate ? moment(formik.values.offenseDate) : null}
                                 disableFuture
-                                onChange={(newDate) =>
-                                    formik.setFieldValue(
-                                        "offenseDate",
-                                        moment(newDate).format("YYYY-MM-DD"),
-                                        true
-                                    )
-                                }
+                                onChange={(newDate) => formik.setFieldValue("offenseDate", moment(newDate).format("YYYY-MM-DD"), true)}
                                 onBlur={formik.handleBlur}
                                 slotProps={{
                                     textField: {
-                                        error:
-                                            formik.touched.offenseDate && formik.errors.offenseDate !== undefined,
+                                        error: formik.touched.offenseDate && formik.errors.offenseDate !== undefined,
                                         helperText:
                                             formik.touched.offenseDate && formik.errors.offenseDate !== undefined
                                                 ? formik.errors.offenseDate
@@ -200,11 +186,7 @@ const CreateOffenseForm = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.article && formik.errors.article !== undefined}
-                                helperText={
-                                    formik.touched.article && formik.errors.article !== undefined
-                                        ? formik.errors.article
-                                        : ""
-                                }
+                                helperText={formik.touched.article && formik.errors.article !== undefined ? formik.errors.article : ""}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -221,9 +203,7 @@ const CreateOffenseForm = () => {
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.courtDecision && formik.errors.courtDecision !== undefined}
                                 helperText={
-                                    formik.touched.courtDecision && formik.errors.courtDecision !== undefined
-                                        ? formik.errors.courtDecision
-                                        : ""
+                                    formik.touched.courtDecision && formik.errors.courtDecision !== undefined ? formik.errors.courtDecision : ""
                                 }
                             />
                         </Grid>
@@ -240,20 +220,11 @@ const CreateOffenseForm = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.penalty && formik.errors.penalty !== undefined}
-                                helperText={
-                                    formik.touched.penalty && formik.errors.penalty !== undefined
-                                        ? formik.errors.penalty
-                                        : ""
-                                }
+                                helperText={formik.touched.penalty && formik.errors.penalty !== undefined ? formik.errors.penalty : ""}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                style={{ padding: 10 }}
-                                onClick={formik.handleSubmit}
-                            >
+                            <Button fullWidth variant="contained" style={{ padding: 10 }} onClick={formik.handleSubmit}>
                                 Создать
                             </Button>
                         </Grid>

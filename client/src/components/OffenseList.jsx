@@ -36,13 +36,7 @@ const OffenseList = ({ offenses, deleteHandler }) => {
                         ))}
                     </Grid>
                     <Grid container justifyContent="center">
-                        <Pagination
-                            count={pagesCount}
-                            color="primary"
-                            shape="rounded"
-                            page={page}
-                            onChange={changePage}
-                        ></Pagination>
+                        <Pagination count={pagesCount} color="primary" shape="rounded" page={page} onChange={changePage}></Pagination>
                     </Grid>
                 </Grid>
             ) : (

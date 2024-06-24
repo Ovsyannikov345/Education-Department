@@ -71,19 +71,13 @@ const EmployeeList = ({
                 <>
                     <FormControl fullWidth>
                         <InputLabel id="employee-label">
-                            {availableEmployees.length > 0
-                                ? "Добавить организавтора"
-                                : "Нет доступных организаторов"}
+                            {availableEmployees.length > 0 ? "Добавить организавтора" : "Нет доступных организаторов"}
                         </InputLabel>
                         <Select
                             fullWidth
                             labelId="employee-label"
                             id="employee-select"
-                            label={
-                                availableEmployees.length > 0
-                                    ? "Добавить организатора"
-                                    : "Нет доступных организаторов"
-                            }
+                            label={availableEmployees.length > 0 ? "Добавить организатора" : "Нет доступных организаторов"}
                             readOnly={availableEmployees.length === 0}
                             value={""}
                             onChange={(e) => addEmployeeHandler(e.target.value)}
@@ -111,13 +105,9 @@ const EmployeeList = ({
                                             value={formik.values.lastName}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined
-                                            }
+                                            error={formik.touched.lastName && formik.errors.lastName !== undefined}
                                             helperText={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined
-                                                    ? formik.errors.lastName
-                                                    : ""
+                                                formik.touched.lastName && formik.errors.lastName !== undefined ? formik.errors.lastName : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -131,13 +121,9 @@ const EmployeeList = ({
                                             value={formik.values.firstName}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined
-                                            }
+                                            error={formik.touched.firstName && formik.errors.firstName !== undefined}
                                             helperText={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined
-                                                    ? formik.errors.firstName
-                                                    : ""
+                                                formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""
                                             }
                                         ></TextField>
                                     </Grid>
@@ -151,13 +137,9 @@ const EmployeeList = ({
                                             value={formik.values.patronymic}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
-                                            error={
-                                                formik.touched.patronymic &&
-                                                formik.errors.patronymic !== undefined
-                                            }
+                                            error={formik.touched.patronymic && formik.errors.patronymic !== undefined}
                                             helperText={
-                                                formik.touched.patronymic &&
-                                                formik.errors.patronymic !== undefined
+                                                formik.touched.patronymic && formik.errors.patronymic !== undefined
                                                     ? formik.errors.patronymic
                                                     : ""
                                             }
@@ -166,12 +148,7 @@ const EmployeeList = ({
                                 </Grid>
                                 <Grid container marginTop={2} marginBottom={2} gap={2}>
                                     <Grid item xs={2}>
-                                        <Button
-                                            fullWidth
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={(e) => formik.handleSubmit(e)}
-                                        >
+                                        <Button fullWidth variant="outlined" color="primary" onClick={(e) => formik.handleSubmit(e)}>
                                             Создать
                                         </Button>
                                     </Grid>
