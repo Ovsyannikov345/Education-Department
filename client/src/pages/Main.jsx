@@ -1,10 +1,12 @@
-import { Grid, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Typography, Snackbar, Alert, Button } from "@mui/material";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import React, { useEffect, useMemo, useState } from "react";
 import { getEvents, deleteEvent } from "../api/eventsApi.js";
 import EventList from "../components/EventList.jsx";
 import SortSelector from "../components/SortSelector.jsx";
 import EventFilter from "../components/EventFilter.jsx";
 import moment from "moment";
+import { getEventsReport } from "../api/reportsApi.js";
 
 function MainPage() {
     const [events, setEvents] = useState([]);
@@ -112,6 +114,22 @@ function MainPage() {
         displaySuccess("Мероприятие удалено");
     };
 
+    const downloadEventsReport = async () => {
+        if (!filteredEvents || filteredEvents.length === 0) {
+            displayError("Мероприятия для экспорта отсутствуют");
+            return;
+        }
+
+        const response = await getEventsReport(searchQuery);
+
+        if (!response.status || response.status >= 300) {
+            displayError(response.data.error);
+            return;
+        }
+
+        displaySuccess("Отчет создан");
+    };
+
     return (
         <>
             <Grid container alignItems={"flex-start"} mb={5}>
@@ -121,7 +139,14 @@ function MainPage() {
                 <Grid container item xs={9} pl={2} pr={2}>
                     <Grid container justifyContent={"space-between"} alignItems={"flex-end"} mt={2}>
                         <Grid item>
-                            <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
+                            <Grid container gap={"30px"}>
+                                <Typography variant="h4">Список мероприятий {`(${filteredEvents.length})`}</Typography>
+                                {filteredEvents && filteredEvents.length > 0 && (
+                                    <Button variant="contained" startIcon={<FileUploadIcon />} onClick={downloadEventsReport}>
+                                        Отчет
+                                    </Button>
+                                )}
+                            </Grid>
                         </Grid>
                         <Grid item>
                             <SortSelector
