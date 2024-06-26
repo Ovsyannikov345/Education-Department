@@ -22,13 +22,17 @@ const getEventsReport = async (eventsQuery) => {
             params: query,
         });
 
+        const filename = `${moment().format("DD-MM-YYYY_HH-mm")}.xlsx`;
+
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', `${moment().format("DD-MM-YYYY HH:mm.xlsx")}`); // Set the file name
+        link.setAttribute("download", filename);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
+        return response;
     } catch (error) {
         if (error.response) {
             if (error.response.status === 401) {

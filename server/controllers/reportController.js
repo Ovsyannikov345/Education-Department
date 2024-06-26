@@ -1,4 +1,14 @@
-const { Event, Department, Subdepartment, Direction, Subdirection, Employee, Student, Participant, Group } = require("../db/models");
+const {
+    Event,
+    Department,
+    Subdepartment,
+    Direction,
+    Subdirection,
+    Employee,
+    Student,
+    Participant,
+    Group,
+} = require("../db/models");
 const moment = require("moment");
 const excelBuilder = require("../utils/excelBuilder");
 
@@ -16,6 +26,7 @@ class ReportController {
                     { model: Employee },
                     { model: Student, include: [{ model: Group }] },
                     { model: Participant },
+                    { model: Group },
                 ],
             });
 
@@ -24,7 +35,9 @@ class ReportController {
 
                 const subdepartmentIds = query.selectedSubdepartments.map((id) => parseInt(id));
 
-                query.selectedSubdepartments = subdepartments.filter((s) => subdepartmentIds.includes(s.id)).map((s) => s.name);
+                query.selectedSubdepartments = subdepartments
+                    .filter((s) => subdepartmentIds.includes(s.id))
+                    .map((s) => s.name);
             }
 
             const startDate = moment(query.startDate);
@@ -46,19 +59,24 @@ class ReportController {
                     (!query.selectedSubdirections ||
                         query.selectedSubdirections.length === 0 ||
                         query.selectedSubdirections.map((id) => parseInt(id)).includes(event.subdirectionId)) &&
+                    (!query.selectedGroups ||
+                        query.selectedGroups.length === 0 ||
+                        event.Groups.some((g) => query.selectedGroups.map((id) => parseInt(id)).includes(g.id))) &&
                     (!query.startDate || moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate)) &&
                     (!query.endDate || moment(event.date, "YYYY-MM-DD").isSameOrBefore(endDate))
             );
 
+            console.log("FOUND " + filteredEvents.length + " EVENTS");
+
             const workbook = excelBuilder.createEventsReportBook(filteredEvents);
 
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            res.setHeader("Content-Disposition", "attachment; filename=eventsReport.xlsx");
+            res.setHeader("Content-Disposition", `attachment; filename=${moment().format("DD-MM-YYYY_HH:mm")}.xlsx`);
 
             await workbook.xlsx.write(res);
             res.end();
         } catch (error) {
-            console.log(error)
+            console.log(error);
             return res.status(500).json({ error: "Неизвестная ошибка во время создания отчета" });
         }
     }

@@ -1,4 +1,5 @@
 const ExcelJS = require("exceljs");
+const moment = require("moment");
 
 class ExcelBuilder {
     createEventsReportBook(events) {
@@ -6,38 +7,113 @@ class ExcelBuilder {
         const worksheet = workbook.addWorksheet("Events Report");
 
         worksheet.columns = [
-            { header: "Name", key: "name", width: 30 },
-            { header: "Date", key: "date", width: 20 },
-            { header: "Planned Result", key: "plannedResult", width: 30 },
-            { header: "Description", key: "description", width: 50 },
-            { header: "Department", key: "department", width: 20 },
-            { header: "Subdepartment", key: "subdepartment", width: 20 },
-            { header: "Direction", key: "direction", width: 20 },
-            { header: "Subdirection", key: "subdirection", width: 20 },
-            { header: "Employees", key: "employees", width: 50 },
-            { header: "Students", key: "students", width: 50 },
-            { header: "Participants", key: "participants", width: 50 },
-            { header: "Groups", key: "groups", width: 30 },
+            { header: "Название", key: "name", width: 25 },
+            { header: "Дата проведения", key: "date", width: 18 },
+            { header: "Планируемый результат", key: "plannedResult", width: 35 },
+            { header: "Описание", key: "description", width: 35 },
+            { header: "Структура", key: "department", width: 27 },
+            { header: "Подразделение", key: "subdepartment", width: 27 },
+            { header: "Направление", key: "direction", width: 30 },
+            { header: "Составляющая", key: "subdirection", width: 32 },
+            { header: "Участвующие группы", key: "groups", width: 20 },
+            { header: "Сотрудники", key: "employees", width: 30 },
+            { header: "Студенты", key: "students", width: 30 },
+            { header: "Приглашенные лица", key: "participants", width: 30 },
         ];
 
+        let rowIndex = 1;
+
         events.forEach((event) => {
-            worksheet.addRow({
-                name: event.name,
-                date: event.date,
-                plannedResult: event.plannedResult,
-                description: event.description,
-                department: event.Department.name,
-                subdepartment: event.Subdepartment.name,
-                direction: event.Direction.name,
-                subdirection: event.Subdirection.name,
-                employees: event.Employees.map((e) => `${e.lastName} ${e.firstName} ${e.patromynic}`).join("; "),
-                students: event.Students.map((s) => `${s.lastName} ${s.firstName} ${s.patromynic} (${s.Group.name})`).join("; "),
-                participants: event.Participants.map(
-                    (p) => `${p.lastName} ${p.firstName} ${p.patromynic} (${p.organization}, ${p.position})`
-                ).join("; "),
-                groups: event.Groups.map((g) => g.name).join("; "),
+            const requiredRowsCount = Math.max(
+                event.Employees.length,
+                event.Students.length,
+                event.Participants.length,
+                event.Groups.length,
+                1
+            );
+
+            for (let i = 0; i < requiredRowsCount; i++) {
+                let row = {
+                    employees: event.Employees[i]
+                        ? [event.Employees[i].lastName, event.Employees[i].firstName, event.Employees[i].patronymic]
+                              .filter(Boolean)
+                              .join(" ")
+                        : "",
+                    students: event.Students[i]
+                        ? [event.Students[i].lastName, event.Students[i].firstName, event.Students[i].patronymic]
+                              .filter(Boolean)
+                              .join(" ") + `\n(${event.Students[i].Group.name})`
+                        : "",
+                    participants: event.Participants[i]
+                        ? [event.Participants[i].lastName, event.Participants[i].firstName, event.Participants[i].patronymic]
+                              .filter(Boolean)
+                              .join(" ") +
+                          `\n(${[event.Participants[i].organization, event.Participants[i].position].filter(Boolean).join(", ")})`
+                        : "",
+                    groups: event.Groups[i] ? event.Groups[i].name : "",
+                };
+
+                if (i === 0) {
+                    row = {
+                        ...row,
+                        name: event.name,
+                        date: moment(event.date).format("DD.MM.YYYY HH:mm"),
+                        plannedResult: event.plannedResult ?? null,
+                        description: event.description ?? null,
+                        department: event.Department.name,
+                        subdepartment: event.Subdepartment?.name,
+                        direction: event.Direction.name,
+                        subdirection: event.Subdirection?.name,
+                    };
+                }
+
+                worksheet.addRow(row);
+                rowIndex++;
+            }
+
+            worksheet.getRow(rowIndex).eachCell({ includeEmpty: true }, (cell) => (cell.border = { bottom: { style: "thin" } }));
+        });
+
+        worksheet.columns.forEach((column) => {
+            column.eachCell((cell) => {
+                cell.alignment = { wrapText: true };
             });
         });
+
+        worksheet.columns.forEach((column) => {
+            let maxLength = column.header.length;
+
+            column.eachCell({ includeEmpty: true }, (cell) => {
+                const cellValue = cell.value ? cell.value.toString() : "";
+                maxLength = Math.max(
+                    maxLength,
+                    cellValue.split("\n").reduce((max, line) => Math.max(max, line.length), 0)
+                );
+            });
+
+            column.width = maxLength + 2 < 50 ? maxLength + 2 : 50;
+        });
+
+        worksheet.columns.forEach((column) =>
+            column.eachCell((cell) => {
+                cell.border = {
+                    ...cell.border,
+                    right: { style: "medium" },
+                };
+            })
+        );
+
+        worksheet.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.alignment = { vertical: "middle", horizontal: "center" };
+            cell.border = {
+                top: { style: "thick" },
+                bottom: { style: "medium" },
+                right: { style: "medium" },
+            };
+        });
+
+        worksheet.getRow(1).height = 35;
 
         return workbook;
     }
