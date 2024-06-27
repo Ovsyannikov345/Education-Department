@@ -117,6 +117,76 @@ class ExcelBuilder {
 
         return workbook;
     }
+
+    createOffensesReportBook(offenses) {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Offenses Report");
+
+        worksheet.columns = [
+            { header: "ФИО студента", key: "student", width: 25 },
+            { header: "Группа", key: "group", width: 18 },
+            { header: "Дата совершения", key: "offenseDate", width: 18 },
+            { header: "Статья", key: "article", width: 35 },
+            { header: "Решение суда", key: "courtDecision", width: 27 },
+            { header: "Взыскание", key: "penalty", width: 27 },
+        ];
+
+        offenses.forEach((offense, index) => {
+            worksheet.addRow({
+                student: [offense.Student.lastName, offense.Student.firstName, offense.Student.patronymic].filter(Boolean).join(" "),
+                group: offense.Student.Group.name,
+                offenseDate: moment(offense.offenseDate).format("DD.MM.YYYY"),
+                article: offense.article,
+                courtDecision: offense.courtDecision ?? null,
+                penalty: offense.penalty ?? null,
+            });
+
+            worksheet.getRow(index + 1).eachCell({ includeEmpty: true }, (cell) => (cell.border = { bottom: { style: "thin" } }));
+        });
+
+        worksheet.columns.forEach((column) => {
+            column.eachCell((cell) => {
+                cell.alignment = { wrapText: true };
+            });
+        });
+
+        worksheet.columns.forEach((column) => {
+            let maxLength = column.header.length;
+
+            column.eachCell({ includeEmpty: true }, (cell) => {
+                const cellValue = cell.value ? cell.value.toString() : "";
+                maxLength = Math.max(
+                    maxLength,
+                    cellValue.split("\n").reduce((max, line) => Math.max(max, line.length), 0)
+                );
+            });
+
+            column.width = maxLength + 2 < 50 ? maxLength + 2 : 50;
+        });
+
+        worksheet.columns.forEach((column) =>
+            column.eachCell((cell) => {
+                cell.border = {
+                    ...cell.border,
+                    right: { style: "medium" },
+                };
+            })
+        );
+
+        worksheet.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.alignment = { vertical: "middle", horizontal: "center" };
+            cell.border = {
+                top: { style: "thick" },
+                bottom: { style: "medium" },
+                right: { style: "medium" },
+            };
+        });
+
+        worksheet.getRow(1).height = 35;
+
+        return workbook;
+    }
 }
 
 module.exports = new ExcelBuilder();

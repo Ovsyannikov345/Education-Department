@@ -20,6 +20,7 @@ const getEventsReport = async (eventsQuery) => {
         const response = await host.get("/reports/events", {
             responseType: "blob",
             params: query,
+            timeout: 10000,
         });
 
         const filename = `${moment().format("DD-MM-YYYY_HH-mm")}.xlsx`;
@@ -49,4 +50,45 @@ const getEventsReport = async (eventsQuery) => {
     }
 };
 
-export { getEventsReport };
+const getOffensesReport = async (offensesQuery) => {
+    try {
+        const query = { ...offensesQuery };
+
+        if (query.text === "") {
+            query.text = null;
+        }
+
+        const response = await host.get("/reports/offenses", {
+            responseType: "blob",
+            params: query,
+            timeout: 10000,
+        });
+
+        const filename = `${moment().format("DD-MM-YYYY_HH-mm")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        return response;
+    } catch (error) {
+        if (error.response) {
+            if (error.response.status === 401) {
+                return await updateToken(getOffensesReport);
+            }
+
+            return { data: { error: "Ошибка при создании отчета" } };
+        } else if (error.request) {
+            return { data: { error: "Сервис временно недоступен" } };
+        } else {
+            console.log(error);
+            return { data: { error: "Ошибка при создании запроса" } };
+        }
+    }
+};
+
+export { getEventsReport, getOffensesReport };

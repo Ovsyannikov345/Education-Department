@@ -8,6 +8,7 @@ const {
     Student,
     Participant,
     Group,
+    Offense,
 } = require("../db/models");
 const moment = require("moment");
 const excelBuilder = require("../utils/excelBuilder");
@@ -35,9 +36,7 @@ class ReportController {
 
                 const subdepartmentIds = query.selectedSubdepartments.map((id) => parseInt(id));
 
-                query.selectedSubdepartments = subdepartments
-                    .filter((s) => subdepartmentIds.includes(s.id))
-                    .map((s) => s.name);
+                query.selectedSubdepartments = subdepartments.filter((s) => subdepartmentIds.includes(s.id)).map((s) => s.name);
             }
 
             const startDate = moment(query.startDate);
@@ -81,7 +80,45 @@ class ReportController {
         }
     }
 
-    async getOffensesReport(req, res) {}
+    async getOffensesReport(req, res) {
+        const query = req.query;
+
+        console.log(query);
+
+        try {
+            const offenses = await Offense.findAll({
+                include: [{ model: Student, include: [{ model: Group }] }],
+            });
+
+            const startDate = moment(query.startDate);
+            const endDate = moment(query.endDate).add(23, "hours").add(59, "minutes").add(59, "seconds");
+
+            const filteredOffenses = offenses.filter(
+                (offense) =>
+                    (!query.text ||
+                        [offense.Student.firstName, offense.Student.lastName, offense.Student.patronymic]
+                            .join(" ")
+                            .toLowerCase()
+                            .includes(query.text.toLowerCase()) ||
+                        offense.Student.Group.name.toLowerCase().includes(query.text.toLowerCase())) &&
+                    (!query.startDate || moment(offense.offenseDate, "YYYY-MM-DD").isSameOrAfter(startDate)) &&
+                    (!query.endDate || moment(offense.offenseDate, "YYYY-MM-DD").isSameOrBefore(endDate))
+            );
+
+            console.log("FOUND " + filteredOffenses.length + " OFFENSES");
+
+            const workbook = excelBuilder.createOffensesReportBook(filteredOffenses);
+
+            res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            res.setHeader("Content-Disposition", `attachment; filename=${moment().format("DD-MM-YYYY_HH:mm")}.xlsx`);
+
+            await workbook.xlsx.write(res);
+            res.end();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: "Неизвестная ошибка во время создания отчета" });
+        }
+    }
 }
 
 module.exports = new ReportController();
