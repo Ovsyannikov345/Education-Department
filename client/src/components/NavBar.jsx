@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { AppBar, Box, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, Grid, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { MAINPAGE_ROUTE, ADDEVENT_ROUTE, OFFENSIVES_ROUTE, REPORTS_ROUTE, ADDOFFENSIVE_ROUTE, ACCOUNTS_ROUTE } from "../utils/consts";
+import { MAINPAGE_ROUTE, ADDEVENT_ROUTE, OFFENSIVES_ROUTE, ADDOFFENSIVE_ROUTE, ACCOUNTS_ROUTE } from "../utils/consts";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import EventIcon from "@mui/icons-material/Event";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import SummarizeIcon from "@mui/icons-material/Summarize";
 import GavelIcon from "@mui/icons-material/Gavel";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -141,7 +140,7 @@ function NavBar() {
                                 <AddBoxIcon />
                                 <ListItemText primary="Создать мероприятие" style={{ marginLeft: 5 }} />
                             </ListItem>
-                            <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(OFFENSIVES_ROUTE)}>
+                            <ListItem sx={{ cursor: "pointer", mt: "10px" }} onClick={() => navigate(OFFENSIVES_ROUTE)}>
                                 <GavelIcon />
                                 <ListItemText primary="Правонарушения" style={{ marginLeft: 5 }} />
                             </ListItem>
@@ -149,18 +148,14 @@ function NavBar() {
                                 <AddBoxIcon />
                                 <ListItemText primary="Создать правонарушение" style={{ marginLeft: 5 }} />
                             </ListItem>
-                            <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(REPORTS_ROUTE)}>
-                                <SummarizeIcon />
-                                <ListItemText primary="Просмотреть отчеты" style={{ marginLeft: 5 }} />
-                            </ListItem>
+                        </List>
+                        <List onClick={toggleDrawer(false)}>
                             {localStorage.getItem("role") === "admin" && (
                                 <ListItem sx={{ cursor: "pointer" }} onClick={() => navigate(ACCOUNTS_ROUTE)}>
                                     <AccountBoxIcon />
                                     <ListItemText primary="Учетные записи" style={{ marginLeft: 5 }} />
                                 </ListItem>
                             )}
-                        </List>
-                        <List onClick={toggleDrawer(false)}>
                             <ListItem sx={{ cursor: "pointer" }} onClick={() => setChangePasswordModalOpen(true)}>
                                 <LockIcon />
                                 <ListItemText primary="Сменить пароль" style={{ marginLeft: 5 }} />
