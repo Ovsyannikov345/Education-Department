@@ -3,9 +3,7 @@ const { Direction, Subdirection } = require("../db/models");
 class DirectionController {
     async getAll(req, res) {
         try {
-            const directions = await Direction.findAll({
-                include: { model: Subdirection },
-            });
+            const directions = await Direction.findAll();
 
             return res.json(directions);
         } catch (error) {
