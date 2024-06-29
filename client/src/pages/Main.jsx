@@ -71,19 +71,17 @@ function MainPage() {
                     ? searchQuery.selectedDepartments.map((dep) => dep.id).includes(event.Department.id)
                     : true) &&
                 (searchQuery.selectedSubdepartments.length > 0
-                    ? event.Subdepartment == null ||
+                    ? event.Subdepartment &&
                       searchQuery.selectedSubdepartments.map((subdep) => subdep.name).includes(event.Subdepartment.name)
                     : true) &&
-                    // TODO subdepartments can have many ids for the same name??? fix???
                 (searchQuery.selectedDirections.length > 0
                     ? searchQuery.selectedDirections.map((dir) => dir.id).includes(event.Direction.id)
                     : true) &&
                 (searchQuery.selectedSubdirections.length > 0
-                    ? event.Subdirection != null && searchQuery.selectedSubdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
+                    ? event.Subdirection != null &&
+                      searchQuery.selectedSubdirections.map((subdir) => subdir.id).includes(event.Subdirection.id)
                     : true) &&
-                (searchQuery.selectedGroups.length > 0
-                    ? event.Groups.some((g) => searchQuery.selectedGroups.includes(g.id))
-                    : true) &&
+                (searchQuery.selectedGroups.length > 0 ? event.Groups.some((g) => searchQuery.selectedGroups.includes(g.id)) : true) &&
                 (isGapValid && startDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrAfter(startDate) : true) &&
                 (isGapValid && endDate != null ? moment(event.date, "YYYY-MM-DD").isSameOrBefore(endDate) : true)
         );
