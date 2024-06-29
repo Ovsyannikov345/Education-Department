@@ -5,6 +5,7 @@ const router = require("./routers/index");
 const cors = require("cors");
 const PORT = process.env.PORT || 5000;
 const app = express();
+const { checkAndCreateDatabase } = require("./db/checkAndCreateDatabase");
 const { clearRefreshTokens } = require("./db/clearRefreshTokens");
 const { initializeDatabase } = require("./db/initializeDatabase");
 
@@ -15,6 +16,9 @@ app.use(router);
 
 const start = async () => {
     try {
+        console.log("[INFO] Database check started...");
+        await checkAndCreateDatabase();
+
         await sequelize.authenticate();
         await sequelize.sync({ alter: true });
 
