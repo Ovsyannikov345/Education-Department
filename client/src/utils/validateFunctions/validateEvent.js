@@ -34,7 +34,6 @@ const validateEvent = (values, department, direction) => {
     if (!values.time) {
         errors.time = "Обязательное поле";
     }
-    console.log(errors);
 
     return errors;
 };
