@@ -1,4 +1,4 @@
-const { Department, Direction, Subdirection, User } = require("./models");
+const { Department, Subdepartment, Direction, Subdirection, User } = require("./models");
 
 const initialDatabaseData = {
     departments: [
@@ -86,7 +86,7 @@ const initializeDepartments = async () => {
         }
 
         await Department.bulkCreate(initialDatabaseData.departments, {
-            include: [{ association: Department.Subdepartment }],
+            include: [{ model: Subdepartment }],
         });
 
         console.log("[INFO] Departments initialization - OK");
