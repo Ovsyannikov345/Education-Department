@@ -57,11 +57,11 @@ class UserController {
                             "<p>В дальшейшем пароль можно будет изменить на сайте.</p>",
                     });
                 } catch (emailError) {
-                    console.log("error while sending email");
+                    console.log("[ERROR] Error while sending email");
                     throw emailError;
                 }
 
-                console.log("Email sent to " + user.email);
+                console.log("[INFO] Email sent to " + user.email);
             });
 
             const createdUser = await User.findOne({
@@ -216,7 +216,7 @@ class UserController {
                         "<p>В дальшейшем пароль можно будет изменить на сайте.</p>",
                 });
 
-                console.log("Email sent to " + email);
+                console.log("[INFO] Email sent to " + email);
             });
 
             return res.sendStatus(204);

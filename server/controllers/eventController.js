@@ -49,8 +49,8 @@ class EventController {
             }
 
             return res.json(event);
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+            console.log(err);
             return res.status(500).json({ error: "Неизвестная ошибка во время загрузки мероприятия" });
         }
     }
@@ -67,7 +67,8 @@ class EventController {
             createdEvent.addGroups(event.groups.map((group) => group.id));
 
             return res.status(201).json();
-        } catch (error) {
+        } catch (err) {
+            console.log(err);
             return res.status(500).json({ error: "Неизвестная ошибка во время создания мероприятия" });
         }
     }
@@ -106,7 +107,8 @@ class EventController {
             eventRecord.addGroups(event.groups);
 
             return res.sendStatus(204);
-        } catch (error) {
+        } catch (err) {
+            console.log(err);
             return res.status(500).json({ error: "Неизвестная ошибка во время изменения мероприятия" });
         }
     }
