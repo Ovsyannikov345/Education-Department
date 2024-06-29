@@ -88,7 +88,7 @@ const EventFilter = ({ queryHandler, displaySuccess, displayError }) => {
         const loadSubdirections = async () => {
             const response = await getSubdirections();
 
-            if (!response || response.status >= 300) {
+            if (!response.status || response.status >= 300) {
                 displayError(response.data.error);
                 return;
             }
