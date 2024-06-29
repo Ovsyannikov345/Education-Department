@@ -2,17 +2,26 @@ const { RefreshToken } = require("./models");
 const jwt = require("jsonwebtoken");
 
 const clearRefreshTokens = async () => {
-    const tokens = await RefreshToken.findAll();
+    try {
+        const tokens = await RefreshToken.findAll();
 
-    tokens.forEach((token) => {
-        try {
-            jwt.verify(token.token, process.env.REFRESH_TOKEN_SECRET);
-        } catch (err) {
-            RefreshToken.destroy({ where: { id: token.id } });
-        }
-    });
+        const tokensCount = tokens.length;
 
-    console.log("Refresh tokens cleared");
+        tokens.forEach(async (token) => {
+            try {
+                jwt.verify(token.token, process.env.REFRESH_TOKEN_SECRET);
+            } catch (err) {
+                await RefreshToken.destroy({ where: { id: token.id } });
+            }
+        });
+
+        const updatedTokens = await RefreshToken.findAll();
+
+        console.log(`[INFO] Refresh tokens cleared. Deleted ${tokensCount - updatedTokens.length} tokens`);
+    } catch (e) {
+        console.log("[ERROR] Error while clearing tokens");
+        console.log(e);
+    }
 };
 
 module.exports = { clearRefreshTokens };
