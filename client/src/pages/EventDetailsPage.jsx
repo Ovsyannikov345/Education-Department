@@ -145,8 +145,6 @@ const EventDetailsPage = () => {
 
             const loadedEvent = response.data;
 
-            console.log(loadedEvent);
-
             const formattedDate = moment.utc(loadedEvent.date).format("YYYY-MM-DD");
             const formattedTime = moment.utc(loadedEvent.date).format("HH:mm");
 

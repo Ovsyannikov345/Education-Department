@@ -6,8 +6,6 @@ const getEventsReport = async (eventsQuery) => {
     try {
         const query = { ...eventsQuery };
 
-        console.log(query);
-
         if (query.name === "") {
             query.name = null;
         }

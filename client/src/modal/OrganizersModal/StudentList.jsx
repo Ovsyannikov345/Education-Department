@@ -36,7 +36,6 @@ const StudentList = ({
             }
 
             setGroups(response.data);
-            console.log(response.data);
         };
 
         loadGroups();

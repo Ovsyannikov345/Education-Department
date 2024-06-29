@@ -43,8 +43,6 @@ function OffensesPage() {
     };
 
     const sortedOffenses = useMemo(() => {
-        console.log(offenses)
-
         switch (sortOption) {
             case "name":
                 return [...offenses].sort((a, b) => compareStudents(a, b));

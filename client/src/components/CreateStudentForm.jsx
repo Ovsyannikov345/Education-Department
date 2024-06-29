@@ -18,7 +18,6 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
         },
         validate: validateStudent,
         onSubmit: async (values) => {
-            console.log(values);
             const response = await postStudent(values);
 
             if (!response.status || response.status >= 300) {

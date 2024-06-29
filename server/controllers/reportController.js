@@ -65,8 +65,6 @@ class ReportController {
                     (!query.endDate || moment(event.date, "YYYY-MM-DD").isSameOrBefore(endDate))
             );
 
-            console.log("FOUND " + filteredEvents.length + " EVENTS");
-
             const workbook = excelBuilder.createEventsReportBook(filteredEvents);
 
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -82,8 +80,6 @@ class ReportController {
 
     async getOffensesReport(req, res) {
         const query = req.query;
-
-        console.log(query);
 
         try {
             const offenses = await Offense.findAll({
@@ -104,8 +100,6 @@ class ReportController {
                     (!query.startDate || moment(offense.offenseDate, "YYYY-MM-DD").isSameOrAfter(startDate)) &&
                     (!query.endDate || moment(offense.offenseDate, "YYYY-MM-DD").isSameOrBefore(endDate))
             );
-
-            console.log("FOUND " + filteredOffenses.length + " OFFENSES");
 
             const workbook = excelBuilder.createOffensesReportBook(filteredOffenses);
 
