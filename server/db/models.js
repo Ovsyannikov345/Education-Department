@@ -344,14 +344,6 @@ Event.belongsTo(Subdirection, {
     sourceKey: "id",
 });
 
-Direction.hasMany(Subdirection, {
-    foreignKey: "directionId",
-});
-Subdirection.belongsTo(Direction, {
-    foreignKey: "directionId",
-    sourceKey: "id",
-});
-
 Event.belongsToMany(Employee, {
     through: "EventOrganizers",
 });
