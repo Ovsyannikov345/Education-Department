@@ -36,7 +36,7 @@ class EventController {
                     { model: Subdepartment },
                     { model: Subdirection },
                     { model: Department, include: [{ model: Subdepartment }] },
-                    { model: Direction, include: [{ model: Subdirection }] },
+                    { model: Direction },
                     { model: Employee },
                     { model: Student, include: [{ model: Group }] },
                     { model: Group },
@@ -50,6 +50,7 @@ class EventController {
 
             return res.json(event);
         } catch (error) {
+            console.log(error);
             return res.status(500).json({ error: "Неизвестная ошибка во время загрузки мероприятия" });
         }
     }
