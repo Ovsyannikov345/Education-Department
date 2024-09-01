@@ -5,7 +5,8 @@ const { validateToken } = require("../middleware/authMiddleware");
 
 const router = new Router();
 
+router.use("/api/auth", publicRouter);
 router.use("/api", validateToken, protectedRouter);
-router.use(publicRouter);
+
 
 module.exports = router;
