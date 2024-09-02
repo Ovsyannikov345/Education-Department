@@ -1,8 +1,9 @@
-FROM node:latest
+FROM node:14.14.0-alpine
 
-COPY package.json package.json
+WORKDIR /app
+COPY ./package.json ./
 RUN npm install
 
 COPY . .
 
-CMD [ "npm", "run", "prod" ]
+CMD [ "npm", "run", "dev" ]
