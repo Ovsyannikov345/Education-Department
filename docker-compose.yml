@@ -4,7 +4,8 @@ services:
 
   nginx:
     image: nginx:stable-alpine
-    container_name: nginx
+    container_name: ed-dep-nginx
+    restart: always
     ports:
       - "4005:80"
     volumes:
@@ -19,6 +20,7 @@ services:
     build:
       context: ./server
     container_name: back-end
+    restart: always
     networks:
       - node-network
     depends_on:
@@ -28,6 +30,7 @@ services:
     build:
       context: ./client
     container_name: front-end
+    restart: always
     networks:
       - node-network
 
