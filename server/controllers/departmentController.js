@@ -5,6 +5,7 @@ class DepartmentController {
         try {
             const departments = await Department.findAll({
                 include: { model: Subdepartment },
+                order: [["id", "ASC"]],
             });
 
             return res.json(departments);
