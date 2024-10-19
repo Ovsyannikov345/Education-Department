@@ -94,7 +94,7 @@ function NavBar() {
                                     )}
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <Typography variant="h5">Отдел по воспитательной работе</Typography>
+                                    <Typography variant="h5">Отдел по идеологической и воспитательной работе</Typography>
                                 </Grid>
                                 <Grid item xs={2} p={1}>
                                     <img
