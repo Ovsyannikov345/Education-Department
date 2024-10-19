@@ -129,10 +129,10 @@ const Participant = sequelize.define(
             type: DataTypes.STRING(50),
         },
         position: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING(400),
         },
         organization: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(400),
             allowNull: false,
         },
     },

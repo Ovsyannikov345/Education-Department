@@ -19,12 +19,12 @@ const validateParticipant = ({ lastName, firstName, patronymic, organization, po
 
     if (!organization) {
         errors.organization = "Обязательное поле";
-    } else if (organization.length > 255) {
-        errors.organization = "Длина не более 255 символов";
+    } else if (organization.length > 400) {
+        errors.organization = "Длина не более 400 символов";
     }
 
-    if (position && position.length > 100) {
-        errors.position = "Длина не более 100 символов";
+    if (position && position.length > 400) {
+        errors.position = "Длина не более 400 символов";
     }
 
     return errors;
