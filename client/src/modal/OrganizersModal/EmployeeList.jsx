@@ -94,8 +94,8 @@ const EmployeeList = ({
                         {creationToggle ? (
                             <FormControl fullWidth>
                                 <Typography variant="h6">Новый организатор</Typography>
-                                <Grid container gap={1}>
-                                    <Grid item xs>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -111,7 +111,7 @@ const EmployeeList = ({
                                             }
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs>
+                                    <Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -127,7 +127,7 @@ const EmployeeList = ({
                                             }
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs>
+                                    <Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"

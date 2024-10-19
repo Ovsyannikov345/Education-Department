@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { FormControl, Grid, TextField, Button, Select, FormHelperText, MenuItem, InputLabel } from "@mui/material";
+import { FormControl, Grid, TextField, Button, Select, FormHelperText, MenuItem, InputLabel, Typography } from "@mui/material";
 import { postStudent } from "../api/studentsApi";
 import { useFormik } from "formik";
 import validateStudent from "../utils/validateFunctions/validateStudent";
@@ -80,8 +80,11 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
 
     return (
         <FormControl fullWidth>
-            <Grid container item xs={12} gap={1}>
-                <Grid item xs={5.9}>
+            <Grid container item xs={12} spacing={1}>
+                <Grid item xs={12}>
+                    <Typography variant="h6">Новый студент</Typography>
+                </Grid>
+                <Grid item xs={6}>
                     <FormControl fullWidth>
                         <InputLabel id="group-label" error={formik.touched.groupId && formik.errors.groupId !== undefined}>
                             Группа
@@ -109,7 +112,22 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         </FormHelperText>
                     </FormControl>
                 </Grid>
-                <Grid item xs={5.9}>
+                <Grid item xs={6}></Grid>
+                <Grid item container xs={6} alignItems={"flex-start"} gap={"10px"}>
+                    {groupCreationToggle ? (
+                        <GroupCreationForm
+                            createCallback={createNewGroup}
+                            declineCallback={() => setGroupCreationToggle(false)}
+                            errorCallback={errorCallback}
+                        />
+                    ) : (
+                        <Button variant="outlined" onClick={() => setGroupCreationToggle(true)}>
+                            Создать группу
+                        </Button>
+                    )}
+                </Grid>
+                <Grid item xs={6}></Grid>
+                <Grid item xs={6}>
                     <TextField
                         fullWidth
                         variant="outlined"
@@ -123,20 +141,7 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         helperText={formik.touched.lastName && formik.errors.lastName !== undefined ? formik.errors.lastName : ""}
                     ></TextField>
                 </Grid>
-                <Grid item container xs={5.9} alignItems={"flex-start"} gap={"10px"}>
-                    {groupCreationToggle ? (
-                        <GroupCreationForm
-                            createCallback={createNewGroup}
-                            declineCallback={() => setGroupCreationToggle(false)}
-                            errorCallback={errorCallback}
-                        />
-                    ) : (
-                        <Button variant="outlined" onClick={() => setGroupCreationToggle(true)}>
-                            Создать группу
-                        </Button>
-                    )}
-                </Grid>
-                <Grid item xs={5.9}>
+                <Grid item xs={6}>
                     <TextField
                         fullWidth
                         variant="outlined"
@@ -147,11 +152,12 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         error={formik.touched.firstName && formik.errors.firstName !== undefined}
-                        helperText={formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""}
+                        helperText={
+                            formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""
+                        }
                     ></TextField>
                 </Grid>
-                <Grid item xs={5.9}></Grid>
-                <Grid item xs={5.9}>
+                <Grid item xs={6}>
                     <TextField
                         fullWidth
                         variant="outlined"
@@ -162,7 +168,9 @@ const CreateStudentForm = ({ declineHandler, successCallback, errorCallback }) =
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         error={formik.touched.patronymic && formik.errors.patronymic !== undefined}
-                        helperText={formik.touched.patronymic && formik.errors.patronymic !== undefined ? formik.errors.patronymic : ""}
+                        helperText={
+                            formik.touched.patronymic && formik.errors.patronymic !== undefined ? formik.errors.patronymic : ""
+                        }
                     ></TextField>
                 </Grid>
                 <Grid container item xs={12} gap={2}>

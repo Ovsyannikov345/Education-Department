@@ -35,9 +35,7 @@ const ParticipantList = ({
         participants.sort((a, b) =>
             [a.lastName, a.firstName, a.patronymic ?? "", a.organization, a.position ?? ""]
                 .join("")
-                .localeCompare(
-                    [b.lastName, b.firstName, b.patronymic ?? "", b.organization, b.position ?? ""].join("")
-                )
+                .localeCompare([b.lastName, b.firstName, b.patronymic ?? "", b.organization, b.position ?? ""].join(""))
         );
     }, [participants]);
 
@@ -45,9 +43,7 @@ const ParticipantList = ({
         availableParticipants.sort((a, b) =>
             [a.lastName, a.firstName, a.patronymic ?? "", a.organization, a.position ?? ""]
                 .join("")
-                .localeCompare(
-                    [b.lastName, b.firstName, b.patronymic ?? "", b.organization, b.position ?? ""].join("")
-                )
+                .localeCompare([b.lastName, b.firstName, b.patronymic ?? "", b.organization, b.position ?? ""].join(""))
         );
     }, [availableParticipants]);
 
@@ -96,8 +92,8 @@ const ParticipantList = ({
                         {creationToggle ? (
                             <FormControl fullWidth>
                                 <Typography variant="h6">Новое приглашенное лицо</Typography>
-                                <Grid container gap={1}>
-                                    <Grid item xs={4}>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -109,11 +105,13 @@ const ParticipantList = ({
                                             onBlur={formik.handleBlur}
                                             error={formik.touched.lastName && formik.errors.lastName !== undefined}
                                             helperText={
-                                                formik.touched.lastName && formik.errors.lastName !== undefined ? formik.errors.lastName : ""
+                                                formik.touched.lastName && formik.errors.lastName !== undefined
+                                                    ? formik.errors.lastName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -125,11 +123,13 @@ const ParticipantList = ({
                                             onBlur={formik.handleBlur}
                                             error={formik.touched.firstName && formik.errors.firstName !== undefined}
                                             helperText={
-                                                formik.touched.firstName && formik.errors.firstName !== undefined ? formik.errors.firstName : ""
+                                                formik.touched.firstName && formik.errors.firstName !== undefined
+                                                    ? formik.errors.firstName
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -147,7 +147,8 @@ const ParticipantList = ({
                                             }
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={6}></Grid>
+                                    <Grid item xs={12}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -165,7 +166,7 @@ const ParticipantList = ({
                                             }
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={12}>
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -177,14 +178,21 @@ const ParticipantList = ({
                                             onBlur={formik.handleBlur}
                                             error={formik.touched.position && formik.errors.position !== undefined}
                                             helperText={
-                                                formik.touched.position && formik.errors.position !== undefined ? formik.errors.position : ""
+                                                formik.touched.position && formik.errors.position !== undefined
+                                                    ? formik.errors.position
+                                                    : ""
                                             }
                                         ></TextField>
                                     </Grid>
                                 </Grid>
                                 <Grid container marginTop={2} marginBottom={2} gap={2}>
                                     <Grid item xs={2}>
-                                        <Button fullWidth variant="outlined" color="primary" onClick={(e) => formik.handleSubmit()}>
+                                        <Button
+                                            fullWidth
+                                            variant="outlined"
+                                            color="primary"
+                                            onClick={(e) => formik.handleSubmit()}
+                                        >
                                             Создать
                                         </Button>
                                     </Grid>
